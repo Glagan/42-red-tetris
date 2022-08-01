@@ -16,3 +16,8 @@ node_modules
 !.yarn/releases
 !.yarn/sdks
 !.yarn/versions
+
+# tests
+/test-results/
+/playwright-report/
+/playwright/.cache/
