@@ -13,6 +13,10 @@ const config = {
 		adapter: adapter(),
 		prerender: {
 			default: false
+		},
+		alias: {
+			$components: 'src/components',
+			$stores: 'src/stores'
 		}
 	}
 };
