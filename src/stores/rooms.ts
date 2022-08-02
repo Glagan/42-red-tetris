@@ -9,6 +9,9 @@ function createStore() {
 		set,
 		subscribe,
 		update,
+		getRoom(roomIdentifier: Room | string) {
+			return rooms.find((room) => room === roomIdentifier || room.id === roomIdentifier);
+		},
 		addRoom(newRoom: Room) {
 			const index = rooms.findIndex((room) => room.id === newRoom.id);
 			if (index < 0) {
