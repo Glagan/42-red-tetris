@@ -444,6 +444,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/luxon@npm:^3.0.0":
+  version: 3.0.0
+  resolution: "@types/luxon@npm:3.0.0"
+  checksum: 7738d3f4b91097a8139eca966ab53c6b40bb417b2cc2014c3bbd0aee033d6ff54af14c62046c2eb042434923b6bf796874f24b2af90e07ef422e6d841463d4b2
+  languageName: node
+  linkType: hard
+
 "@types/node@npm:*":
   version: 18.6.3
   resolution: "@types/node@npm:18.6.3"
@@ -2675,6 +2682,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"luxon@npm:^3.0.1":
+  version: 3.0.1
+  resolution: "luxon@npm:3.0.1"
+  checksum: aa966eb919bf95b1bd819cda784d1f6f66e3fb65bd9ec7bf68b6a978eeb4e3e14f7e2275021b473f93b15b6b7ba2e5a30471e53add3929a7e695fcfd6dd40ec8
+  languageName: node
+  linkType: hard
+
 "lz-string@npm:^1.4.4":
   version: 1.4.4
   resolution: "lz-string@npm:1.4.4"
@@ -3461,6 +3475,7 @@ __metadata:
     "@sveltejs/kit": next
     "@testing-library/jest-dom": ^5.16.4
     "@testing-library/svelte": ^3.1.3
+    "@types/luxon": ^3.0.0
     "@types/testing-library__jest-dom": ^5.14.5
     "@typescript-eslint/eslint-plugin": ^5.27.0
     "@typescript-eslint/parser": ^5.27.0
@@ -3470,6 +3485,7 @@ __metadata:
     eslint-config-prettier: ^8.3.0
     eslint-plugin-svelte3: ^4.0.0
     jsdom: ^20.0.0
+    luxon: ^3.0.1
     nanoid: ^4.0.0
     postcss: ^8.4.14
     prettier: ^2.6.2
