@@ -1,9 +1,17 @@
 import { sveltekit } from '@sveltejs/kit/vite';
 import { configDefaults } from 'vitest/config';
+import useSocketIo from './src/socket';
+
+const webSocketServer = {
+	name: 'webSocketServer',
+	configureServer(server) {
+		useSocketIo(server.httpServer);
+	}
+};
 
 /** @type {import('vite').UserConfig} */
 const config = {
-	plugins: [sveltekit()],
+	plugins: [sveltekit(), webSocketServer],
 	define: {
 		// Eliminate in-source test code
 		'import.meta.vitest': 'undefined'

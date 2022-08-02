@@ -1,5 +1,6 @@
 <script lang="ts">
 	import '../app.css';
+	import '$lib/socket';
 </script>
 
 <h1 class="text-blue-400">Welcome to SvelteKit</h1>
