@@ -1,7 +1,7 @@
 import http from 'http';
 import express from 'express';
 import { handler } from './build/handler.js';
-import useSocketIo from './src/socket';
+import useSocketIo from 'src/server/socket';
 
 const app = express();
 const server = http.createServer(app);

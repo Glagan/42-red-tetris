@@ -1,7 +1,49 @@
 import type { Handle } from '@sveltejs/kit';
 import { nanoid } from 'nanoid';
-import InvalidRequestError from '$lib/Errors/InvalidRequestError';
-import ValidationError from '$lib/Errors/ValidationError';
+import { DateTime } from 'luxon';
+import InvalidRequestError from '$server/lib/Errors/InvalidRequestError';
+import ValidationError from '$server/lib/Errors/ValidationError';
+import useRoomAPI from '$server/events/room';
+import { socketUserReferences, socketUsers } from '$server/users';
+import Player from '$server/lib/Player';
+import type { Server } from 'socket.io';
+import type { ClientToServerEvents, ServerToClientEvents } from './server/types';
+
+const io = (global as unknown as { io: Server<ClientToServerEvents, ServerToClientEvents> }).io;
+
+// * Auth middleware to check user tokens
+io.use((socket, next) => {
+	const token = socket.handshake.auth.token;
+	if (!token) {
+		next(Error('Missing token in handshake'));
+	}
+
+	if (socketUserReferences[socket.id]) {
+		console.log('connected user');
+		const player = socketUsers[token];
+		if (player) {
+			socketUsers[token].lastUpdate = DateTime.now();
+		}
+	} else {
+		socketUserReferences[socket.id] = token;
+		socketUsers[token] = {
+			player: new Player(token, 'Player'),
+			lastUpdate: DateTime.now()
+		};
+	}
+
+	console.log('users', socketUserReferences, socketUsers);
+	next();
+});
+
+io.on('connection', (socket) => {
+	console.log(`[${socket.id}]  on:connection`);
+	useRoomAPI(socket);
+	socket.on('disconnect', () => {
+		console.log(`[${socket.id}]  on:disconnect`);
+		delete socketUserReferences[socket.id];
+	});
+});
 
 // Mark the function async to catch both promises and non-promise exceptions
 export const handle: Handle = async ({ event, resolve }) => {

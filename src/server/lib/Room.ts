@@ -1,5 +1,5 @@
 import { nanoid } from 'nanoid';
-import type Player from '$lib/Player';
+import type Player from '$server/lib/Player';
 import { DateTime } from 'luxon';
 
 export default class Room {
