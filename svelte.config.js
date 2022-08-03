@@ -19,7 +19,6 @@ const config = {
 			$server: 'src/server',
 			'$server/lib': 'src/server/lib',
 			'$server/events': 'src/server/events',
-			'$server/stores': 'src/server/stores',
 			$client: 'src/client',
 			'$client/lib': 'src/client/lib',
 			'$client/stores': 'src/client/stores'

@@ -1,6 +1,7 @@
 import { nanoid } from 'nanoid';
 import type Player from '$server/lib/Player';
 import { DateTime } from 'luxon';
+import type { Room as ClientRoom } from '$client/lib/Room';
 
 export default class Room {
 	id: string;
@@ -38,5 +39,18 @@ export default class Room {
 
 	isEmpty() {
 		return this.players.length === 0;
+	}
+
+	toClient(): ClientRoom {
+		return {
+			id: this.id,
+			name: this.name,
+			players: this.players.map((player) => ({
+				id: player.id,
+				name: player.name
+			})),
+			createdAt: this.createdAt.toString(),
+			lastUpdate: this.lastUpdate.toString()
+		};
 	}
 }

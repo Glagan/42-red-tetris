@@ -1,13 +1,12 @@
 import type { Handle } from '@sveltejs/kit';
 import { nanoid } from 'nanoid';
-import { DateTime } from 'luxon';
 import InvalidRequestError from '$server/lib/Errors/InvalidRequestError';
 import ValidationError from '$server/lib/Errors/ValidationError';
 import useRoomAPI from '$server/events/room';
-import { socketUserReferences, socketUsers } from '$server/users';
-import Player from '$server/lib/Player';
 import type { Server } from 'socket.io';
-import type { ClientToServerEvents, ServerToClientEvents } from './server/types';
+import type { ClientToServerEvents, ServerToClientEvents } from './socket';
+import rooms from '$server/RoomManager';
+import PlayerManager from '$server/PlayerManager';
 
 const io = (global as unknown as { io: Server<ClientToServerEvents, ServerToClientEvents> }).io;
 
@@ -18,31 +17,27 @@ io.use((socket, next) => {
 		next(Error('Missing token in handshake'));
 	}
 
-	if (socketUserReferences[socket.id]) {
+	if (PlayerManager.exists(socket.id)) {
 		console.log('connected user');
-		const player = socketUsers[token];
-		if (player) {
-			socketUsers[token].lastUpdate = DateTime.now();
-		}
+		PlayerManager.refreshPlayer(token);
 	} else {
-		socketUserReferences[socket.id] = token;
-		socketUsers[token] = {
-			player: new Player(token, 'Player'),
-			lastUpdate: DateTime.now()
-		};
+		PlayerManager.addPlayer(socket.id, token, socket.handshake.auth.username);
 	}
 
-	console.log('users', socketUserReferences, socketUsers);
+	console.log('users', PlayerManager.players, PlayerManager.playersBySocket);
 	next();
 });
 
 io.on('connection', (socket) => {
 	console.log(`[${socket.id}]  on:connection`);
+
 	useRoomAPI(socket);
+
 	socket.on('disconnect', () => {
 		console.log(`[${socket.id}]  on:disconnect`);
-		delete socketUserReferences[socket.id];
+		PlayerManager.removeSocket(socket.id);
 	});
+	socket.emit('room:all', rooms.all());
 });
 
 // Mark the function async to catch both promises and non-promise exceptions
