@@ -1,7 +1,0 @@
-{
-	"all": true,
-	"exclude": [".svelte-kit/**", "**/*.d.ts", "**/*.test.ts"],
-	"extension": [".js", ".cjs", ".ts", ".svelte"],
-	"reporter": ["text", "html"],
-	"src": "src/"
-}

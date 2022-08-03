@@ -8,42 +8,44 @@ import PlayerManager from '$server/PlayerManager';
 import { ioServer } from '$server/lib/SocketIO';
 
 // * Auth middleware to check user tokens
-let bindMiddleware = false;
-if (!bindMiddleware) {
-	bindMiddleware = true;
-	ioServer.use((socket, next) => {
+if (ioServer) {
+	let bindMiddleware = false;
+	if (!bindMiddleware) {
+		bindMiddleware = true;
+		ioServer.use((socket, next) => {
+			const token = socket.handshake.auth.token;
+			if (!token) {
+				next(Error('Missing token in handshake'));
+			}
+
+			if (PlayerManager.exists(token) || PlayerManager.exists(socket.id)) {
+				PlayerManager.refreshPlayer(token);
+			} else {
+				PlayerManager.addPlayer(socket.id, token, socket.handshake.auth.username);
+			}
+
+			next();
+		});
+	}
+
+	ioServer.removeAllListeners('connection'); // Debug
+	ioServer.on('connection', (socket) => {
+		console.log(`[${socket.id}]  on:connection`);
 		const token = socket.handshake.auth.token;
-		if (!token) {
-			next(Error('Missing token in handshake'));
-		}
 
-		if (PlayerManager.exists(token) || PlayerManager.exists(socket.id)) {
-			PlayerManager.refreshPlayer(token);
-		} else {
-			PlayerManager.addPlayer(socket.id, token, socket.handshake.auth.username);
-		}
+		useRoomAPI(socket);
 
-		next();
+		socket.on('disconnect', () => {
+			console.log(`[${socket.id}]  on:disconnect`);
+			PlayerManager.removeSocket(socket.id);
+		});
+		socket.emit('room:all', rooms.all());
+		const player = PlayerManager.getPlayer(token);
+		if (player && player?.room) {
+			socket.emit('room:current', player.room.id);
+		}
 	});
 }
-
-ioServer.removeAllListeners('connection'); // Debug
-ioServer.on('connection', (socket) => {
-	console.log(`[${socket.id}]  on:connection`);
-	const token = socket.handshake.auth.token;
-
-	useRoomAPI(socket);
-
-	socket.on('disconnect', () => {
-		console.log(`[${socket.id}]  on:disconnect`);
-		PlayerManager.removeSocket(socket.id);
-	});
-	socket.emit('room:all', rooms.all());
-	const player = PlayerManager.getPlayer(token);
-	if (player && player?.room) {
-		socket.emit('room:current', player.room.id);
-	}
-});
 
 // Mark the function async to catch both promises and non-promise exceptions
 export const handle: Handle = async ({ event, resolve }) => {

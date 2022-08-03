@@ -6,10 +6,18 @@ describe('Test index.svelte', () => {
 		const { getByText } = render(Index);
 		expect(getByText('Welcome to SvelteKit')).toBeTruthy();
 	});
+
 	it('link to svelte website', () => {
 		render(Index);
 
 		const link = screen.getByRole('link');
 		expect(link).toHaveAttribute('href', 'https://kit.svelte.dev');
+	});
+
+	it('has rooms', () => {
+		const { getByText } = render(Index);
+
+		const rooms = getByText('Rooms');
+		expect(rooms).toBeTruthy();
 	});
 });

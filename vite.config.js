@@ -1,11 +1,11 @@
 import { sveltekit } from '@sveltejs/kit/vite';
+import { Server } from 'socket.io';
 import { configDefaults } from 'vitest/config';
-import useSocketIo from './src/server/socket';
 
 const webSocketServer = {
 	name: 'webSocketServer',
 	configureServer(server) {
-		const io = useSocketIo(server.httpServer);
+		const io = new Server(server.httpServer);
 		global.io = io;
 	}
 };
@@ -27,7 +27,11 @@ const config = {
 		setupFiles: ['./setupTest.ts'],
 		// Exclude files in c8
 		coverage: {
-			exclude: ['setupTest.ts']
+			all: true,
+			exclude: ['.svelte-kit/**', 'setupTest.ts', '**/*.d.ts', '**/*.test.ts'],
+			extension: ['.js', '.cjs', '.ts', '.svelte'],
+			reporter: ['text', 'html'],
+			src: 'src/'
 		},
 
 		deps: {
