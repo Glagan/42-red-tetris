@@ -1,9 +1,10 @@
 import { nanoid } from 'nanoid';
 import { io, Socket } from 'socket.io-client';
+import { get } from 'svelte/store';
 import { browser } from '$app/env';
 import type { ServerToClientEvents, ClientToServerEvents } from '../socket';
 import rooms from '$client/stores/rooms';
-import { get } from 'svelte/store';
+import currentRoom from './stores/currentRoom';
 
 let socket: Socket<ServerToClientEvents, ClientToServerEvents>;
 if (browser) {
@@ -24,17 +25,28 @@ if (browser) {
 
 	socket.on('connect', () => {
 		socket.emit('room:create', 'my room', (room) => {
-			console.log('room', room);
-			// socket.emit('room:leave');
-			socket.emit('room:get', room.id, (room) => {
-				// console.log('room (should be null)', room);
+			if ('message' in room) {
+				console.log(room.message);
+			} else {
+				currentRoom.set(room.id);
 				console.log('room', room);
-			});
+				// socket.emit('room:leave');
+				socket.emit('room:get', room.id, (room) => {
+					// console.log('room (should be null)', room);
+					console.log('room', room);
+				});
+			}
 		});
 	});
 
 	socket.on('room:all', (serverRooms) => {
 		rooms.set(serverRooms);
+	});
+
+	socket.on('room:current', (currentRoomId) => {
+		if (currentRoomId) {
+			currentRoom.set(currentRoomId);
+		}
 	});
 
 	socket.on('room:created', (room) => {

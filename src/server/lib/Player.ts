@@ -26,6 +26,7 @@ export default class Player {
 			const previousRoom = this.room;
 			this.room.removePlayer(this.id);
 			this.room.lastUpdate = DateTime.now();
+			this.room = undefined;
 			return previousRoom;
 		}
 		return undefined;

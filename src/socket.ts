@@ -1,12 +1,14 @@
 import type Player from '$client/lib/Player';
 import type Room from '$client/lib/Room';
 
+export type BasicError = { message: string };
+
 export interface ClientToServerEvents {
 	// * Room
 	'room:getAll': (callback: (rooms: Room[]) => void) => void;
-	'room:get': (roomId: string, callback: (room: Room | null) => void) => void;
-	'room:create': (name: string, callback: (room: Room) => void) => void;
-	'room:join': (roomId: string, callback: (room: Room | null) => void) => void;
+	'room:get': (roomId: string, callback: (room: Room | BasicError | null) => void) => void;
+	'room:create': (name: string, callback: (room: Room | BasicError) => void) => void;
+	'room:join': (roomId: string, callback: (room: Room | BasicError | null) => void) => void;
 	'room:leave': () => void;
 }
 
@@ -14,6 +16,8 @@ export interface ServerToClientEvents {
 	// * Room
 	'room:all': (rooms: Room[]) => void;
 	'room:created': (room: Room) => void;
-	'room:joined': (user: Player, room: Room) => void;
+	'room:playerJoined': (player: Player, room: Room) => void;
+	'room:playerLeft': (player: Player, room: Room) => void;
 	'room:deleted': (roomId: string) => void;
+	'room:current': (roomId: string) => void;
 }

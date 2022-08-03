@@ -17,14 +17,12 @@ if (!bindMiddleware) {
 			next(Error('Missing token in handshake'));
 		}
 
-		if (PlayerManager.exists(socket.id)) {
-			console.log('connected user');
+		if (PlayerManager.exists(token) || PlayerManager.exists(socket.id)) {
 			PlayerManager.refreshPlayer(token);
 		} else {
 			PlayerManager.addPlayer(socket.id, token, socket.handshake.auth.username);
 		}
 
-		console.log('users', PlayerManager.players, PlayerManager.playersBySocket);
 		next();
 	});
 }
@@ -32,6 +30,7 @@ if (!bindMiddleware) {
 ioServer.removeAllListeners('connection'); // Debug
 ioServer.on('connection', (socket) => {
 	console.log(`[${socket.id}]  on:connection`);
+	const token = socket.handshake.auth.token;
 
 	useRoomAPI(socket);
 
@@ -40,6 +39,10 @@ ioServer.on('connection', (socket) => {
 		PlayerManager.removeSocket(socket.id);
 	});
 	socket.emit('room:all', rooms.all());
+	const player = PlayerManager.getPlayer(token);
+	if (player && player?.room) {
+		socket.emit('room:current', player.room.id);
+	}
 });
 
 // Mark the function async to catch both promises and non-promise exceptions
@@ -90,5 +93,3 @@ export const handle: Handle = async ({ event, resolve }) => {
 		throw error;
 	}
 };
-
-// export const handleError: HandleError = ({ error, event }) => {};
