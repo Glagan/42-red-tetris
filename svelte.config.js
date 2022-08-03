@@ -21,7 +21,7 @@ const config = {
 			'$server/events': 'src/server/events',
 			$client: 'src/client',
 			'$client/lib': 'src/client/lib',
-			'$client/stores': 'src/client/stores'
+			$stores: 'src/client/stores'
 		}
 	}
 };

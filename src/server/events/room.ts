@@ -7,6 +7,7 @@ import type { ClientToServerEvents, ServerToClientEvents } from '../../socket';
 import isValidID from '$server/lib/Validators/ID';
 import PlayerManager from '$server/PlayerManager';
 import RoomManager from '$server/RoomManager';
+import { ioServer } from '$server/lib/SocketIO';
 
 export type CreateRoomRequest = {
 	name: string;
@@ -46,7 +47,8 @@ export default function useRoomAPI(socket: Socket<ClientToServerEvents, ServerTo
 				});
 			}
 		}
-		// global.io.broadcast('room:created', room);
+
+		ioServer.emit('room:created', room.toClient());
 	});
 
 	socket.on('room:get', (roomId, callback) => {
@@ -74,7 +76,7 @@ export default function useRoomAPI(socket: Socket<ClientToServerEvents, ServerTo
 		}
 
 		if (callback) {
-			return callback(undefined);
+			return callback(null);
 		}
 	});
 
@@ -96,7 +98,7 @@ export default function useRoomAPI(socket: Socket<ClientToServerEvents, ServerTo
 			const previousRoom = player.leaveCurrentRoom();
 			if (previousRoom && previousRoom.isEmpty()) {
 				RoomManager.removeRoom(previousRoom.id);
-				// global.io.broadcast('room:deleted', roomId);
+				ioServer.emit('room:deleted', previousRoom.id);
 			}
 		}
 	});

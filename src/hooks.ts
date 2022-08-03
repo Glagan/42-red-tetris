@@ -3,32 +3,34 @@ import { nanoid } from 'nanoid';
 import InvalidRequestError from '$server/lib/Errors/InvalidRequestError';
 import ValidationError from '$server/lib/Errors/ValidationError';
 import useRoomAPI from '$server/events/room';
-import type { Server } from 'socket.io';
-import type { ClientToServerEvents, ServerToClientEvents } from './socket';
 import rooms from '$server/RoomManager';
 import PlayerManager from '$server/PlayerManager';
-
-const io = (global as unknown as { io: Server<ClientToServerEvents, ServerToClientEvents> }).io;
+import { ioServer } from '$server/lib/SocketIO';
 
 // * Auth middleware to check user tokens
-io.use((socket, next) => {
-	const token = socket.handshake.auth.token;
-	if (!token) {
-		next(Error('Missing token in handshake'));
-	}
+let bindMiddleware = false;
+if (!bindMiddleware) {
+	bindMiddleware = true;
+	ioServer.use((socket, next) => {
+		const token = socket.handshake.auth.token;
+		if (!token) {
+			next(Error('Missing token in handshake'));
+		}
 
-	if (PlayerManager.exists(socket.id)) {
-		console.log('connected user');
-		PlayerManager.refreshPlayer(token);
-	} else {
-		PlayerManager.addPlayer(socket.id, token, socket.handshake.auth.username);
-	}
+		if (PlayerManager.exists(socket.id)) {
+			console.log('connected user');
+			PlayerManager.refreshPlayer(token);
+		} else {
+			PlayerManager.addPlayer(socket.id, token, socket.handshake.auth.username);
+		}
 
-	console.log('users', PlayerManager.players, PlayerManager.playersBySocket);
-	next();
-});
+		console.log('users', PlayerManager.players, PlayerManager.playersBySocket);
+		next();
+	});
+}
 
-io.on('connection', (socket) => {
+ioServer.removeAllListeners('connection'); // Debug
+ioServer.on('connection', (socket) => {
 	console.log(`[${socket.id}]  on:connection`);
 
 	useRoomAPI(socket);

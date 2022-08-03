@@ -4,9 +4,9 @@ import type Room from '$client/lib/Room';
 export interface ClientToServerEvents {
 	// * Room
 	'room:getAll': (callback: (rooms: Room[]) => void) => void;
-	'room:get': (roomId: string, callback: (rooms: Room | undefined) => void) => void;
+	'room:get': (roomId: string, callback: (room: Room | null) => void) => void;
 	'room:create': (name: string, callback: (room: Room) => void) => void;
-	'room:join': (roomId: string, callback: (room: Room | undefined) => void) => void;
+	'room:join': (roomId: string, callback: (room: Room | null) => void) => void;
 	'room:leave': () => void;
 }
 
