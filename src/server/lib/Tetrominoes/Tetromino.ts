@@ -17,11 +17,28 @@ export default abstract class Tetromino {
 	offset: Coordinates;
 	type: TetrominoType;
 	matrix: Matrix;
+	bottom!: Coordinates[];
+	locked: boolean;
 
 	constructor(type: TetrominoType, matrix: Matrix) {
 		this.offset = [0, 0];
 		this.matrix = matrix;
 		this.type = type;
+		this.calculateBottom();
+		this.locked = false;
+	}
+
+	calculateBottom() {
+		this.bottom = [];
+		const N = this.matrix.length;
+		for (let m = N - 1; m >= 0; m--) {
+			for (let n = N - 1; n >= 0; n--) {
+				if (this.matrix[n][m]) {
+					this.bottom.push([n, m]);
+					break;
+				}
+			}
+		}
 	}
 
 	rotateClockwise() {
@@ -37,6 +54,7 @@ export default abstract class Tetromino {
 				this.matrix[m][n] = tmp;
 			}
 		}
+		this.calculateBottom();
 	}
 
 	rotateCounterClockwise() {
@@ -52,6 +70,7 @@ export default abstract class Tetromino {
 		}
 		// Swap rows
 		this.matrix.reverse();
+		this.calculateBottom();
 	}
 
 	/*print() {

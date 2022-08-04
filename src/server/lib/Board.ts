@@ -2,13 +2,15 @@ import chalk from 'chalk';
 import { TetrominoType } from './Tetrominoes/Tetromino';
 import type Tetromino from './Tetrominoes/Tetromino';
 
-const ROWS = 20;
-const COLUMNS = 10;
+export const ROWS = 20;
+export const COLUMNS = 10;
 
 export default class Board {
 	movingTetromino: Tetromino | undefined;
 	tetrominoes: Tetromino[];
 	bitboard: TetrominoType[][];
+	// Lines that are completely blocked after an opponent attack
+	deepOffset: number;
 
 	constructor() {
 		this.movingTetromino = undefined;
@@ -18,6 +20,7 @@ export default class Board {
 		for (let n = 0; n < ROWS; n++) {
 			this.bitboard.push(new Array(COLUMNS).fill(TetrominoType.None));
 		}
+		this.deepOffset = 0;
 	}
 
 	/**
@@ -26,7 +29,7 @@ export default class Board {
 	 * @returns true if the line is a tetris or false
 	 */
 	checkLine(index: number) {
-		if (index >= 0 && index < ROWS) {
+		if (index >= 0 && index < ROWS - this.deepOffset) {
 			return this.bitboard[index].every((column) => column != TetrominoType.None);
 		}
 		return false;
@@ -37,7 +40,7 @@ export default class Board {
 	 * @param index Line index
 	 */
 	removeLine(index: number) {
-		if (index >= 0 && index < ROWS) {
+		if (index >= 0 && index < ROWS - this.deepOffset) {
 			this.bitboard.splice(index, 1);
 			this.bitboard.unshift(new Array(COLUMNS).fill(TetrominoType.None));
 			// TODO this.movingTetromino ? There can't be a moving tetromino if a line is being completed
@@ -46,14 +49,26 @@ export default class Board {
 
 	/**
 	 * Move the moving tetromino one position down on the board
+	 * @returns true if the current moving tetromino was consumed or false
 	 */
 	tickDown() {
 		if (this.movingTetromino) {
+			if (this.movingTetrominoIsTouching() && this.movingTetromino.locked) {
+				this.tetrominoes.push(this.movingTetromino);
+				this.movingTetromino = undefined;
+				return true;
+			}
 			this.clearTetrominoOnBitboard(this.movingTetromino);
 			this.movingTetromino.offset[0] += 1;
 			this.setTetrominoOnBitboard(this.movingTetromino);
-			// TODO: Is touching -> lock delay start
+			if (this.movingTetrominoIsTouching()) {
+				this.movingTetromino.locked = true;
+			} else {
+				// Clear lock if the tetromino moved from a lock position
+				this.movingTetromino.locked = false;
+			}
 		}
+		return false;
 	}
 
 	/**
@@ -64,7 +79,14 @@ export default class Board {
 		const size = tetromino.matrix.length;
 		for (let x = 0; x < size; x++) {
 			for (let y = 0; y < size; y++) {
-				this.bitboard[tetromino.offset[0] + x][tetromino.offset[1] + y] = TetrominoType.None;
+				const inMatrix = tetromino.matrix[x][y];
+				if (inMatrix) {
+					const xOffset = tetromino.offset[0] + x;
+					const yOffset = tetromino.offset[1] + y;
+					if (xOffset >= 0 && yOffset >= 0 && xOffset < ROWS && yOffset < COLUMNS) {
+						this.bitboard[xOffset][yOffset] = TetrominoType.None;
+					}
+				}
 			}
 		}
 	}
@@ -79,10 +101,56 @@ export default class Board {
 			for (let y = 0; y < size; y++) {
 				const inMatrix = tetromino.matrix[x][y];
 				if (inMatrix) {
-					this.bitboard[tetromino.offset[0] + x][tetromino.offset[1] + y] = tetromino.type;
+					const xOffset = tetromino.offset[0] + x;
+					const yOffset = tetromino.offset[1] + y;
+					if (xOffset >= 0 && yOffset >= 0 && xOffset < ROWS && yOffset < COLUMNS) {
+						this.bitboard[xOffset][yOffset] = tetromino.type;
+					}
 				}
 			}
 		}
+	}
+
+	/**
+	 * Check if the current tetromino is touching another tetromino or the bottom of the board
+	 * @returns true if the curren tetromino is touching or false
+	 */
+	movingTetrominoIsTouching() {
+		if (this.movingTetromino) {
+			for (const [x, y] of this.movingTetromino.bottom) {
+				if (
+					this.movingTetromino.matrix[x][y] &&
+					(this.movingTetromino.offset[0] + x + 1 >= ROWS ||
+						this.bitboard[this.movingTetromino.offset[0] + x + 1][
+							this.movingTetromino.offset[1] + y
+						])
+				) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * Check if the given tetromino don't already have occupied space under it's position
+	 * TODO: Wall kick to allow a tetromino to "fill" top space
+	 * @param tetromino
+	 * @returns true if the tetromino can spawn or false
+	 */
+	canSpawnTetromino(tetromino: Tetromino) {
+		const size = tetromino.matrix.length;
+		for (let x = 0; x < size; x++) {
+			for (let y = 0; y < size; y++) {
+				if (
+					tetromino.matrix[x][y] &&
+					this.bitboard[tetromino.offset[0] + x][tetromino.offset[1] + y]
+				) {
+					return false;
+				}
+			}
+		}
+		return true;
 	}
 
 	/**
@@ -91,11 +159,12 @@ export default class Board {
 	 * @returns true if the tetromino can fit on the board or false
 	 */
 	spawnTetromino(tetromino: Tetromino) {
-		tetromino.offset[1] = Math.floor(COLUMNS / 2 - tetromino.matrix.length / 2);
 		this.setTetrominoOnBitboard(tetromino);
 		this.movingTetromino = tetromino;
-		// TODO: is touching ? Lock delay ? Can move before lock delay and is not locked -> remove lock delay
-		return true;
+	}
+
+	static moveTetrominoToCenter(tetromino: Tetromino) {
+		tetromino.offset[1] = Math.floor(COLUMNS / 2 - tetromino.matrix.length / 2);
 	}
 
 	repr() {
