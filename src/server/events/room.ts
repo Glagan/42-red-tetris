@@ -1,5 +1,5 @@
 import Room from '$server/lib/Room';
-import { validateBody } from '$server/lib/Validator';
+import { validatePayload } from '$server/lib/Validator';
 import isValidName from '$server/lib/Validators/Name';
 import { objectOf } from '@altostra/type-validations';
 import type { Socket } from 'socket.io';
@@ -22,7 +22,7 @@ export default function useRoomAPI(socket: Socket<ClientToServerEvents, ServerTo
 		console.log(`[${socket.id}]  room:create`, name);
 		const token = socket.handshake.auth.token;
 
-		validateBody(
+		validatePayload(
 			{ name },
 			objectOf<CreateRoomRequest>({
 				name: isValidName
@@ -56,7 +56,7 @@ export default function useRoomAPI(socket: Socket<ClientToServerEvents, ServerTo
 	socket.on('room:get', (roomId, callback) => {
 		console.log(`[${socket.id}]  room:get`, roomId);
 
-		validateBody(
+		validatePayload(
 			{ id: roomId },
 			objectOf<GetRoomRequest>({
 				id: isValidID
