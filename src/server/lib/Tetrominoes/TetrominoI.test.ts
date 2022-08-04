@@ -1,6 +1,22 @@
+import type { Coordinates } from './Tetromino';
+import type Tetromino from './Tetromino';
 import TetrominoI from './TetrominoI';
 
 describe('Test Tetromino I', () => {
+	function calculateBottom(tetromino: Tetromino) {
+		const coordinates: Coordinates[] = [];
+		const N = tetromino.matrix.length;
+		for (let m = 0; m < N; m++) {
+			for (let n = N - 1; n >= 0; n--) {
+				if (tetromino.matrix[n][m]) {
+					coordinates.push([n, m]);
+					break;
+				}
+			}
+		}
+		return coordinates;
+	}
+
 	it('Rotate Clockwise', () => {
 		const tetromino = new TetrominoI();
 
@@ -11,6 +27,7 @@ describe('Test Tetromino I', () => {
 			[0, 0, 0, 0],
 			[0, 0, 0, 0]
 		]);
+		expect(tetromino.bottom).toEqual(calculateBottom(tetromino));
 
 		// 1
 		tetromino.rotateClockwise();
@@ -20,6 +37,7 @@ describe('Test Tetromino I', () => {
 			[0, 0, 1, 0],
 			[0, 0, 1, 0]
 		]);
+		expect(tetromino.bottom).toEqual(calculateBottom(tetromino));
 
 		// 2
 		tetromino.rotateClockwise();
@@ -29,6 +47,7 @@ describe('Test Tetromino I', () => {
 			[1, 1, 1, 1],
 			[0, 0, 0, 0]
 		]);
+		expect(tetromino.bottom).toEqual(calculateBottom(tetromino));
 
 		// 3
 		tetromino.rotateClockwise();
@@ -38,6 +57,7 @@ describe('Test Tetromino I', () => {
 			[0, 1, 0, 0],
 			[0, 1, 0, 0]
 		]);
+		expect(tetromino.bottom).toEqual(calculateBottom(tetromino));
 
 		// Reset
 		tetromino.rotateClockwise();
@@ -47,6 +67,7 @@ describe('Test Tetromino I', () => {
 			[0, 0, 0, 0],
 			[0, 0, 0, 0]
 		]);
+		expect(tetromino.bottom).toEqual(calculateBottom(tetromino));
 	});
 
 	it('Rotate Counter Clockwise', () => {
@@ -59,6 +80,7 @@ describe('Test Tetromino I', () => {
 			[0, 0, 0, 0],
 			[0, 0, 0, 0]
 		]);
+		expect(tetromino.bottom).toEqual(calculateBottom(tetromino));
 
 		// 1
 		tetromino.rotateCounterClockwise();
@@ -68,6 +90,7 @@ describe('Test Tetromino I', () => {
 			[0, 1, 0, 0],
 			[0, 1, 0, 0]
 		]);
+		expect(tetromino.bottom).toEqual(calculateBottom(tetromino));
 
 		// 2
 		tetromino.rotateCounterClockwise();
@@ -77,6 +100,7 @@ describe('Test Tetromino I', () => {
 			[1, 1, 1, 1],
 			[0, 0, 0, 0]
 		]);
+		expect(tetromino.bottom).toEqual(calculateBottom(tetromino));
 
 		// 3
 		tetromino.rotateCounterClockwise();
@@ -86,6 +110,7 @@ describe('Test Tetromino I', () => {
 			[0, 0, 1, 0],
 			[0, 0, 1, 0]
 		]);
+		expect(tetromino.bottom).toEqual(calculateBottom(tetromino));
 
 		// Reset
 		tetromino.rotateCounterClockwise();
@@ -95,5 +120,6 @@ describe('Test Tetromino I', () => {
 			[0, 0, 0, 0],
 			[0, 0, 0, 0]
 		]);
+		expect(tetromino.bottom).toEqual(calculateBottom(tetromino));
 	});
 });

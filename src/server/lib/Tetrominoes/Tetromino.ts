@@ -17,28 +17,17 @@ export default abstract class Tetromino {
 	offset: Coordinates;
 	type: TetrominoType;
 	matrix: Matrix;
-	bottom!: Coordinates[];
+	bottomCoordinates: Coordinates[][];
+	direction: number;
 	locked: boolean;
 
-	constructor(type: TetrominoType, matrix: Matrix) {
+	constructor(type: TetrominoType, matrix: Matrix, bottomCoordinates: Coordinates[][]) {
 		this.offset = [0, 0];
 		this.matrix = matrix;
+		this.bottomCoordinates = bottomCoordinates;
+		this.direction = 0;
 		this.type = type;
-		this.calculateBottom();
 		this.locked = false;
-	}
-
-	calculateBottom() {
-		this.bottom = [];
-		const N = this.matrix.length;
-		for (let m = N - 1; m >= 0; m--) {
-			for (let n = N - 1; n >= 0; n--) {
-				if (this.matrix[n][m]) {
-					this.bottom.push([n, m]);
-					break;
-				}
-			}
-		}
 	}
 
 	rotateClockwise() {
@@ -54,7 +43,7 @@ export default abstract class Tetromino {
 				this.matrix[m][n] = tmp;
 			}
 		}
-		this.calculateBottom();
+		this.direction = (this.direction + 1) % 4;
 	}
 
 	rotateCounterClockwise() {
@@ -70,7 +59,14 @@ export default abstract class Tetromino {
 		}
 		// Swap rows
 		this.matrix.reverse();
-		this.calculateBottom();
+		this.direction -= 1;
+		if (this.direction < 0) {
+			this.direction = 3;
+		}
+	}
+
+	get bottom() {
+		return this.bottomCoordinates[this.direction];
 	}
 
 	/*print() {

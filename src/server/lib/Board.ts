@@ -48,6 +48,21 @@ export default class Board {
 	}
 
 	/**
+	 * Move the current tetromino as far down as possible and lock it directly to the board, consuming it
+	 */
+	dash() {
+		if (this.movingTetromino) {
+			while (!this.movingTetrominoIsTouching()) {
+				this.clearTetrominoOnBitboard(this.movingTetromino);
+				this.movingTetromino.offset[0] += 1;
+				this.setTetrominoOnBitboard(this.movingTetromino);
+			}
+			this.tetrominoes.push(this.movingTetromino);
+			this.movingTetromino = undefined;
+		}
+	}
+
+	/**
 	 * Move the moving tetromino one position down on the board
 	 * @returns true if the current moving tetromino was consumed or false
 	 */
