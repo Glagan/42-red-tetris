@@ -1,8 +1,11 @@
+<!-- ========================= SCRIPT -->
 <script lang="ts">
-	import '../app.css';
+	import CentralBox from '../components/containers/central_box.svelte';
+
 </script>
 
-<h1 class="text-blue-400">Welcome to SvelteKit</h1>
-<p>
-	Visit <a class="text-red-400" href="https://kit.svelte.dev">kit.svelte.dev</a> to read the documentation
-</p>
+<!-- ========================= HTML -->
+<CentralBox title="Pseudo">
+	<input type="text" class="text-input" placeholder="Your pseudo" />
+	<button class="mt-5">Enter</button>
+</CentralBox>
