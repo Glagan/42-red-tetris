@@ -37,6 +37,8 @@ if (browser) {
 				});
 			}
 		});
+
+		socket.emit('game:test');
 	});
 
 	socket.on('room:all', (serverRooms) => {

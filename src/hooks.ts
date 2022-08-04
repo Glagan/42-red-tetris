@@ -4,6 +4,7 @@ import useRoomAPI from '$server/events/room';
 import rooms from '$server/RoomManager';
 import PlayerManager from '$server/PlayerManager';
 import { ioServer } from '$server/lib/SocketIO';
+import useGameAPI from '$server/events/game';
 
 // * Auth middleware to check user tokens
 if (ioServer) {
@@ -32,6 +33,7 @@ if (ioServer) {
 		const token = socket.handshake.auth.token;
 
 		useRoomAPI(socket);
+		useGameAPI(socket);
 
 		socket.on('disconnect', () => {
 			console.log(`[${socket.id}]  on:disconnect`);

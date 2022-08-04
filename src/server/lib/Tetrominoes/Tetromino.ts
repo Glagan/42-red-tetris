@@ -3,6 +3,7 @@ export type Matrix = number[][];
 export type Coordinates = [number, number];
 
 export enum TetrominoType {
+	None,
 	I,
 	J,
 	L,
@@ -13,10 +14,12 @@ export enum TetrominoType {
 }
 
 export default abstract class Tetromino {
+	offset: Coordinates;
 	type: TetrominoType;
 	matrix: Matrix;
 
 	constructor(type: TetrominoType, matrix: Matrix) {
+		this.offset = [0, 0];
 		this.matrix = matrix;
 		this.type = type;
 	}
@@ -51,11 +54,7 @@ export default abstract class Tetromino {
 		this.matrix.reverse();
 	}
 
-	fitAt(/* board: Board, position: Coordinates */) {
-		//
-	}
-
-	print() {
+	/*print() {
 		let repr = '';
 		for (const row of this.matrix) {
 			for (const column of row) {
@@ -68,5 +67,5 @@ export default abstract class Tetromino {
 			repr += '\n';
 		}
 		console.log(repr);
-	}
+	}*/
 }

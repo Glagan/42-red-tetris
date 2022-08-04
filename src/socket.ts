@@ -10,6 +10,8 @@ export interface ClientToServerEvents {
 	'room:create': (name: string, callback: (room: Room | BasicError) => void) => void;
 	'room:join': (roomId: string, callback: (room: Room | BasicError | null) => void) => void;
 	'room:leave': () => void;
+	// * Game
+	'game:test': () => void;
 }
 
 export interface ServerToClientEvents {
