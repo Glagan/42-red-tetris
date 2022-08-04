@@ -762,6 +762,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"accurate-game-loop@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "accurate-game-loop@npm:2.0.0"
+  checksum: 893df722be2979f8dec3eb0a1affb33b6c756615ddecb5d153d817617f8a3e370ea8e8b96d9654530aa53a72e6659372e89908e0a5e7df58168d7ad7302b1d38
+  languageName: node
+  linkType: hard
+
 "acorn-globals@npm:^6.0.0":
   version: 6.0.0
   resolution: "acorn-globals@npm:6.0.0"
@@ -1246,6 +1253,13 @@ __metadata:
     ansi-styles: ^4.1.0
     supports-color: ^7.1.0
   checksum: fe75c9d5c76a7a98d45495b91b2172fa3b7a09e0cc9370e5c8feb1c567b85c4288e2b3fded7cfdd7359ac28d6b3844feb8b82b8686842e93d23c827c417e83fc
+  languageName: node
+  linkType: hard
+
+"chalk@npm:^5.0.1":
+  version: 5.0.1
+  resolution: "chalk@npm:5.0.1"
+  checksum: 7b45300372b908f0471fbf7389ce2f5de8d85bb949026fd51a1b95b10d0ed32c7ed5aab36dd5e9d2bf3191867909b4404cef75c5f4d2d1daeeacd301dd280b76
   languageName: node
   linkType: hard
 
@@ -4015,8 +4029,10 @@ __metadata:
     "@types/testing-library__jest-dom": ^5.14.5
     "@typescript-eslint/eslint-plugin": ^5.27.0
     "@typescript-eslint/parser": ^5.27.0
+    accurate-game-loop: ^2.0.0
     autoprefixer: ^10.4.8
     c8: ^7.12.0
+    chalk: ^5.0.1
     eslint: ^8.16.0
     eslint-config-prettier: ^8.3.0
     eslint-plugin-svelte3: ^4.0.0

@@ -16,6 +16,8 @@
 	},
 	"dependencies": {
 		"@altostra/type-validations": "^2.6.3",
+		"accurate-game-loop": "^2.0.0",
+		"chalk": "^5.0.1",
 		"express": "^4.18.1",
 		"luxon": "^3.0.1",
 		"nanoid": "^4.0.0",
