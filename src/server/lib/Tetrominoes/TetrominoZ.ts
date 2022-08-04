@@ -1,4 +1,4 @@
-import Tetromino, { TetrominoType } from './Tetromino';
+import Tetromino, { JLTSZWallkicks, TetrominoType } from './Tetromino';
 
 export default class TetrominoZ extends Tetromino {
 	constructor() {
@@ -28,7 +28,8 @@ export default class TetrominoZ extends Tetromino {
 					[2, 0],
 					[1, 1]
 				]
-			]
+			],
+			JLTSZWallkicks()
 		);
 	}
 }

@@ -1,6 +1,16 @@
 export type Matrix = number[][];
 
 export type Coordinates = [number, number];
+export type DirectionWallkicks = [
+	[Coordinates, Coordinates, Coordinates, Coordinates],
+	[Coordinates, Coordinates, Coordinates, Coordinates]
+];
+export type Wallkicks = [
+	DirectionWallkicks,
+	DirectionWallkicks,
+	DirectionWallkicks,
+	DirectionWallkicks
+];
 
 export enum TetrominoType {
 	None,
@@ -13,21 +23,100 @@ export enum TetrominoType {
 	Z
 }
 
+/**
+ * Shared wallkicks for the J, L, T, S and Z tetrominoes
+ * @returns Wallkicks
+ */
+export function JLTSZWallkicks(): Wallkicks {
+	return [
+		[
+			[
+				[-1, 0],
+				[-1, 1],
+				[0, -2],
+				[-1, -2]
+			],
+			[
+				[1, 0],
+				[1, 1],
+				[0, -2],
+				[1, -2]
+			]
+		],
+		[
+			[
+				[1, 0],
+				[1, -1],
+				[0, 2],
+				[1, 2]
+			],
+			[
+				[1, 0],
+				[1, -1],
+				[0, 2],
+				[1, 2]
+			]
+		],
+		[
+			[
+				[1, 0],
+				[1, 1],
+				[0, -2],
+				[1, -2]
+			],
+			[
+				[-1, 0],
+				[-1, 1],
+				[0, -2],
+				[-1, -2]
+			]
+		],
+		[
+			[
+				[-1, 0],
+				[-1, -1],
+				[0, 2],
+				[-1, 2]
+			],
+			[
+				[-1, 0],
+				[-1, -1],
+				[0, 2],
+				[-1, 2]
+			]
+		]
+	];
+}
+
 export default abstract class Tetromino {
 	offset: Coordinates;
 	type: TetrominoType;
 	matrix: Matrix;
 	bottomCoordinates: Coordinates[][];
+	// Array indexed [initialDirection][Clockwise/Counter-clockwise][] with the last dimension being an array of offset for the attempts
+	wallKicks: Wallkicks | undefined;
 	direction: number;
+	// Flag for the next tickDown to set the tetromino to the bitboard
 	locked: boolean;
 
-	constructor(type: TetrominoType, matrix: Matrix, bottomCoordinates: Coordinates[][]) {
+	constructor(
+		type: TetrominoType,
+		matrix: Matrix,
+		bottomCoordinates: Coordinates[][],
+		wallKicks?: Wallkicks
+	) {
 		this.offset = [0, 0];
 		this.matrix = matrix;
 		this.bottomCoordinates = bottomCoordinates;
+		this.wallKicks = wallKicks;
 		this.direction = 0;
 		this.type = type;
 		this.locked = false;
+	}
+
+	translate(coordinates: Coordinates) {
+		this.offset[0] += coordinates[0];
+		this.offset[1] += coordinates[1];
 	}
 
 	rotateClockwise() {

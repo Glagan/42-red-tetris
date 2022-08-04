@@ -5,6 +5,11 @@ import type Tetromino from './Tetrominoes/Tetromino';
 export const ROWS = 20;
 export const COLUMNS = 10;
 
+export enum RotationDirection {
+	Clockwise,
+	Counterclockwise
+}
+
 export default class Board {
 	movingTetromino: Tetromino | undefined;
 	tetrominoes: Tetromino[];
@@ -25,7 +30,7 @@ export default class Board {
 
 	/**
 	 * Check if the line given by the index is a Tetris
-	 * @param index Line index
+	 * @param index
 	 * @returns true if the line is a tetris or false
 	 */
 	checkLine(index: number) {
@@ -37,7 +42,7 @@ export default class Board {
 
 	/**
 	 * Remove the line on the given index and add a new line at the top of the board
-	 * @param index Line index
+	 * @param index
 	 */
 	removeLine(index: number) {
 		if (index >= 0 && index < ROWS - this.deepOffset) {
@@ -87,6 +92,49 @@ export default class Board {
 	}
 
 	/**
+	 * Rotate (if possible) the current tetromino with wallkicks enabled
+	 */
+	rotateWithWallKicks(rotationDirection: RotationDirection) {
+		if (this.movingTetromino) {
+			const tetromino = this.movingTetromino;
+			this.clearTetrominoOnBitboard(tetromino);
+			if (rotationDirection == RotationDirection.Clockwise) {
+				tetromino.rotateClockwise();
+			} else {
+				tetromino.rotateCounterClockwise();
+			}
+			// If the initial position can be rotated
+			// The tetromino is simply added back to the board
+			if (this.canSetTetrominoOnBitboard(tetromino)) {
+				this.setTetrominoOnBitboard(tetromino);
+				return;
+			}
+			// Wallkicks
+			else if (tetromino.wallKicks) {
+				const wallkicks = tetromino.wallKicks[tetromino.direction][rotationDirection];
+				for (const wallkick of wallkicks) {
+					// Apply translate and check if the tetromino fit on the board
+					tetromino.translate(wallkick);
+					if (this.canSetTetrominoOnBitboard(tetromino)) {
+						this.setTetrominoOnBitboard(tetromino);
+						return;
+					}
+					// Remove translate
+					tetromino.translate([-wallkick[0], -wallkick[1]]);
+				}
+			}
+
+			// If no rotation was possible restore the initial position and rotation
+			if (rotationDirection == RotationDirection.Clockwise) {
+				tetromino.rotateCounterClockwise();
+			} else {
+				tetromino.rotateClockwise();
+			}
+			this.setTetrominoOnBitboard(tetromino);
+		}
+	}
+
+	/**
 	 * Update the bitboard to remove the Tetromino from it
 	 * @param tetromino
 	 */
@@ -104,6 +152,21 @@ export default class Board {
 				}
 			}
 		}
+	}
+
+	canSetTetrominoOnBitboard(tetromino: Tetromino) {
+		const size = tetromino.matrix.length;
+		for (let x = 0; x < size; x++) {
+			for (let y = 0; y < size; y++) {
+				if (
+					tetromino.matrix[x][y] &&
+					this.bitboard[tetromino.offset[0] + x][tetromino.offset[1] + y]
+				) {
+					return false;
+				}
+			}
+		}
+		return true;
 	}
 
 	/**
@@ -149,23 +212,12 @@ export default class Board {
 
 	/**
 	 * Check if the given tetromino don't already have occupied space under it's position
-	 * TODO: Wall kick to allow a tetromino to "fill" top space
+	 * TODO: Wall kick to allow a tetromino to "fill" top space ?
 	 * @param tetromino
 	 * @returns true if the tetromino can spawn or false
 	 */
 	canSpawnTetromino(tetromino: Tetromino) {
-		const size = tetromino.matrix.length;
-		for (let x = 0; x < size; x++) {
-			for (let y = 0; y < size; y++) {
-				if (
-					tetromino.matrix[x][y] &&
-					this.bitboard[tetromino.offset[0] + x][tetromino.offset[1] + y]
-				) {
-					return false;
-				}
-			}
-		}
-		return true;
+		return this.canSetTetrominoOnBitboard(tetromino);
 	}
 
 	/**
@@ -178,6 +230,10 @@ export default class Board {
 		this.movingTetromino = tetromino;
 	}
 
+	/**
+	 * Set the given tetromino offset to the horizontal center of the board
+	 * @param tetromino
+	 */
 	static moveTetrominoToCenter(tetromino: Tetromino) {
 		tetromino.offset[1] = Math.floor(COLUMNS / 2 - tetromino.matrix.length / 2);
 	}

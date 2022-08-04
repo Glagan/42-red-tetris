@@ -115,8 +115,8 @@ export default class Game {
 	/**
 	 * Run every ~16.6667ms
 	 */
-	async onTick(deltaMs: number) {
-		console.log('tick', deltaMs, this.tick, this.nextTickDown);
+	async onTick(/* deltaMs: number */) {
+		// console.log('tick', deltaMs, this.tick, this.nextTickDown);
 		if (this.tick >= this.nextTickDown) {
 			if (this.boards[0].tickDown()) {
 				// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
