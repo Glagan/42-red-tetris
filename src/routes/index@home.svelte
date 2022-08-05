@@ -4,13 +4,12 @@
 	import { browser } from '$app/env';
 	import { goto } from '$app/navigation';
 	import CentralBox from '../client/components/containers/central_box.svelte';
-	
+
 	let username = '';
 
 	if (browser && $UsernameStore.length > 0) {
-		username = $UsernameStore
+		username = $UsernameStore;
 	}
-
 
 	$: disabled_enter = username.length == 0;
 

@@ -7,96 +7,96 @@
 html,
 body,
 body {
-    height: 100%;
+	height: 100%;
 }
 
 * {
-    --cube-size: 32px;
-    --cube-size-negative: calc(var(--cube-size) * -1);
-    --cube-half-size: calc(var(--cube-size) / 2);
-    --cube-half-size-negative: calc(var(--cube-half-size) * -1);
-    --grid-width: calc(var(--cube-size) * 10);
-    --grid-height: calc(var(--cube-size) * 18);
+	--cube-size: 32px;
+	--cube-size-negative: calc(var(--cube-size) * -1);
+	--cube-half-size: calc(var(--cube-size) / 2);
+	--cube-half-size-negative: calc(var(--cube-half-size) * -1);
+	--grid-width: calc(var(--cube-size) * 10);
+	--grid-height: calc(var(--cube-size) * 18);
 
-    --central-box-width: 500px;
+	--central-box-width: 500px;
 
-    @apply text-gray-200;
+	@apply text-gray-200;
 
-    font-family: 'Carter One', cursive;
+	font-family: 'Carter One', cursive;
 
-    image-rendering: pixelated;
-    image-rendering: -moz-crisp-edges;
-    image-rendering: crisp-edges;
+	image-rendering: pixelated;
+	image-rendering: -moz-crisp-edges;
+	image-rendering: crisp-edges;
 
-    font-display: block;
+	font-display: block;
 }
 
 html {
-    @apply bg-neutral-800;
+	@apply bg-neutral-800;
 }
 
 button {
-    @apply bg-blue-300 p-2 text-black block m-auto transition-all;
+	@apply bg-blue-300 p-2 text-black block m-auto transition-all;
 }
 
 button:not([disabled]):not(.cant-click):hover {
-    @apply bg-blue-400;
+	@apply bg-blue-400;
 }
 
 button:disabled {
-    @apply bg-neutral-300;
+	@apply bg-neutral-300;
 }
 
 .cant-select-text {
-    -webkit-touch-callout: none;
-    /* iOS Safari */
-    -webkit-user-select: none;
-    /* Safari */
-    -khtml-user-select: none;
-    /* Konqueror HTML */
-    -moz-user-select: none;
-    /* Old versions of Firefox */
-    -ms-user-select: none;
-    /* Internet Explorer/Edge */
-    user-select: none;
-    /* Non-prefixed version, currently supported by Chrome, Edge, Opera and Firefox */
+	-webkit-touch-callout: none;
+	/* iOS Safari */
+	-webkit-user-select: none;
+	/* Safari */
+	-khtml-user-select: none;
+	/* Konqueror HTML */
+	-moz-user-select: none;
+	/* Old versions of Firefox */
+	-ms-user-select: none;
+	/* Internet Explorer/Edge */
+	user-select: none;
+	/* Non-prefixed version, currently supported by Chrome, Edge, Opera and Firefox */
 }
 
 .text-input {
-    @apply bg-inherit w-[70%] border-b-[1px] p-2 outline-none placeholder-neutral-500;
+	@apply bg-inherit w-[70%] border-b-[1px] p-2 outline-none placeholder-neutral-500;
 }
 
 .cant-click:hover {
-    cursor: not-allowed;
+	cursor: not-allowed;
 }
 
 .scale-hover {
-    @apply transition-all;
+	@apply transition-all;
 }
 
 .scale-hover:hover {
-    @apply scale-105 cursor-pointer;
+	@apply scale-105 cursor-pointer;
 }
 
 /* ===== Scrollbar CSS ===== */
 /* Firefox */
 * {
-    scrollbar-width: auto;
-    scrollbar-color: #5e5e5e inherit;
-    border-radius: 0px;
+	scrollbar-width: auto;
+	scrollbar-color: #5e5e5e inherit;
+	border-radius: 0px;
 }
 
 /* Chrome, Edge, and Safari */
 *::-webkit-scrollbar {
-    width:5px;
+	width: 5px;
 }
 
 *::-webkit-scrollbar-track {
-    background: inherit;
+	background: inherit;
 }
 
 *::-webkit-scrollbar-thumb {
-    background-color: #5e5e5e;
-    border-radius: 0px;
-    border: 0px solid #ffffff;
+	background-color: #5e5e5e;
+	border-radius: 0px;
+	border: 0px solid #ffffff;
 }
