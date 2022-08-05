@@ -1,7 +1,7 @@
 import { writable } from 'svelte/store';
 
 function createPseudoStore() {
-	const { subscribe, set } = writable("");
+	const { subscribe, set,  } = writable("");
 
 	return {
 		subscribe,
