@@ -27,6 +27,8 @@ body {
     image-rendering: pixelated;
     image-rendering: -moz-crisp-edges;
     image-rendering: crisp-edges;
+
+    font-display: block;
 }
 
 html {
@@ -37,8 +39,12 @@ button {
     @apply bg-blue-300 p-2 text-black block m-auto transition-all;
 }
 
-button:hover:not(.cant-click) {
+button:not([disabled]):not(.cant-click):hover {
     @apply bg-blue-400;
+}
+
+button:disabled {
+    @apply bg-neutral-300;
 }
 
 .cant-select-text {
