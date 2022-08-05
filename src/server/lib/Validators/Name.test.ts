@@ -11,13 +11,8 @@ describe('Name Validator', () => {
 		expect(isValidName(value)).toBeFalsy();
 	});
 
-	it('Handle incomplete input', () => {
-		const value = 'M';
-		expect(isValidName(value)).toBeFalsy();
-	});
-
 	it('Handle trimmed input', () => {
-		const value = 'M     ';
+		const value = '     ';
 		expect(isValidName(value)).toBeFalsy();
 	});
 
