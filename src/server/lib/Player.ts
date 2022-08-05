@@ -32,6 +32,10 @@ export default class Player {
 		return undefined;
 	}
 
+	refresh() {
+		this.lastUpdate = DateTime.now();
+	}
+
 	toClient(): ClientPlayer {
 		return {
 			id: this.id,

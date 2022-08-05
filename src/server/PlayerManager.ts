@@ -1,4 +1,3 @@
-import { DateTime } from 'luxon';
 import Player from '$server/lib/Player';
 
 export class PlayerManager {
@@ -14,21 +13,14 @@ export class PlayerManager {
 		);
 	}
 
-	getPlayer(token: string) {
+	get(token: string) {
 		return this.players[token];
 	}
 
-	addPlayer(socketId: string, token: string, username?: string | null) {
+	add(socketId: string, token: string, username?: string | null): Player {
 		this.playersBySocket[socketId] = token;
 		this.players[token] = new Player(username ?? 'Player');
 		return this.players[token];
-	}
-
-	refreshPlayer(token: string) {
-		const player = this.players[token];
-		if (player) {
-			player.lastUpdate = DateTime.now();
-		}
 	}
 
 	removeSocket(socketId: string) {

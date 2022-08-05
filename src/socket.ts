@@ -26,4 +26,6 @@ export interface ServerToClientEvents {
 	'room:deleted': (roomId: string) => void;
 	'room:current': (roomId: string | null) => void;
 	'room:gameCreated': () => void;
+	// * Game
+	'game:tick': (tick: number) => void;
 }

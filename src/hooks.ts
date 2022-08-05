@@ -18,10 +18,13 @@ if (ioServer) {
 				next(Error('Missing token in handshake'));
 			}
 
-			if (PlayerManager.exists(token) || PlayerManager.exists(socket.id)) {
-				PlayerManager.refreshPlayer(token);
+			const player = PlayerManager.get(token);
+			if (player) {
+				player.refresh();
+				socket.player = player;
 			} else {
-				PlayerManager.addPlayer(socket.id, token, socket.handshake.auth.username);
+				const player = PlayerManager.add(socket.id, token, socket.handshake.auth.username);
+				socket.player = player;
 			}
 
 			next();
@@ -31,7 +34,6 @@ if (ioServer) {
 	ioServer.removeAllListeners('connection'); // Debug
 	ioServer.on('connection', (socket) => {
 		console.log(`[${socket.id}]  on:connection`);
-		const token = socket.handshake.auth.token;
 
 		socket.on('disconnect', () => {
 			console.log(`[${socket.id}]  on:disconnect`);
@@ -43,12 +45,9 @@ if (ioServer) {
 		useGameAPI(socket);
 
 		socket.emit('room:all', rooms.all());
-		const player = PlayerManager.getPlayer(token);
-		if (player && player?.room) {
-			socket.rooms.add(`room:${player.room.id}`);
-			socket.emit('room:current', player.room.id);
-		} else {
-			socket.emit('room:current', null);
+		if (socket.player?.room) {
+			socket.rooms.add(`room:${socket.player.room.id}`);
+			socket.emit('room:current', socket.player.room.id);
 		}
 	});
 }
