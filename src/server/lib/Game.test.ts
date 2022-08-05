@@ -1,5 +1,5 @@
 import Board from './Board';
-import Game, { Winner } from './Game';
+import Game from './Game';
 import { TetrominoType } from './Tetrominoes/Tetromino';
 import TetrominoI from './Tetrominoes/TetrominoI';
 import TetrominoJ from './Tetrominoes/TetrominoJ';
@@ -10,10 +10,10 @@ import TetrominoT from './Tetrominoes/TetrominoT';
 import TetrominoZ from './Tetrominoes/TetrominoZ';
 
 describe('Test Game', () => {
-	const game = new Game();
+	const game = new Game(2);
 
 	it('Has a valid default state', () => {
-		expect(game.winner).toBe(Winner.None);
+		expect(game.winner).toBe(0);
 		expect(game.boards.length).toBe(2);
 		expect(game.boards[0]).toBeInstanceOf(Board);
 		expect(game.boards[1]).toBeInstanceOf(Board);

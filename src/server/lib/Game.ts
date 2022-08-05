@@ -1,4 +1,4 @@
-import Board from './Board';
+import Board, { MoveDirection, RotationDirection } from './Board';
 import { TetrominoType } from './Tetrominoes/Tetromino';
 import type Tetromino from './Tetrominoes/Tetromino';
 import TetrominoI from './Tetrominoes/TetrominoI';
@@ -14,12 +14,6 @@ import { default as Loop } from 'accurate-game-loop';
 const TICK_RATE = 60;
 const GRAVITY_PER_SEC = 0.5;
 
-export enum Winner {
-	None,
-	PlayerOne,
-	PlayerTwo
-}
-
 /**
  * Generate a random number between min (included) and max (excluded)
  * @source https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/random#getting_a_random_integer_between_two_values
@@ -34,30 +28,36 @@ function getRandomInt(min: number, max: number) {
 }
 
 export default class Game {
-	winner: Winner;
-	boards: [Board, Board];
+	playerCount: number;
+	winner: number;
+	boards: Board[];
 	lastTetromino?: TetrominoType;
-	tetrominoesBags: [Tetromino[], Tetromino[]];
+	tetrominoesBags: Tetromino[][];
 	paused: boolean;
 	loop: Loop.Loop;
 	tick: number;
 	tickDownRate: number;
 	nextTickDown: number;
 
-	constructor() {
-		this.winner = Winner.None;
-		this.boards = [new Board(), new Board()];
+	constructor(playerCount: number) {
+		this.playerCount = playerCount;
+		this.winner = 0;
 		// Always keep 3 next tetrominoes
 		// -- +1 at the start for the initial tetromino
-		this.tetrominoesBags = [[], []];
+		this.tetrominoesBags = [];
+		this.boards = [];
+		for (let index = 0; index < this.playerCount; index++) {
+			this.tetrominoesBags.push([]);
+			this.boards.push(new Board());
+		}
 		for (let i = 0; i < 4; i++) {
 			this.addRandomTetrominoToBags();
 		}
 		// Add the initial tetrominoes to the boards
-		// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-		this.boards[0].spawnTetromino(this.tetrominoesBags[0].pop()!);
-		// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-		this.boards[1].spawnTetromino(this.tetrominoesBags[1].pop()!);
+		for (let index = 0; index < this.playerCount; index++) {
+			// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+			this.boards[index].spawnTetromino(this.tetrominoesBags[index].pop()!);
+		}
 		this.paused = true;
 		this.tick = 0;
 		this.tickDownRate = Math.floor(1000 / GRAVITY_PER_SEC / TICK_RATE);
@@ -104,18 +104,24 @@ export default class Game {
 	addRandomTetrominoToBags() {
 		const type = this.randomTetrominoType();
 
-		const playerOneTetromino = this.generateTetromino(type);
-		Board.moveTetrominoToCenter(playerOneTetromino);
-		this.tetrominoesBags[0].unshift(playerOneTetromino);
-
-		const playerTwoTetromino = this.generateTetromino(type);
-		Board.moveTetrominoToCenter(playerTwoTetromino);
-		this.tetrominoesBags[1].unshift(playerTwoTetromino);
+		for (let index = 0; index < this.playerCount; index++) {
+			const playerTetromino = this.generateTetromino(type);
+			Board.moveTetrominoToCenter(playerTetromino);
+			this.tetrominoesBags[index].unshift(playerTetromino);
+		}
 	}
 
 	start() {
 		this.paused = false;
 		this.loop.start();
+	}
+
+	move(index: number, direction: MoveDirection) {
+		return this.boards[index].move(direction);
+	}
+
+	rotate(index: number, direction: RotationDirection) {
+		return this.boards[index].rotateWithWallKicks(direction);
 	}
 
 	/**
@@ -124,26 +130,17 @@ export default class Game {
 	async onTick(/* deltaMs: number */) {
 		// console.log('tick', deltaMs, this.tick, this.nextTickDown);
 		if (this.tick >= this.nextTickDown) {
-			if (this.boards[0].tickDown()) {
-				// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-				const nextTetromino = this.tetrominoesBags[0].pop()!;
-				if (this.boards[0].canSpawnTetromino(nextTetromino)) {
-					this.boards[0].spawnTetromino(nextTetromino);
-					this.addRandomTetrominoToBags();
-				} else {
-					this.winner = Winner.PlayerTwo;
-					this.stop();
-				}
-			}
-			if (this.boards[1].tickDown()) {
-				// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-				const nextTetromino = this.tetrominoesBags[1].pop()!;
-				if (this.boards[1].canSpawnTetromino(nextTetromino)) {
-					this.boards[1].spawnTetromino(nextTetromino);
-					this.addRandomTetrominoToBags();
-				} else {
-					this.winner = Winner.PlayerOne;
-					this.stop();
+			for (let index = 0; index < this.playerCount; index++) {
+				if (this.boards[index].tickDown()) {
+					// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+					const nextTetromino = this.tetrominoesBags[index].pop()!;
+					if (this.boards[index].canSpawnTetromino(nextTetromino)) {
+						this.boards[index].spawnTetromino(nextTetromino);
+						this.addRandomTetrominoToBags();
+					} else {
+						this.winner = index + 1;
+						this.stop();
+					}
 				}
 			}
 			this.nextTickDown = this.tick + this.tickDownRate;

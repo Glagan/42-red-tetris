@@ -12,6 +12,7 @@ export default class Room {
 	createdAt: DateTime;
 	lastUpdate: DateTime;
 	game?: Game;
+	playersIndex: Record<string, number>;
 
 	constructor(name: string) {
 		this.id = nanoid();
@@ -20,6 +21,7 @@ export default class Room {
 		this.ready = [];
 		this.createdAt = DateTime.now();
 		this.lastUpdate = DateTime.now();
+		this.playersIndex = {};
 	}
 
 	addPlayer(player: Player) {
@@ -59,7 +61,14 @@ export default class Room {
 	}
 
 	createGame() {
-		this.game = new Game();
+		if (this.players.length > 0) {
+			this.playersIndex = {};
+			for (let index = 0; index < this.players.length; index++) {
+				const player = this.players[index];
+				this.playersIndex[player.id] = index;
+			}
+			this.game = new Game(this.players.length);
+		}
 	}
 
 	startGame() {

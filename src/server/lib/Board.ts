@@ -7,7 +7,7 @@ export const COLUMNS = 10;
 
 export enum RotationDirection {
 	Clockwise,
-	Counterclockwise
+	CounterClockwise
 }
 
 export enum MoveDirection {

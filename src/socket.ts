@@ -15,6 +15,10 @@ export interface ClientToServerEvents {
 	'room:ready': (callback: (success: boolean | BasicError) => void) => void;
 	// * Game
 	'game:test': () => void;
+	'game:move:left': (callback?: (ok: boolean) => void) => void;
+	'game:move:right': (callback?: (ok: boolean) => void) => void;
+	'game:rotate:clockwise': (callback?: (ok: boolean) => void) => void;
+	'game:rotate:counter-clockwise': (callback?: (ok: boolean) => void) => void;
 }
 
 export interface ServerToClientEvents {
