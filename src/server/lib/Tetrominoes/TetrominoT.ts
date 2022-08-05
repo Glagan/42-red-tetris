@@ -1,35 +1,20 @@
-import Tetromino, { JLTSZWallkicks, TetrominoType } from './Tetromino';
+import Tetromino, {
+	JLTSZWallkicks,
+	TetrominoType,
+	GenerateTetromino,
+	type Wallkicks
+} from './Tetromino';
 
 export default class TetrominoT extends Tetromino {
+	static wallKicks: Wallkicks = JLTSZWallkicks();
+
 	constructor() {
-		super(
-			TetrominoType.T,
-			[
-				[0, 1, 0],
-				[1, 1, 1],
-				[0, 0, 0]
-			],
-			[
-				[
-					[1, 0],
-					[1, 1],
-					[1, 2]
-				],
-				[
-					[2, 1],
-					[1, 2]
-				],
-				[
-					[1, 0],
-					[2, 1],
-					[1, 2]
-				],
-				[
-					[1, 0],
-					[2, 1]
-				]
-			],
-			JLTSZWallkicks()
-		);
+		super(TetrominoType.T, [
+			[0, 1, 0],
+			[1, 1, 1],
+			[0, 0, 0]
+		]);
 	}
 }
+
+GenerateTetromino(TetrominoT);

@@ -10,6 +10,11 @@ export enum RotationDirection {
 	Counterclockwise
 }
 
+export enum MoveDirection {
+	Left,
+	Right
+}
+
 export default class Board {
 	movingTetromino: Tetromino | undefined;
 	tetrominoes: Tetromino[];
@@ -64,7 +69,32 @@ export default class Board {
 			}
 			this.tetrominoes.push(this.movingTetromino);
 			this.movingTetromino = undefined;
+			return true;
 		}
+		return false;
+	}
+
+	move(direction: MoveDirection) {
+		if (this.movingTetromino) {
+			const offset = direction == MoveDirection.Left ? -1 : 1;
+			this.movingTetromino.offset[1] += offset;
+			for (const [x, y] of this.movingTetromino.blocks) {
+				const xOffset = this.movingTetromino.offset[0] + x;
+				const yOffset = this.movingTetromino.offset[1] + y;
+				if (
+					xOffset < 0 ||
+					yOffset < 0 ||
+					xOffset >= ROWS ||
+					yOffset >= COLUMNS ||
+					this.bitboard[xOffset][yOffset] != TetrominoType.None
+				) {
+					this.movingTetromino.offset[1] -= offset;
+					return false;
+				}
+			}
+			return true;
+		}
+		return false;
 	}
 
 	/**
@@ -110,8 +140,8 @@ export default class Board {
 				return;
 			}
 			// Wallkicks
-			else if (tetromino.wallKicks) {
-				const wallkicks = tetromino.wallKicks[tetromino.direction][rotationDirection];
+			else if (tetromino.wallKicksInDirection) {
+				const wallkicks = tetromino.wallKicksInDirection[rotationDirection];
 				for (const wallkick of wallkicks) {
 					// Apply translate and check if the tetromino fit on the board
 					tetromino.translate(wallkick);
@@ -139,31 +169,22 @@ export default class Board {
 	 * @param tetromino
 	 */
 	clearTetrominoOnBitboard(tetromino: Tetromino) {
-		const size = tetromino.matrix.length;
-		for (let x = 0; x < size; x++) {
-			for (let y = 0; y < size; y++) {
-				const inMatrix = tetromino.matrix[x][y];
-				if (inMatrix) {
-					const xOffset = tetromino.offset[0] + x;
-					const yOffset = tetromino.offset[1] + y;
-					if (xOffset >= 0 && yOffset >= 0 && xOffset < ROWS && yOffset < COLUMNS) {
-						this.bitboard[xOffset][yOffset] = TetrominoType.None;
-					}
-				}
+		for (const [x, y] of tetromino.blocks) {
+			const xOffset = tetromino.offset[0] + x;
+			const yOffset = tetromino.offset[1] + y;
+			if (xOffset >= 0 && yOffset >= 0 && xOffset < ROWS && yOffset < COLUMNS) {
+				this.bitboard[xOffset][yOffset] = TetrominoType.None;
 			}
 		}
 	}
 
 	canSetTetrominoOnBitboard(tetromino: Tetromino) {
-		const size = tetromino.matrix.length;
-		for (let x = 0; x < size; x++) {
-			for (let y = 0; y < size; y++) {
-				if (
-					tetromino.matrix[x][y] &&
-					this.bitboard[tetromino.offset[0] + x][tetromino.offset[1] + y]
-				) {
-					return false;
-				}
+		for (const [x, y] of tetromino.blocks) {
+			if (
+				tetromino.matrix[x][y] &&
+				this.bitboard[tetromino.offset[0] + x][tetromino.offset[1] + y]
+			) {
+				return false;
 			}
 		}
 		return true;
@@ -174,17 +195,11 @@ export default class Board {
 	 * @param tetromino
 	 */
 	setTetrominoOnBitboard(tetromino: Tetromino) {
-		const size = tetromino.matrix.length;
-		for (let x = 0; x < size; x++) {
-			for (let y = 0; y < size; y++) {
-				const inMatrix = tetromino.matrix[x][y];
-				if (inMatrix) {
-					const xOffset = tetromino.offset[0] + x;
-					const yOffset = tetromino.offset[1] + y;
-					if (xOffset >= 0 && yOffset >= 0 && xOffset < ROWS && yOffset < COLUMNS) {
-						this.bitboard[xOffset][yOffset] = tetromino.type;
-					}
-				}
+		for (const [x, y] of tetromino.blocks) {
+			const xOffset = tetromino.offset[0] + x;
+			const yOffset = tetromino.offset[1] + y;
+			if (xOffset >= 0 && yOffset >= 0 && xOffset < ROWS && yOffset < COLUMNS) {
+				this.bitboard[xOffset][yOffset] = tetromino.type;
 			}
 		}
 	}

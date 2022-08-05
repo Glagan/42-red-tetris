@@ -1,32 +1,13 @@
-import Tetromino, { TetrominoType } from './Tetromino';
+import Tetromino, { TetrominoType, GenerateTetromino, type Wallkicks } from './Tetromino';
 
 export default class TetrominoO extends Tetromino {
+	static wallKicks: Wallkicks | undefined = undefined;
+
 	constructor() {
-		super(
-			TetrominoType.O,
-			[
-				[1, 1],
-				[1, 1]
-			],
-			[
-				[
-					[1, 0],
-					[1, 1]
-				],
-				[
-					[1, 0],
-					[1, 1]
-				],
-				[
-					[1, 0],
-					[1, 1]
-				],
-				[
-					[1, 0],
-					[1, 1]
-				]
-			]
-		);
+		super(TetrominoType.O, [
+			[1, 1],
+			[1, 1]
+		]);
 	}
 
 	rotateClockwise() {
@@ -37,3 +18,5 @@ export default class TetrominoO extends Tetromino {
 		// Nothing to do
 	}
 }
+
+GenerateTetromino(TetrominoO);

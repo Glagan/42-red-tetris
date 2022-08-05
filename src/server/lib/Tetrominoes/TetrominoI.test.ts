@@ -1,22 +1,7 @@
-import type { Coordinates } from './Tetromino';
-import type Tetromino from './Tetromino';
+import Tetromino from './Tetromino';
 import TetrominoI from './TetrominoI';
 
 describe('Test Tetromino I', () => {
-	function calculateBottom(tetromino: Tetromino) {
-		const coordinates: Coordinates[] = [];
-		const N = tetromino.matrix.length;
-		for (let m = 0; m < N; m++) {
-			for (let n = N - 1; n >= 0; n--) {
-				if (tetromino.matrix[n][m]) {
-					coordinates.push([n, m]);
-					break;
-				}
-			}
-		}
-		return coordinates;
-	}
-
 	it('Rotate Clockwise', () => {
 		const tetromino = new TetrominoI();
 
@@ -27,7 +12,9 @@ describe('Test Tetromino I', () => {
 			[0, 0, 0, 0],
 			[0, 0, 0, 0]
 		]);
-		expect(tetromino.bottom).toEqual(calculateBottom(tetromino));
+		expect(tetromino.bottom).toEqual(Tetromino.calculateBottom(tetromino.matrix));
+		expect(tetromino.left).toEqual(Tetromino.calculateLeft(tetromino.matrix));
+		expect(tetromino.right).toEqual(Tetromino.calculateRight(tetromino.matrix));
 
 		// 1
 		tetromino.rotateClockwise();
@@ -37,7 +24,9 @@ describe('Test Tetromino I', () => {
 			[0, 0, 1, 0],
 			[0, 0, 1, 0]
 		]);
-		expect(tetromino.bottom).toEqual(calculateBottom(tetromino));
+		expect(tetromino.bottom).toEqual(Tetromino.calculateBottom(tetromino.matrix));
+		expect(tetromino.left).toEqual(Tetromino.calculateLeft(tetromino.matrix));
+		expect(tetromino.right).toEqual(Tetromino.calculateRight(tetromino.matrix));
 
 		// 2
 		tetromino.rotateClockwise();
@@ -47,7 +36,9 @@ describe('Test Tetromino I', () => {
 			[1, 1, 1, 1],
 			[0, 0, 0, 0]
 		]);
-		expect(tetromino.bottom).toEqual(calculateBottom(tetromino));
+		expect(tetromino.bottom).toEqual(Tetromino.calculateBottom(tetromino.matrix));
+		expect(tetromino.left).toEqual(Tetromino.calculateLeft(tetromino.matrix));
+		expect(tetromino.right).toEqual(Tetromino.calculateRight(tetromino.matrix));
 
 		// 3
 		tetromino.rotateClockwise();
@@ -57,7 +48,9 @@ describe('Test Tetromino I', () => {
 			[0, 1, 0, 0],
 			[0, 1, 0, 0]
 		]);
-		expect(tetromino.bottom).toEqual(calculateBottom(tetromino));
+		expect(tetromino.bottom).toEqual(Tetromino.calculateBottom(tetromino.matrix));
+		expect(tetromino.left).toEqual(Tetromino.calculateLeft(tetromino.matrix));
+		expect(tetromino.right).toEqual(Tetromino.calculateRight(tetromino.matrix));
 
 		// Reset
 		tetromino.rotateClockwise();
@@ -67,7 +60,9 @@ describe('Test Tetromino I', () => {
 			[0, 0, 0, 0],
 			[0, 0, 0, 0]
 		]);
-		expect(tetromino.bottom).toEqual(calculateBottom(tetromino));
+		expect(tetromino.bottom).toEqual(Tetromino.calculateBottom(tetromino.matrix));
+		expect(tetromino.left).toEqual(Tetromino.calculateLeft(tetromino.matrix));
+		expect(tetromino.right).toEqual(Tetromino.calculateRight(tetromino.matrix));
 	});
 
 	it('Rotate Counter Clockwise', () => {
@@ -80,7 +75,9 @@ describe('Test Tetromino I', () => {
 			[0, 0, 0, 0],
 			[0, 0, 0, 0]
 		]);
-		expect(tetromino.bottom).toEqual(calculateBottom(tetromino));
+		expect(tetromino.bottom).toEqual(Tetromino.calculateBottom(tetromino.matrix));
+		expect(tetromino.left).toEqual(Tetromino.calculateLeft(tetromino.matrix));
+		expect(tetromino.right).toEqual(Tetromino.calculateRight(tetromino.matrix));
 
 		// 1
 		tetromino.rotateCounterClockwise();
@@ -90,7 +87,9 @@ describe('Test Tetromino I', () => {
 			[0, 1, 0, 0],
 			[0, 1, 0, 0]
 		]);
-		expect(tetromino.bottom).toEqual(calculateBottom(tetromino));
+		expect(tetromino.bottom).toEqual(Tetromino.calculateBottom(tetromino.matrix));
+		expect(tetromino.left).toEqual(Tetromino.calculateLeft(tetromino.matrix));
+		expect(tetromino.right).toEqual(Tetromino.calculateRight(tetromino.matrix));
 
 		// 2
 		tetromino.rotateCounterClockwise();
@@ -100,7 +99,9 @@ describe('Test Tetromino I', () => {
 			[1, 1, 1, 1],
 			[0, 0, 0, 0]
 		]);
-		expect(tetromino.bottom).toEqual(calculateBottom(tetromino));
+		expect(tetromino.bottom).toEqual(Tetromino.calculateBottom(tetromino.matrix));
+		expect(tetromino.left).toEqual(Tetromino.calculateLeft(tetromino.matrix));
+		expect(tetromino.right).toEqual(Tetromino.calculateRight(tetromino.matrix));
 
 		// 3
 		tetromino.rotateCounterClockwise();
@@ -110,7 +111,9 @@ describe('Test Tetromino I', () => {
 			[0, 0, 1, 0],
 			[0, 0, 1, 0]
 		]);
-		expect(tetromino.bottom).toEqual(calculateBottom(tetromino));
+		expect(tetromino.bottom).toEqual(Tetromino.calculateBottom(tetromino.matrix));
+		expect(tetromino.left).toEqual(Tetromino.calculateLeft(tetromino.matrix));
+		expect(tetromino.right).toEqual(Tetromino.calculateRight(tetromino.matrix));
 
 		// Reset
 		tetromino.rotateCounterClockwise();
@@ -120,6 +123,8 @@ describe('Test Tetromino I', () => {
 			[0, 0, 0, 0],
 			[0, 0, 0, 0]
 		]);
-		expect(tetromino.bottom).toEqual(calculateBottom(tetromino));
+		expect(tetromino.bottom).toEqual(Tetromino.calculateBottom(tetromino.matrix));
+		expect(tetromino.left).toEqual(Tetromino.calculateLeft(tetromino.matrix));
+		expect(tetromino.right).toEqual(Tetromino.calculateRight(tetromino.matrix));
 	});
 });
