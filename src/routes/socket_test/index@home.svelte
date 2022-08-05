@@ -1,5 +1,4 @@
 <script lang="ts">
-	import '../app.css';
 	import '$client/socket';
 	import rooms from '$client/stores/rooms';
 	import socket from '$client/socket';

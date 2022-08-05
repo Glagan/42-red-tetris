@@ -6,8 +6,8 @@
 	export const load: Load = () => {
 		if (browser) {
 			return {
-				status: 200,
-			}
+				status: 200
+			};
 		}
 		return {
 			redirect: '/',
