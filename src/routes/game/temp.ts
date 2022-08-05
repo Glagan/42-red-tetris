@@ -1,4 +1,4 @@
-import MinecraftTheme from '../../themes/minecraft';
+import MinecraftTheme from '../../client/themes/minecraft';
 import type CubeInfo from './cube.info';
 
 export const left_cubes: Array<CubeInfo> = [

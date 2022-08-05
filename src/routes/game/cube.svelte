@@ -1,6 +1,6 @@
 <!-- ========================= SCRIPT -->
 <script lang="ts">
-	import Config from '../../configs/front.config';
+	import Config from '../../client/configs/game';
 
 	export let sprites: Array<string> = ['/sprites/default/cross.png'];
 

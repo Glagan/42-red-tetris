@@ -1,6 +1,6 @@
 <!-- ========================= SCRIPT -->
 <script lang="ts">
-	import CentralBox from '../../components/containers/central_box.svelte';
+	import CentralBox from '../../client/components/containers/central_box.svelte';
 
 	const tips: Array<string> = [
 		'When you complete more than two lines, your opponent receives additional lines.'

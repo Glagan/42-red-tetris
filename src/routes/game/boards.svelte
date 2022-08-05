@@ -1,10 +1,10 @@
 <!-- ========================= SCRIPT -->
 <script lang="ts">
 	import Board from './board.svelte';
-	import Config from '../../configs/front.config';
+	import Config from '../../client/configs/game';
 	import { left_cubes, right_cubes } from './temp';
-	import MinecraftTheme from '../../themes/minecraft';
-	import _3Dto2D from '../../themes/generators/3Dto2D';
+	import MinecraftTheme from '../../client/themes/minecraft';
+	import _3Dto2D from '../../client/themes/generators/3Dto2D';
 	import { browser } from '$app/env';
 
 	let background_theme = MinecraftTheme.backgrounds[2];

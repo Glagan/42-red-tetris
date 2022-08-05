@@ -1,4 +1,4 @@
-import type CubeInfo from '../routes/game/cube.info';
+import type CubeInfo from '../../routes/game/cube.info';
 
 export default interface theme {
     block_textures: {

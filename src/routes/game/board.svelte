@@ -1,7 +1,7 @@
 <!-- ========================= SCRIPT -->
 <script lang="ts">
 	import Cube from './cube.svelte';
-	import Config from '../../configs/front.config';
+	import Config from '../../client/configs/game';
 	import { browser } from '$app/env';
 	import type CubeInfo from './cube.info';
 

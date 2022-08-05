@@ -2,8 +2,8 @@
 <script lang="ts">
 	import { browser } from '$app/env';
 	import { goto } from '$app/navigation';
-	import PseudoStore from '../stores/pseudo';
-	import CentralBox from '../components/containers/central_box.svelte';
+	import PseudoStore from '../client/stores/pseudo';
+	import CentralBox from '../client/components/containers/central_box.svelte';
 
 	if (browser && $PseudoStore.length > 0) {
 		goto('/search');
@@ -16,7 +16,7 @@
 	function handle_enter() {
 		if (pseudo.length > 0) {
 			PseudoStore.set(pseudo);
-			goto('/search');
+			goto('/game');
 		}
 	}
 </script>

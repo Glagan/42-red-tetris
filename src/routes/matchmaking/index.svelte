@@ -1,7 +1,7 @@
 <!-- ========================= SCRIPT -->
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import CentralBox from '../../components/containers/central_box.svelte';
+	import CentralBox from '../../client/components/containers/central_box.svelte';
 	import sleep from '../../utils/sleep';
 
 	let waiting_time = 0;
