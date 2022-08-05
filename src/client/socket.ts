@@ -35,10 +35,13 @@ if (browser) {
 					// console.log('room (should be null)', room);
 					console.log('room', room);
 				});
+				socket.emit('room:ready', (success) => {
+					console.log('success?', success);
+				});
 			}
 		});
 
-		socket.emit('game:test');
+		// socket.emit('game:test');
 	});
 
 	socket.on('room:all', (serverRooms) => {
