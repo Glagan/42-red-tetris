@@ -43,6 +43,8 @@ if (ioServer) {
 		const player = PlayerManager.getPlayer(token);
 		if (player && player?.room) {
 			socket.emit('room:current', player.room.id);
+		} else {
+			socket.emit('room:current', null);
 		}
 	});
 }

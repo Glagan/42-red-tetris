@@ -21,5 +21,5 @@ export interface ServerToClientEvents {
 	'room:playerJoined': (player: Player, room: Room) => void;
 	'room:playerLeft': (player: Player, room: Room) => void;
 	'room:deleted': (roomId: string) => void;
-	'room:current': (roomId: string) => void;
+	'room:current': (roomId: string | null) => void;
 }
