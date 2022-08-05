@@ -1,6 +1,6 @@
 <!-- ========================= SCRIPT -->
 <script lang="ts">
-	import PseudoStore from '../../stores/pseudo';
+	import PseudoStore from '../../stores/username';
 
 	export let title = '';
 	export let show_pseudo = false;

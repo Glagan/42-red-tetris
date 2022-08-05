@@ -1,28 +1,29 @@
 <!-- ========================= SCRIPT -->
 <script lang="ts">
+	import UsernameStore from '../client/stores/username';
 	import { browser } from '$app/env';
 	import { goto } from '$app/navigation';
-	import PseudoStore from '../client/stores/pseudo';
 	import CentralBox from '../client/components/containers/central_box.svelte';
+	
+	let username = '';
 
-	if (browser && $PseudoStore.length > 0) {
-		goto('/search');
+	if (browser && $UsernameStore.length > 0) {
+		username = $UsernameStore
 	}
 
-	let pseudo = '';
 
-	$: disabled_enter = pseudo.length == 0;
+	$: disabled_enter = username.length == 0;
 
 	function handle_enter() {
-		if (pseudo.length > 0) {
-			PseudoStore.set(pseudo);
-			goto('/game');
+		if (username.length > 0) {
+			UsernameStore.set(username);
+			goto('/search');
 		}
 	}
 </script>
 
 <!-- ========================= HTML -->
-<CentralBox title="Pseudo">
-	<input type="text" class="text-input" placeholder="Your pseudo" bind:value={pseudo} />
+<CentralBox title="Username">
+	<input type="text" class="text-input" placeholder="Your username" bind:value={username} />
 	<button class="mt-5" on:click={handle_enter} disabled={disabled_enter}>Enter</button>
 </CentralBox>
