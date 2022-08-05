@@ -5,6 +5,7 @@ import rooms from '$server/RoomManager';
 import PlayerManager from '$server/PlayerManager';
 import { ioServer } from '$server/lib/SocketIO';
 import useGameAPI from '$server/events/game';
+import useUserAPI from '$server/events/user';
 
 // * Auth middleware to check user tokens
 if (ioServer) {
@@ -32,17 +33,22 @@ if (ioServer) {
 		console.log(`[${socket.id}]  on:connection`);
 		const token = socket.handshake.auth.token;
 
-		useRoomAPI(socket);
-		useGameAPI(socket);
-
 		socket.on('disconnect', () => {
 			console.log(`[${socket.id}]  on:disconnect`);
 			PlayerManager.removeSocket(socket.id);
 		});
+
+		useUserAPI(socket);
+		useRoomAPI(socket);
+		useGameAPI(socket);
+
 		socket.emit('room:all', rooms.all());
 		const player = PlayerManager.getPlayer(token);
 		if (player && player?.room) {
+			socket.rooms.add(`room:${player.room.id}`);
 			socket.emit('room:current', player.room.id);
+		} else {
+			socket.emit('room:current', null);
 		}
 	});
 }

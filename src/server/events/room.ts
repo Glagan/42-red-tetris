@@ -9,11 +9,11 @@ import PlayerManager from '$server/PlayerManager';
 import RoomManager from '$server/RoomManager';
 import { ioServer } from '$server/lib/SocketIO';
 
-export type CreateRoomRequest = {
+export type CreateRoomPayload = {
 	name: string;
 };
 
-export type GetRoomRequest = {
+export type GetRoomPayload = {
 	id: string;
 };
 
@@ -24,7 +24,7 @@ export default function useRoomAPI(socket: Socket<ClientToServerEvents, ServerTo
 
 		validatePayload(
 			{ name },
-			objectOf<CreateRoomRequest>({
+			objectOf<CreateRoomPayload>({
 				name: isValidName
 			})
 		);
@@ -34,6 +34,7 @@ export default function useRoomAPI(socket: Socket<ClientToServerEvents, ServerTo
 		if (player && !player.room) {
 			const room = new Room(roomName);
 			player.joinRoom(room);
+			socket.rooms.add(`room:${room.id}`);
 			RoomManager.addRoom(room);
 			if (callback) {
 				callback({
@@ -58,7 +59,7 @@ export default function useRoomAPI(socket: Socket<ClientToServerEvents, ServerTo
 
 		validatePayload(
 			{ id: roomId },
-			objectOf<GetRoomRequest>({
+			objectOf<GetRoomPayload>({
 				id: isValidID
 			})
 		);
@@ -96,6 +97,7 @@ export default function useRoomAPI(socket: Socket<ClientToServerEvents, ServerTo
 		const room = RoomManager.getRoom(roomId);
 		if (player && room && !room.isFull()) {
 			player.joinRoom(room);
+			socket.rooms.add(`room:${roomId}`);
 			if (callback) {
 				callback(room.toClient());
 			}
@@ -111,12 +113,38 @@ export default function useRoomAPI(socket: Socket<ClientToServerEvents, ServerTo
 		const player = PlayerManager.getPlayer(token);
 		if (player) {
 			const previousRoom = player.leaveCurrentRoom();
+			if (previousRoom) {
+				socket.rooms.delete(`room:${previousRoom.id}`);
+			}
 			if (previousRoom && previousRoom.isEmpty()) {
 				RoomManager.removeRoom(previousRoom.id);
 				ioServer.emit('room:deleted', previousRoom.id);
 			} else if (previousRoom) {
 				ioServer.emit('room:playerLeft', player.toClient(), previousRoom.toClient());
 			}
+		}
+	});
+
+	socket.on('room:ready', (callback) => {
+		console.log(`[${socket.id}]  room:leave`);
+		const token = socket.handshake.auth.token;
+		const player = PlayerManager.getPlayer(token);
+
+		if (player) {
+			if (player.room) {
+				player.room.markPlayerAsReady(player.id);
+				if (player.room.allPlayersReady()) {
+					player.room.createGame();
+					ioServer.to(`room:${player.room.id}`).emit('room:gameCreated');
+				}
+				setTimeout(() => {
+					if (player.room) {
+						player.room.startGame();
+					}
+				}, 5000);
+			}
+		} else if (callback) {
+			callback({ message: 'No user found' });
 		}
 	});
 }
