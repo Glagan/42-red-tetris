@@ -7,6 +7,7 @@ import type { BasicError, ClientToServerEvents, ServerToClientEvents } from '../
 import isValidID from '$server/lib/Validators/ID';
 import RoomManager from '$server/RoomManager';
 import { ioServer } from '$server/lib/SocketIO';
+import isValidQuery from '$server/lib/Validators/Query';
 
 export type CreateRoomPayload = {
 	name: string;
@@ -14,6 +15,10 @@ export type CreateRoomPayload = {
 
 export type GetRoomPayload = {
 	id: string;
+};
+
+export type SearchPayload = {
+	query: string;
 };
 
 export default function useRoomAPI(socket: Socket<ClientToServerEvents, ServerToClientEvents>) {
@@ -146,6 +151,36 @@ export default function useRoomAPI(socket: Socket<ClientToServerEvents, ServerTo
 			}
 		} else if (callback) {
 			callback({ message: 'You are not currently in a room' });
+		}
+	});
+
+	socket.on('room:search', (query, callback) => {
+		console.log(`[${socket.id}]  room:search`, query);
+
+		validatePayload(
+			{ query },
+			objectOf<SearchPayload>({
+				query: isValidQuery
+			})
+		);
+
+		const parts = query.trim().split(' ');
+		const results: Room[] = [];
+		for (const room of RoomManager.rooms) {
+			for (const part of parts) {
+				if (
+					room.name.indexOf(part) >= 0 ||
+					room.id == part ||
+					room.players.findIndex((player) => player.id == part || player.name.indexOf(part) >= 0)
+				) {
+					results.push(room);
+					break;
+				}
+			}
+		}
+
+		if (callback) {
+			callback(results.map((room) => room.toClient()));
 		}
 	});
 }

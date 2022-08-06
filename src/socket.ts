@@ -15,6 +15,7 @@ export interface ClientToServerEvents {
 	'room:join': (roomId: string, callback: (room: Room | BasicError | null) => void) => void;
 	'room:leave': (callback: (success: boolean | BasicError) => void) => void;
 	'room:ready': (callback: (success: boolean | BasicError) => void) => void;
+	'room:search': (query: string, callback: (rooms: Room[] | BasicError) => void) => void;
 	// * Game
 	'game:test': () => void;
 	'game:move:left': (callback?: (ok: boolean) => void) => void;
