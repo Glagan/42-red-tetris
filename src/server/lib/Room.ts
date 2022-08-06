@@ -1,6 +1,5 @@
 import { nanoid } from 'nanoid';
 import type Player from '$server/lib/Player';
-import { DateTime } from 'luxon';
 import type { Room as ClientRoom } from '$client/lib/Room';
 import Game from './Game';
 
@@ -9,9 +8,8 @@ export default class Room {
 	name: string;
 	players: Player[];
 	ready: string[];
-	createdAt: DateTime;
-	lastUpdate: DateTime;
 	game?: Game;
+	winner: number;
 	playersIndex: Record<string, number>;
 
 	constructor(name: string) {
@@ -19,14 +17,12 @@ export default class Room {
 		this.name = name;
 		this.players = [];
 		this.ready = [];
-		this.createdAt = DateTime.now();
-		this.lastUpdate = DateTime.now();
+		this.winner = 0;
 		this.playersIndex = {};
 	}
 
 	addPlayer(player: Player) {
 		this.players.push(player);
-		this.lastUpdate = DateTime.now();
 	}
 
 	removePlayer(playerId: string) {
@@ -38,7 +34,6 @@ export default class Room {
 		if (readyIndex >= 0) {
 			this.ready.splice(readyIndex, 1);
 		}
-		this.lastUpdate = DateTime.now();
 	}
 
 	isFull() {
@@ -67,7 +62,13 @@ export default class Room {
 				const player = this.players[index];
 				this.playersIndex[player.id] = index;
 			}
+			this.winner = -1;
 			this.game = new Game(this.players.length);
+			this.game.onCompletion = (winner) => {
+				this.winner = winner;
+				delete this.game;
+			};
+			this.ready = [];
 		}
 	}
 
@@ -77,6 +78,10 @@ export default class Room {
 		}
 	}
 
+	isPlaying() {
+		return this.game && this.winner < 0;
+	}
+
 	toClient(): ClientRoom {
 		return {
 			id: this.id,
@@ -84,9 +89,7 @@ export default class Room {
 			players: this.players.map((player) => ({
 				id: player.id,
 				name: player.name
-			})),
-			createdAt: this.createdAt.toString(),
-			lastUpdate: this.lastUpdate.toString()
+			}))
 		};
 	}
 }

@@ -6,6 +6,7 @@ import type { ServerToClientEvents, ClientToServerEvents } from '../socket';
 import rooms from '$client/stores/rooms';
 import currentRoom from './stores/currentRoom';
 import UsernameStore from './stores/username';
+import { getRandomInt } from '$utils/random';
 
 let socket: Socket<ServerToClientEvents, ClientToServerEvents>;
 
@@ -45,6 +46,19 @@ if (browser) {
 			}
 		});
 
+		setInterval(() => {
+			const actions: (keyof ClientToServerEvents)[] = [
+				'game:rotate:clockwise',
+				'game:rotate:counter-clockwise',
+				'game:move:left',
+				'game:move:right'
+			];
+			const action = getRandomInt(0, actions.length);
+			socket.emit(actions[action], (ok: boolean) => {
+				console.log('move:right', ok);
+			});
+		}, 200);
+
 		// socket.emit('game:test');
 	});
 
@@ -75,6 +89,10 @@ if (browser) {
 
 	socket.on('game:tick', (tick) => {
 		console.log('game:tick', tick);
+	});
+
+	socket.on('game:over', (winner) => {
+		console.log('game:over', winner);
 	});
 }
 

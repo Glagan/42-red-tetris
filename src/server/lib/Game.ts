@@ -1,3 +1,5 @@
+// @ts-expect-error Huh ? File '.../node_modules/accurate-game-loop/index.ts' is not a module. ts(2306)
+import { default as Loop } from 'accurate-game-loop';
 import Board, { MoveDirection, RotationDirection } from './Board';
 import { TetrominoType } from './Tetrominoes/Tetromino';
 import type Tetromino from './Tetrominoes/Tetromino';
@@ -8,24 +10,10 @@ import TetrominoO from './Tetrominoes/TetrominoO';
 import TetrominoS from './Tetrominoes/TetrominoS';
 import TetrominoT from './Tetrominoes/TetrominoT';
 import TetrominoZ from './Tetrominoes/TetrominoZ';
-// @ts-expect-error Huh ? File '.../node_modules/accurate-game-loop/index.ts' is not a module. ts(2306)
-import { default as Loop } from 'accurate-game-loop';
+import { getRandomInt } from '$utils/random';
 
 const TICK_RATE = 60;
 const GRAVITY_PER_SEC = 0.5;
-
-/**
- * Generate a random number between min (included) and max (excluded)
- * @source https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/random#getting_a_random_integer_between_two_values
- * @param min Min included
- * @param max Max excluded
- * @returns number
- */
-function getRandomInt(min: number, max: number) {
-	min = Math.ceil(min);
-	max = Math.floor(max);
-	return Math.floor(Math.random() * (max - min) + min); // The maximum is exclusive and the minimum is inclusive
-}
 
 export default class Game {
 	playerCount: number;
@@ -38,6 +26,7 @@ export default class Game {
 	tick: number;
 	tickDownRate: number;
 	nextTickDown: number;
+	onCompletion?: (winner: number) => void;
 
 	constructor(playerCount: number) {
 		this.playerCount = playerCount;
@@ -139,6 +128,7 @@ export default class Game {
 						this.addRandomTetrominoToBags();
 					} else {
 						this.winner = index + 1;
+						this.onCompletion?.(this.winner);
 						this.stop();
 					}
 				}

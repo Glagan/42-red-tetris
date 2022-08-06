@@ -3,7 +3,7 @@ import { validatePayload } from '$server/lib/Validator';
 import isValidName from '$server/lib/Validators/Name';
 import { objectOf } from '@altostra/type-validations';
 import type { Socket } from 'socket.io';
-import type { ClientToServerEvents, ServerToClientEvents } from '../../socket';
+import type { BasicError, ClientToServerEvents, ServerToClientEvents } from '../../socket';
 import isValidID from '$server/lib/Validators/ID';
 import RoomManager from '$server/RoomManager';
 import { ioServer } from '$server/lib/SocketIO';
@@ -40,9 +40,7 @@ export default function useRoomAPI(socket: Socket<ClientToServerEvents, ServerTo
 					players: room.players.map((player) => ({
 						id: player.id,
 						name: player.name
-					})),
-					createdAt: room.createdAt.toString(),
-					lastUpdate: room.lastUpdate.toString()
+					}))
 				});
 			}
 			ioServer.emit('room:created', room.toClient());
@@ -69,9 +67,7 @@ export default function useRoomAPI(socket: Socket<ClientToServerEvents, ServerTo
 				players: room.players.map((player) => ({
 					id: player.id,
 					name: player.name
-				})),
-				createdAt: room.createdAt.toString(),
-				lastUpdate: room.lastUpdate.toString()
+				}))
 			});
 		}
 
@@ -91,35 +87,53 @@ export default function useRoomAPI(socket: Socket<ClientToServerEvents, ServerTo
 		}
 
 		const room = RoomManager.getRoom(roomId);
-		if (room && !room.isFull()) {
+		if (room && !room.isFull() && !room.isPlaying()) {
 			socket.player.joinRoom(room);
 			socket.rooms.add(`room:${roomId}`);
 			if (callback) {
 				callback(room.toClient());
 			}
 		} else if (callback) {
-			callback({ message: 'The room is full' });
+			callback({ message: 'The room is full or already in a game' });
 		}
 	});
 
-	socket.on('room:leave', () => {
+	socket.on('room:leave', (callback: (success: boolean | BasicError) => void) => {
 		console.log(`[${socket.id}]  room:leave`);
+
+		if (socket.player.room?.isPlaying()) {
+			if (callback) {
+				callback({ message: "You can't leave a room while a game is playing" });
+			}
+			return;
+		}
 
 		const previousRoom = socket.player.leaveCurrentRoom();
 		if (previousRoom) {
 			socket.rooms.delete(`room:${previousRoom.id}`);
 		}
-		if (previousRoom && previousRoom.isEmpty()) {
-			RoomManager.removeRoom(previousRoom.id);
-			ioServer.emit('room:deleted', previousRoom.id);
-		} else if (previousRoom) {
-			ioServer.emit('room:playerLeft', socket.player.toClient(), previousRoom.toClient());
+		if (previousRoom) {
+			if (previousRoom.isEmpty()) {
+				RoomManager.removeRoom(previousRoom.id);
+				if (callback) {
+					callback(true);
+				}
+				ioServer.emit('room:deleted', previousRoom.id);
+			} else {
+				if (callback) {
+					callback(false);
+				}
+				ioServer.emit('room:playerLeft', socket.player.toClient(), previousRoom.toClient());
+			}
 		}
 	});
 
 	socket.on('room:ready', (callback) => {
 		console.log(`[${socket.id}]  room:leave`);
 
+		if (socket.player.room?.game && socket.player.room.winner < 0) {
+			callback({ message: "A game is already in progress, you can't ready up" });
+		}
 		if (socket.player.room) {
 			const room = socket.player.room;
 			room.markPlayerAsReady(socket.player.id);

@@ -11,7 +11,7 @@ export interface ClientToServerEvents {
 	'room:get': (roomId: string, callback: (room: Room | BasicError | null) => void) => void;
 	'room:create': (name: string, callback: (room: Room | BasicError) => void) => void;
 	'room:join': (roomId: string, callback: (room: Room | BasicError | null) => void) => void;
-	'room:leave': () => void;
+	'room:leave': (callback: (success: boolean | BasicError) => void) => void;
 	'room:ready': (callback: (success: boolean | BasicError) => void) => void;
 	// * Game
 	'game:test': () => void;
@@ -32,4 +32,5 @@ export interface ServerToClientEvents {
 	'room:gameCreated': () => void;
 	// * Game
 	'game:tick': (tick: number) => void;
+	'game:over': (winner: number) => void;
 }
