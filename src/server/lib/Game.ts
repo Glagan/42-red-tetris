@@ -155,28 +155,35 @@ export default class Game {
 		return false;
 	}
 
+	gameOver(loserBoardIndex: number) {
+		this.emitBoardUpdate(loserBoardIndex);
+		this.stop();
+		if (this.playerCount == 1) {
+			this.winner = 0;
+		} else {
+			this.winner = (loserBoardIndex + 1) % 2;
+		}
+		ioServer.to(this.room).emit('game:over', this.winner);
+		console.log('loser');
+		console.log(this.boards[loserBoardIndex].repr());
+		this.onCompletion?.(this.winner);
+	}
+
 	/**
 	 * Spawn the next tetromino for the given board and return true if the board can't handle a new tetromino
 	 * @param boardIndex
-	 * @returns true if the game is over or false
+	 * @returns false if the game is over or true
 	 */
 	spawnNextTetromino(boardIndex: number) {
+		this.addRandomTetrominoToBags();
 		// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 		const nextTetromino = this.tetrominoesBags[boardIndex].pop()!;
-		if (this.boards[boardIndex].canSpawnTetromino(nextTetromino)) {
-			this.boards[boardIndex].spawnTetromino(nextTetromino);
-			this.addRandomTetrominoToBags();
+		if (this.boards[boardIndex].spawnTetromino(nextTetromino)) {
 			this.emitBoardUpdate(boardIndex);
 			this.emitPieceUpdate(boardIndex);
-		} else {
-			this.emitBoardUpdate(boardIndex);
-			this.stop();
-			this.winner = boardIndex + 1;
-			ioServer.to(this.room).emit('game:over', this.winner);
-			console.log('loser', this.boards[boardIndex].repr());
-			this.onCompletion?.(this.winner);
 			return true;
 		}
+		this.gameOver(boardIndex);
 		return false;
 	}
 
@@ -188,8 +195,23 @@ export default class Game {
 		// ioServer.to(this.room).emit('game:tick', this.tick + 1);
 		if (this.tick >= this.nextTickDown) {
 			for (let index = 0; index < this.playerCount; index++) {
-				if (this.boards[index].tickDown() && this.spawnNextTetromino(index)) {
-					return true;
+				const completedLines = this.boards[index].tickDown();
+				if (completedLines >= 0 && !this.spawnNextTetromino(index)) {
+					return;
+				}
+				// Add blocked lines to the other player
+				if (this.playerCount > 1 && completedLines >= 2) {
+					for (let otherIndex = 0; otherIndex < this.playerCount; otherIndex++) {
+						if (
+							otherIndex != index &&
+							!this.boards[otherIndex].generateBlockedLine(completedLines - 1)
+						) {
+							this.gameOver(otherIndex);
+							return;
+						}
+						this.emitBoardUpdate(otherIndex);
+						this.emitPieceUpdate(otherIndex);
+					}
 				}
 				console.log(this.boards[index].repr());
 			}

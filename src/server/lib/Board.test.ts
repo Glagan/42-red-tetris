@@ -17,7 +17,6 @@ describe('Test Boad', () => {
 		expect(
 			board.bitboard.every((row) => row.every((column) => column == TetrominoType.None))
 		).toBeTruthy();
-		expect(board.deepOffset).toBe(0);
 	});
 
 	it('Can validate a line', () => {
