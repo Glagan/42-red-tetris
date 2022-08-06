@@ -18,7 +18,7 @@ if (browser) {
 	}
 	let username = localStorage.getItem('username');
 	if (username == null) {
-		username = 'Player' + Math.random().toString();
+		username = `Player#${getRandomInt(1000, 9999)}`;
 		localStorage.setItem('username', username);
 		UsernameStore.set(username);
 	}

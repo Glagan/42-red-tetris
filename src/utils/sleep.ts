@@ -1,7 +1,7 @@
-export default function (timeout: number): Promise<any> {
+export default function (duration: number): Promise<unknown> {
 	return new Promise((resolve) => {
 		setTimeout(() => {
 			resolve(true);
-		}, timeout);
+		}, duration);
 	});
 }

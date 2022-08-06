@@ -6,6 +6,16 @@ import PlayerManager from '$server/PlayerManager';
 import { ioServer } from '$server/lib/SocketIO';
 import useGameAPI from '$server/events/game';
 import useUserAPI from '$server/events/user';
+import ValidationError from '$server/lib/Errors/ValidationError';
+import { validatePayload } from '$server/lib/Validator';
+import { objectOf } from '@altostra/type-validations';
+import isValidID from '$server/lib/Validators/ID';
+import isValidName from '$server/lib/Validators/Name';
+
+type AuthPayload = {
+	token: string;
+	username?: string;
+};
 
 // * Auth middleware to check user tokens
 if (ioServer) {
@@ -18,6 +28,18 @@ if (ioServer) {
 				next(Error('Missing token in handshake'));
 			}
 
+			if (
+				!validatePayload(
+					{ token, username: socket.handshake.auth.username },
+					objectOf<AuthPayload>({
+						token: isValidID,
+						username: isValidName
+					})
+				)
+			) {
+				next(Error('Invalid handshake payload'));
+			}
+
 			const player = PlayerManager.get(token);
 			if (player) {
 				socket.data.player = player;
@@ -26,7 +48,15 @@ if (ioServer) {
 				socket.data.player = player;
 			}
 
-			next();
+			try {
+				next();
+			} catch (error) {
+				if (error instanceof ValidationError) {
+					console.log(`[${socket.id}]  validation error`);
+				} else {
+					console.error(error);
+				}
+			}
 		});
 	}
 
