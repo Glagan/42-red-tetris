@@ -28,6 +28,7 @@ if (browser) {
 		auth: { token, username }
 	});
 
+	let gameInterval = 0;
 	socket.on('connect', () => {
 		socket.emit('room:create', 'my room', (room) => {
 			if ('message' in room) {
@@ -45,19 +46,6 @@ if (browser) {
 				});
 			}
 		});
-
-		setInterval(() => {
-			const actions: (keyof ClientToServerEvents)[] = [
-				'game:rotate:clockwise',
-				'game:rotate:counter-clockwise',
-				'game:move:left',
-				'game:move:right'
-			];
-			const action = getRandomInt(0, actions.length);
-			socket.emit(actions[action], (ok: boolean) => {
-				console.log('move:right', ok);
-			});
-		}, 200);
 
 		// socket.emit('game:test');
 	});
@@ -87,12 +75,38 @@ if (browser) {
 		}
 	});
 
+	socket.on('room:gameCreated', () => {
+		console.log('game created');
+	});
+
+	socket.on('game:start', () => {
+		console.log('start !!');
+		gameInterval = setInterval(() => {
+			const actions: (keyof ClientToServerEvents)[] = [
+				'game:rotate:clockwise',
+				'game:rotate:counter-clockwise',
+				'game:move:left',
+				'game:move:right',
+				'game:dash'
+			];
+			const action = getRandomInt(0, actions.length);
+			socket.emit(actions[action], (ok: boolean) => {
+				console.log(actions[action], ok);
+			});
+		}, 200) as unknown as number;
+	});
+
 	socket.on('game:tick', (tick) => {
 		console.log('game:tick', tick);
 	});
 
 	socket.on('game:over', (winner) => {
 		console.log('game:over', winner);
+		clearInterval(gameInterval);
+	});
+
+	socket.on('game:startIn', (seconds) => {
+		console.log('game starts in', seconds, 'seconds');
 	});
 }
 

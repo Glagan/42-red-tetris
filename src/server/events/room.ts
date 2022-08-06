@@ -28,10 +28,10 @@ export default function useRoomAPI(socket: Socket<ClientToServerEvents, ServerTo
 		);
 
 		const roomName = name.trim();
-		if (!socket.player.room) {
+		if (!socket.data.player.room) {
 			const room = new Room(roomName);
-			socket.player.joinRoom(room);
-			socket.rooms.add(`room:${room.id}`);
+			socket.data.player.joinRoom(room);
+			socket.join(`room:${room.id}`);
 			RoomManager.addRoom(room);
 			if (callback) {
 				callback({
@@ -79,7 +79,7 @@ export default function useRoomAPI(socket: Socket<ClientToServerEvents, ServerTo
 	socket.on('room:join', (roomId, callback) => {
 		console.log(`[${socket.id}]  room:join`);
 
-		if (socket.player.room) {
+		if (socket.data.player.room) {
 			if (callback) {
 				callback({ message: 'You already are in a room' });
 			}
@@ -88,8 +88,8 @@ export default function useRoomAPI(socket: Socket<ClientToServerEvents, ServerTo
 
 		const room = RoomManager.getRoom(roomId);
 		if (room && !room.isFull() && !room.isPlaying()) {
-			socket.player.joinRoom(room);
-			socket.rooms.add(`room:${roomId}`);
+			socket.data.player.joinRoom(room);
+			socket.join(`room:${roomId}`);
 			if (callback) {
 				callback(room.toClient());
 			}
@@ -101,16 +101,16 @@ export default function useRoomAPI(socket: Socket<ClientToServerEvents, ServerTo
 	socket.on('room:leave', (callback: (success: boolean | BasicError) => void) => {
 		console.log(`[${socket.id}]  room:leave`);
 
-		if (socket.player.room?.isPlaying()) {
+		if (socket.data.player.room?.isPlaying()) {
 			if (callback) {
 				callback({ message: "You can't leave a room while a game is playing" });
 			}
 			return;
 		}
 
-		const previousRoom = socket.player.leaveCurrentRoom();
+		const previousRoom = socket.data.player.leaveCurrentRoom();
 		if (previousRoom) {
-			socket.rooms.delete(`room:${previousRoom.id}`);
+			socket.leave(`room:${previousRoom.id}`);
 		}
 		if (previousRoom) {
 			if (previousRoom.isEmpty()) {
@@ -123,7 +123,7 @@ export default function useRoomAPI(socket: Socket<ClientToServerEvents, ServerTo
 				if (callback) {
 					callback(false);
 				}
-				ioServer.emit('room:playerLeft', socket.player.toClient(), previousRoom.toClient());
+				ioServer.emit('room:playerLeft', socket.data.player.toClient(), previousRoom.toClient());
 			}
 		}
 	});
@@ -131,12 +131,12 @@ export default function useRoomAPI(socket: Socket<ClientToServerEvents, ServerTo
 	socket.on('room:ready', (callback) => {
 		console.log(`[${socket.id}]  room:leave`);
 
-		if (socket.player.room?.game && socket.player.room.winner < 0) {
+		if (socket.data.player.room?.game && socket.data.player.room.winner < 0) {
 			callback({ message: "A game is already in progress, you can't ready up" });
 		}
-		if (socket.player.room) {
-			const room = socket.player.room;
-			room.markPlayerAsReady(socket.player.id);
+		if (socket.data.player.room) {
+			const room = socket.data.player.room;
+			room.markPlayerAsReady(socket.data.player.id);
 			if (room.allPlayersReady()) {
 				room.createGame();
 				ioServer.to(`room:${room.id}`).emit('room:gameCreated');
@@ -144,11 +144,6 @@ export default function useRoomAPI(socket: Socket<ClientToServerEvents, ServerTo
 					callback(true);
 				}
 			}
-			setTimeout(() => {
-				if (room) {
-					room.startGame();
-				}
-			}, 5000);
 		} else if (callback) {
 			callback({ message: 'You are not currently in a room' });
 		}

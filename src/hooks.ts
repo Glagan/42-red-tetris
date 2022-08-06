@@ -20,11 +20,10 @@ if (ioServer) {
 
 			const player = PlayerManager.get(token);
 			if (player) {
-				player.refresh();
-				socket.player = player;
+				socket.data.player = player;
 			} else {
 				const player = PlayerManager.add(socket.id, token, socket.handshake.auth.username);
-				socket.player = player;
+				socket.data.player = player;
 			}
 
 			next();
@@ -45,9 +44,9 @@ if (ioServer) {
 		useGameAPI(socket);
 
 		socket.emit('room:all', rooms.all());
-		if (socket.player?.room) {
-			socket.rooms.add(`room:${socket.player.room.id}`);
-			socket.emit('room:current', socket.player.room.id);
+		if (socket.data.player?.room) {
+			socket.join(`room:${socket.data.player.room.id}`);
+			socket.emit('room:current', socket.data.player.room.id);
 		}
 	});
 }

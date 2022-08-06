@@ -2,6 +2,7 @@ import { nanoid } from 'nanoid';
 import type Player from '$server/lib/Player';
 import type { Room as ClientRoom } from '$client/lib/Room';
 import Game from './Game';
+import { ioServer } from './SocketIO';
 
 export default class Room {
 	id: string;
@@ -63,12 +64,24 @@ export default class Room {
 				this.playersIndex[player.id] = index;
 			}
 			this.winner = -1;
-			this.game = new Game(this.players.length);
+			this.game = new Game(`room:${this.id}`, this.players.length);
 			this.game.onCompletion = (winner) => {
 				this.winner = winner;
-				delete this.game;
+				ioServer.to(`room:${this.id}`).emit('game:over', this.winner);
 			};
 			this.ready = [];
+			// Start game after 5s
+			let count = 0;
+			const interval = setInterval(() => {
+				if (count == 5) {
+					clearInterval(interval);
+					ioServer.to(`room:${this.id}`).emit('game:start');
+					this.startGame();
+				} else {
+					ioServer.to(`room:${this.id}`).emit('game:startIn', 5 - count);
+				}
+				count += 1;
+			}, 1000);
 		}
 	}
 

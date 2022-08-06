@@ -19,6 +19,7 @@ export interface ClientToServerEvents {
 	'game:move:right': (callback?: (ok: boolean) => void) => void;
 	'game:rotate:clockwise': (callback?: (ok: boolean) => void) => void;
 	'game:rotate:counter-clockwise': (callback?: (ok: boolean) => void) => void;
+	'game:dash': (callback?: (ok: boolean) => void) => void;
 }
 
 export interface ServerToClientEvents {
@@ -31,6 +32,8 @@ export interface ServerToClientEvents {
 	'room:current': (roomId: string | null) => void;
 	'room:gameCreated': () => void;
 	// * Game
+	'game:startIn': (seconds: number) => void;
+	'game:start': () => void;
 	'game:tick': (tick: number) => void;
 	'game:over': (winner: number) => void;
 }

@@ -20,8 +20,8 @@ export default function useUserAPI(socket: Socket<ClientToServerEvents, ServerTo
 		);
 
 		username = username.trim();
-		if (!socket.player.room) {
-			socket.player.name = username;
+		if (!socket.data.player.room) {
+			socket.data.player.name = username;
 			callback(true);
 		} else {
 			callback({ message: "You can't change your username while in a room" });
