@@ -30,10 +30,8 @@ if (browser) {
 
 	let gameInterval = 0;
 	socket.on('connect', () => {
-		socket.emit('room:create', 'my room', (room) => {
-			if ('message' in room) {
-				console.log(room.message);
-			} else {
+		socket.emit('room:create', 'my room', (room, error) => {
+			if (room) {
 				currentRoom.set(room.id);
 				console.log('room', room);
 				// socket.emit('room:leave');
@@ -44,6 +42,8 @@ if (browser) {
 				socket.emit('room:ready', (success) => {
 					console.log('success?', success);
 				});
+			} else if (error) {
+				console.log(error.message);
 			}
 		});
 

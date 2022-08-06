@@ -3,7 +3,7 @@ import { validatePayload } from '$server/lib/Validator';
 import isValidName from '$server/lib/Validators/Name';
 import { objectOf } from '@altostra/type-validations';
 import type { Socket } from 'socket.io';
-import type { BasicError, ClientToServerEvents, ServerToClientEvents } from '../../socket';
+import type { ClientToServerEvents, ServerToClientEvents } from '../../socket';
 import isValidID from '$server/lib/Validators/ID';
 import RoomManager from '$server/RoomManager';
 import { ioServer } from '$server/lib/SocketIO';
@@ -50,7 +50,7 @@ export default function useRoomAPI(socket: Socket<ClientToServerEvents, ServerTo
 			}
 			ioServer.emit('room:created', room.toClient());
 		} else if (callback) {
-			callback({ message: 'You already are in a room' });
+			callback(null, { message: 'You already are in a room' });
 		}
 	});
 
@@ -86,7 +86,7 @@ export default function useRoomAPI(socket: Socket<ClientToServerEvents, ServerTo
 
 		if (socket.data.player.room) {
 			if (callback) {
-				callback({ message: 'You already are in a room' });
+				callback(null, { message: 'You already are in a room' });
 			}
 			return;
 		}
@@ -99,16 +99,16 @@ export default function useRoomAPI(socket: Socket<ClientToServerEvents, ServerTo
 				callback(room.toClient());
 			}
 		} else if (callback) {
-			callback({ message: 'The room is full or already in a game' });
+			callback(null, { message: 'The room is full or already in a game' });
 		}
 	});
 
-	socket.on('room:leave', (callback: (success: boolean | BasicError) => void) => {
+	socket.on('room:leave', (callback) => {
 		console.log(`[${socket.id}]  room:leave`);
 
 		if (socket.data.player.room?.isPlaying()) {
 			if (callback) {
-				callback({ message: "You can't leave a room while a game is playing" });
+				callback(false, { message: "You can't leave a room while a game is playing" });
 			}
 			return;
 		}
@@ -137,7 +137,10 @@ export default function useRoomAPI(socket: Socket<ClientToServerEvents, ServerTo
 		console.log(`[${socket.id}]  room:leave`);
 
 		if (socket.data.player.room?.game && socket.data.player.room.winner < 0) {
-			callback({ message: "A game is already in progress, you can't ready up" });
+			if (callback) {
+				callback(false, { message: "A game is already in progress, you can't ready up" });
+			}
+			return;
 		}
 		if (socket.data.player.room) {
 			const room = socket.data.player.room;
@@ -150,7 +153,7 @@ export default function useRoomAPI(socket: Socket<ClientToServerEvents, ServerTo
 				}
 			}
 		} else if (callback) {
-			callback({ message: 'You are not currently in a room' });
+			callback(false, { message: 'You are not currently in a room' });
 		}
 	});
 

@@ -7,15 +7,52 @@ export type BasicError = { message: string };
 
 export interface ClientToServerEvents {
 	// * Player
-	'set:username': (username: string, callback: (success: boolean | BasicError) => void) => void;
+	'set:username': (
+		username: string,
+		callback: <T extends boolean, E extends T extends false ? BasicError : null>(
+			success: T,
+			error?: E
+		) => void
+	) => void;
 	// * Room
 	'room:getAll': (callback: (rooms: Room[]) => void) => void;
-	'room:get': (roomId: string, callback: (room: Room | BasicError | null) => void) => void;
-	'room:create': (name: string, callback: (room: Room | BasicError) => void) => void;
-	'room:join': (roomId: string, callback: (room: Room | BasicError | null) => void) => void;
-	'room:leave': (callback: (success: boolean | BasicError) => void) => void;
-	'room:ready': (callback: (success: boolean | BasicError) => void) => void;
-	'room:search': (query: string, callback: (rooms: Room[] | BasicError) => void) => void;
+	'room:get': (
+		roomId: string,
+		callback: <T extends Room | null, E extends T extends null ? BasicError : null>(
+			room: T,
+			error?: E
+		) => void
+	) => void;
+	'room:create': (
+		name: string,
+		callback: <T extends Room | null, E extends T extends null ? BasicError : null>(
+			room: T,
+			error?: E
+		) => void
+	) => void;
+	'room:join': (
+		roomId: string,
+		callback: <T extends Room | null, E extends T extends null ? BasicError : null>(
+			room: T,
+			error?: E
+		) => void
+	) => void;
+	'room:leave': (
+		callback: <T extends boolean, E extends T extends false ? BasicError : null>(
+			success: T,
+			error?: E
+		) => void
+	) => void;
+	'room:ready': (
+		callback: <T extends boolean, E extends T extends false ? BasicError : null>(
+			success: T,
+			error?: E
+		) => void
+	) => void;
+	'room:search': (
+		query: string,
+		callback: (rooms: Room[], error?: BasicError | null) => void
+	) => void;
 	// * Game
 	'game:test': () => void;
 	'game:move:left': (callback?: (ok: boolean) => void) => void;

@@ -24,7 +24,7 @@ export default function useUserAPI(socket: Socket<ClientToServerEvents, ServerTo
 			socket.data.player.name = username;
 			callback(true);
 		} else {
-			callback({ message: "You can't change your username while in a room" });
+			callback(false, { message: "You can't change your username while in a room" });
 		}
 	});
 }
