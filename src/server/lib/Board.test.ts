@@ -1,5 +1,5 @@
 import Board, { COLUMNS, MoveDirection, RotationDirection, ROWS } from './Board';
-import { TetrominoType } from './Tetrominoes/Tetromino';
+import { TetrominoType } from '$shared/Tetromino';
 import TetrominoI from './Tetrominoes/TetrominoI';
 import TetrominoJ from './Tetrominoes/TetrominoJ';
 import TetrominoL from './Tetrominoes/TetrominoL';

@@ -1,5 +1,5 @@
 import chalk from 'chalk';
-import { TetrominoType } from './Tetrominoes/Tetromino';
+import { TetrominoType } from '$shared/Tetromino';
 import type Tetromino from './Tetrominoes/Tetromino';
 
 export const ROWS = 20;

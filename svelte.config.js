@@ -22,7 +22,8 @@ const config = {
 			$client: 'src/client',
 			'$client/lib': 'src/client/lib',
 			$stores: 'src/client/stores',
-			$utils: 'src/utils'
+			$utils: 'src/utils',
+			$shared: 'src/shared'
 		}
 	}
 };

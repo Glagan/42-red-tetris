@@ -6,7 +6,7 @@
 
 	function joinRoom(roomId: string) {
 		socket.emit('room:join', roomId, (room) => {
-			console.log('joined room', room);
+			console.log('joined room ?', room);
 			if (room && !('message' in room)) {
 				$currentRoom = room.id;
 			} else {
@@ -16,8 +16,11 @@
 	}
 
 	function leaveRoom(roomId: string) {
-		socket.emit('room:leave');
-		$currentRoom = '';
+		socket.emit('room:leave', (success) => {
+			if (success === true) {
+				$currentRoom = '';
+			}
+		});
 	}
 </script>
 

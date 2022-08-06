@@ -67,7 +67,6 @@ export default class Room {
 			this.game = new Game(`room:${this.id}`, this.players.length);
 			this.game.onCompletion = (winner) => {
 				this.winner = winner;
-				ioServer.to(`room:${this.id}`).emit('game:over', this.winner);
 			};
 			this.ready = [];
 			// Start game after 5s

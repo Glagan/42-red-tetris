@@ -108,6 +108,14 @@ if (browser) {
 	socket.on('game:startIn', (seconds) => {
 		console.log('game starts in', seconds, 'seconds');
 	});
+
+	socket.on('game:piece', (piece) => {
+		console.log('received game piece', piece);
+	});
+
+	socket.on('game:board', (board) => {
+		console.log('received game board', board);
+	});
 }
 
 /// @ts-expect-error It is defined when used in browsert moe

@@ -1,9 +1,5 @@
-import Tetromino, {
-	GenerateTetromino,
-	JLTSZWallkicks,
-	TetrominoType,
-	type Wallkicks
-} from './Tetromino';
+import { TetrominoType } from '$shared/Tetromino';
+import Tetromino, { GenerateTetromino, JLTSZWallkicks, type Wallkicks } from './Tetromino';
 
 export default class TetrominoJ extends Tetromino {
 	static wallKicks: Wallkicks = JLTSZWallkicks();

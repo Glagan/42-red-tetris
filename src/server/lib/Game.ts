@@ -1,7 +1,7 @@
 // @ts-expect-error Huh ? File '.../node_modules/accurate-game-loop/index.ts' is not a module. ts(2306)
 import { default as Loop } from 'accurate-game-loop';
 import Board, { MoveDirection, RotationDirection } from './Board';
-import { TetrominoType } from './Tetrominoes/Tetromino';
+import { TetrominoType } from '$shared/Tetromino';
 import type Tetromino from './Tetrominoes/Tetromino';
 import TetrominoI from './Tetrominoes/TetrominoI';
 import TetrominoJ from './Tetrominoes/TetrominoJ';
@@ -104,17 +104,46 @@ export default class Game {
 		}
 	}
 
+	emitBoardUpdate(index: number) {
+		ioServer.to(this.room).emit('game:board', {
+			player: index,
+			board: this.boards[index].bitboard
+		});
+	}
+
+	emitPieceUpdate(index: number) {
+		if (this.boards[index].movingTetromino) {
+			// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+			const tetromino = this.boards[index].movingTetromino!;
+			ioServer.to(this.room).emit('game:piece', {
+				player: index,
+				x: tetromino.offset[0],
+				y: tetromino.offset[1],
+				type: tetromino.type,
+				matrix: tetromino.matrix
+			});
+		}
+	}
+
 	start() {
 		this.paused = false;
 		this.loop.start();
 	}
 
 	move(index: number, direction: MoveDirection) {
-		return this.boards[index].move(direction);
+		const ok = this.boards[index].move(direction);
+		if (ok) {
+			this.emitPieceUpdate(index);
+		}
+		return ok;
 	}
 
 	rotate(index: number, direction: RotationDirection) {
-		return this.boards[index].rotateWithWallKicks(direction);
+		const ok = this.boards[index].rotateWithWallKicks(direction);
+		if (ok) {
+			this.emitPieceUpdate(index);
+		}
+		return ok;
 	}
 
 	dash(index: number) {
@@ -137,10 +166,14 @@ export default class Game {
 		if (this.boards[boardIndex].canSpawnTetromino(nextTetromino)) {
 			this.boards[boardIndex].spawnTetromino(nextTetromino);
 			this.addRandomTetrominoToBags();
+			this.emitBoardUpdate(boardIndex);
+			this.emitPieceUpdate(boardIndex);
 		} else {
+			this.emitBoardUpdate(boardIndex);
 			this.stop();
 			this.winner = boardIndex + 1;
 			ioServer.to(this.room).emit('game:over', this.winner);
+			console.log('loser', this.boards[boardIndex].repr());
 			this.onCompletion?.(this.winner);
 			return true;
 		}
@@ -150,16 +183,13 @@ export default class Game {
 	/**
 	 * Run every ~16.6667ms
 	 */
-	async onTick(deltaMs: number) {
-		console.log('tick', deltaMs, this.tick, this.nextTickDown);
-		ioServer.to(this.room).emit('game:tick', this.tick + 1);
+	async onTick(/* deltaMs: number */) {
+		// console.log('tick', deltaMs, this.tick, this.nextTickDown);
+		// ioServer.to(this.room).emit('game:tick', this.tick + 1);
 		if (this.tick >= this.nextTickDown) {
 			for (let index = 0; index < this.playerCount; index++) {
-				if (this.boards[index].tickDown()) {
-					if (this.spawnNextTetromino(index)) {
-						console.log('loser', this.boards[index].repr());
-						return true;
-					}
+				if (this.boards[index].tickDown() && this.spawnNextTetromino(index)) {
+					return true;
 				}
 				console.log(this.boards[index].repr());
 			}

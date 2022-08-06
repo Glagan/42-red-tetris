@@ -1,3 +1,5 @@
+import type GameBoard from '$client/lib/GameBoard';
+import type GamePiece from '$client/lib/GamePiece';
 import type Player from '$client/lib/Player';
 import type Room from '$client/lib/Room';
 
@@ -36,4 +38,6 @@ export interface ServerToClientEvents {
 	'game:start': () => void;
 	'game:tick': (tick: number) => void;
 	'game:over': (winner: number) => void;
+	'game:piece': (piece: GamePiece) => void;
+	'game:board': (board: GameBoard) => void;
 }
