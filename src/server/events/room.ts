@@ -224,9 +224,12 @@ export default function useRoomAPI(socket: TypedSocket) {
 		for (const room of RoomManager.rooms) {
 			for (const part of parts) {
 				if (
-					room.name.indexOf(part) >= 0 ||
-					room.id === part ||
-					room.players.findIndex((player) => player.id === part || player.name.indexOf(part) >= 0)
+					part != '' &&
+					(room.name.indexOf(part) >= 0 ||
+						room.id === part ||
+						room.players.findIndex(
+							(player) => player.id === part || player.name.indexOf(part) >= 0
+						) >= 0)
 				) {
 					results.push(room);
 					break;

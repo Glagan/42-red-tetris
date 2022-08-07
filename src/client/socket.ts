@@ -47,6 +47,16 @@ if (browser) {
 			}
 		}); */
 
+		socket.emit('room:create', 'Cool cat', (room) => {
+			console.log('created?', room != null);
+		});
+		socket.emit('room:create', 'Ben bean', (room) => {
+			console.log('created?', room != null);
+		});
+		socket.emit('room:create', 'Francois', (room) => {
+			console.log('created?', room != null);
+		});
+
 		socket.emit(
 			'set:username',
 			'riuwerwerwruuiruiwuiruiriuwerwerwruuiruiwuiruiriuwerwerwruuiruiwuiruiriuwerwerwruuiruiwuiruiriuwerwerwruuiruiwuirui',
@@ -54,6 +64,18 @@ if (browser) {
 				console.log('set username?', ok);
 			}
 		);
+
+		socket.emit('room:search', 'room', (rooms) => {
+			console.log('room', rooms);
+		});
+
+		socket.emit('room:search', 'ben', (rooms) => {
+			console.log('ben', rooms);
+		});
+
+		socket.emit('room:search', 'cat', (rooms) => {
+			console.log('cat', rooms);
+		});
 
 		// socket.emit('game:test');
 	});
