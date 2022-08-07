@@ -1,7 +1,9 @@
+import type Player from '$server/lib/Player';
 import type Room from '$server/lib/Room';
 
 export class RoomManager {
 	rooms: Room[] = [];
+	matchmaking: Player[] = [];
 
 	all() {
 		return this.rooms.map((room) => room.toClient());
@@ -25,6 +27,27 @@ export class RoomManager {
 		if (index >= 0) {
 			this.rooms.splice(index, 1);
 		}
+	}
+
+	playerIsInMatchmaking(playerId: string) {
+		return this.matchmaking.findIndex((player) => player.id == playerId) >= 0;
+	}
+
+	findOpponent(playerId: string) {
+		return this.matchmaking.find((player) => player.id != playerId);
+	}
+
+	addPlayerToMatchmaking(player: Player) {
+		this.matchmaking.push(player);
+	}
+
+	removePlayerFromMatchmaking(playerId: string) {
+		const index = this.matchmaking.findIndex((player) => player.id == playerId);
+		if (index >= 0) {
+			this.matchmaking.splice(index, 1);
+			return true;
+		}
+		return false;
 	}
 }
 const manager = new RoomManager();
