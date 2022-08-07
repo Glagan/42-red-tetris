@@ -39,7 +39,7 @@
 				if (room != null) {
 					CurrentRoomStore.set(room);
 					NotificationStore.push({ id: uuidv4(), message: 'room joined', error: false });
-					goto('/matchmaking');
+					goto('/room');
 				} else {
 					NotificationStore.push({
 						id: uuidv4(),

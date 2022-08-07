@@ -30,12 +30,12 @@
 		{/if}
 		{#if show_username && show_room}
 			<p class="absolute right-4 -top-[11px]">
-				{$UsernameStore}&nbsp;<span class="text-neutral-500">@{$CurrentRoomStore?.name}</span>
+				{$CurrentRoomStore?.name}&nbsp;<span class="text-neutral-500">@{$UsernameStore}</span>
 			</p>
 		{:else if show_username}
 			<p class="absolute text-neutral-500 right-4 -top-[11px]">@{$UsernameStore}</p>
 		{:else if show_room}
-			<p class="absolute text-neutral-500 right-4 -top-[11px]">Room: {$CurrentRoomStore}</p>
+			<p class="absolute text-neutral-500 right-4 -top-[11px]">Room: {$CurrentRoomStore?.name}</p>
 		{/if}
 		<slot />
 	</div>

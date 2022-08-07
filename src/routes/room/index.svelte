@@ -66,18 +66,34 @@
 			loading = false;
 		});
 	}
+
+	function handle_ready() {
+		loading = true;
+		Socket.emit('room:ready', (new_ready: boolean, error: BasicError | null | undefined) => {
+			if (error != null && error != undefined) {
+				NotificationStore.push({ id: uuidv4(), message: error.message, error: true });
+			} else {
+				ready = new_ready;
+				NotificationStore.push({
+					id: uuidv4(),
+					message: (new_ready ? '' : 'not ') + 'ready',
+					error: false
+				});
+			}
+			loading = false;
+		});
+	}
 </script>
 
 <!-- ========================= HTML -->
-<CentralBox title="Room" {loading} show_room show_username>
-	<h1>{$CurrentRoomStore?.players.length}</h1>
+<CentralBox title="Room" {loading} show_room>
 	<p class="mt-3">{start_message}</p>
 	<p class="text-neutral-400 mt-7">{tips[0]}</p>
-	<div class="flex justify-between mt-6">
+	<div class="button-container flex justify-between mt-6">
 		<div>
 			<p>
 				{#if opponent_username != null}
-					opponent_username
+					@{opponent_username}
 				{:else}
 					<ThreePoints bind:waiting_time />
 				{/if}
@@ -92,11 +108,20 @@
 		</div>
 		<div>
 			<p>
-				<span class="underline underline-offset-1">toto</span>&nbsp;<span class="text-neutral-500"
-					>(you)</span
-				>
+				@{$UsernameStore}&nbsp;<span class="text-neutral-500">(you)</span>
 			</p>
-			<button class="mt-2" class:off={!ready}>Ready</button>
+			<button class="mt-2" class:off={!ready} on:click={handle_ready}>Ready</button>
 		</div>
 	</div>
 </CentralBox>
+
+<!-- ========================= CSS -->
+<style lang="postcss">
+	.button-container > div {
+		@apply overflow-hidden basis-0 flex-grow-[1];
+	}
+
+	.button-container > div > p {
+		@apply truncate;
+	}
+</style>
