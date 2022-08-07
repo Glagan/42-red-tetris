@@ -1,9 +1,8 @@
-import type { Socket } from 'socket.io';
-import type { ClientToServerEvents, ServerToClientEvents } from '../../socket';
+import type { TypedSocket } from '../../socket';
 import Game from '$server/lib/Game';
 import { MoveDirection, RotationDirection } from '$server/lib/Board';
 
-export default function useGameAPI(socket: Socket<ClientToServerEvents, ServerToClientEvents>) {
+export default function useGameAPI(socket: TypedSocket) {
 	socket.on('game:test', () => {
 		console.log(`[${socket.id}]  game:test`);
 		const game = new Game(`room:test`, 1);
@@ -12,6 +11,12 @@ export default function useGameAPI(socket: Socket<ClientToServerEvents, ServerTo
 
 	socket.on('game:move:left', (callback) => {
 		console.log(`[${socket.id}]  game:move:left`);
+
+		if (!socket.data.player) {
+			if (callback) callback(false);
+			return;
+		}
+
 		const room = socket.data.player.room;
 		if (room && room.game && !room.game.paused) {
 			const index = room.playersIndex[socket.data.player.id];
@@ -27,6 +32,12 @@ export default function useGameAPI(socket: Socket<ClientToServerEvents, ServerTo
 
 	socket.on('game:move:right', (callback) => {
 		console.log(`[${socket.id}]  game:move:right`);
+
+		if (!socket.data.player) {
+			if (callback) callback(false);
+			return;
+		}
+
 		const room = socket.data.player.room;
 		if (room && room.game && !room.game.paused) {
 			const index = room.playersIndex[socket.data.player.id];
@@ -42,6 +53,12 @@ export default function useGameAPI(socket: Socket<ClientToServerEvents, ServerTo
 
 	socket.on('game:rotate:clockwise', (callback) => {
 		console.log(`[${socket.id}]  game:rotate:clockwise`);
+
+		if (!socket.data.player) {
+			if (callback) callback(false);
+			return;
+		}
+
 		const room = socket.data.player.room;
 		if (room && room.game && !room.game.paused) {
 			const index = room.playersIndex[socket.data.player.id];
@@ -57,6 +74,12 @@ export default function useGameAPI(socket: Socket<ClientToServerEvents, ServerTo
 
 	socket.on('game:rotate:counter-clockwise', (callback) => {
 		console.log(`[${socket.id}]  game:rotate:counter-clockwise`);
+
+		if (!socket.data.player) {
+			if (callback) callback(false);
+			return;
+		}
+
 		const room = socket.data.player.room;
 		if (room && room.game && !room.game.paused) {
 			const index = room.playersIndex[socket.data.player.id];
@@ -72,6 +95,12 @@ export default function useGameAPI(socket: Socket<ClientToServerEvents, ServerTo
 
 	socket.on('game:dash', (callback) => {
 		console.log(`[${socket.id}]  game:dash`);
+
+		if (!socket.data.player) {
+			if (callback) callback(false);
+			return;
+		}
+
 		const room = socket.data.player.room;
 		if (room && room.game && !room.game.paused) {
 			const index = room.playersIndex[socket.data.player.id];

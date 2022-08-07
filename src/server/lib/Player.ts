@@ -1,11 +1,13 @@
 import { nanoid } from 'nanoid';
 import type Room from '$server/lib/Room';
 import type { Player as ClientPlayer } from '$client/lib/Player';
+import type { TypedSocket } from '../../socket';
 
 export default class Player {
 	id: string;
 	name: string;
 	room?: Room;
+	socket?: TypedSocket;
 
 	constructor(name: string) {
 		this.id = nanoid();

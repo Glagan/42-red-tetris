@@ -1,6 +1,4 @@
-import type { Server } from 'socket.io';
-import type { ClientToServerEvents, ServerToClientEvents } from 'src/socket';
+import type { SocketServer } from '../../socket';
 
-export const ioServer = (
-	global as unknown as { io: Server<ClientToServerEvents, ServerToClientEvents> }
-).io;
+/* c8 ignore next */
+export const ioServer = (global as unknown as { io: SocketServer }).io;

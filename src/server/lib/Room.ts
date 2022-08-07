@@ -18,12 +18,19 @@ export default class Room {
 		this.name = name;
 		this.players = [];
 		this.ready = [];
-		this.winner = 0;
+		this.winner = -1;
 		this.playersIndex = {};
 	}
 
 	addPlayer(player: Player) {
-		this.players.push(player);
+		if (
+			this.players.length < 2 &&
+			this.players.findIndex((playerInRoom) => playerInRoom.id == player.id) < 0
+		) {
+			this.players.push(player);
+			return true;
+		}
+		return false;
 	}
 
 	removePlayer(playerId: string) {
@@ -45,19 +52,27 @@ export default class Room {
 		return this.players.length === 0;
 	}
 
-	markPlayerAsReady(playerId: string) {
+	togglePlayerAsReady(playerId: string) {
 		const index = this.players.findIndex((player) => player.id === playerId);
 		if (index >= 0) {
-			this.ready.push(playerId);
+			const readyIndex = this.ready.indexOf(playerId);
+			if (readyIndex >= 0) {
+				this.ready.splice(readyIndex, 1);
+				return false;
+			} else {
+				this.ready.push(playerId);
+				return true;
+			}
 		}
+		return false;
 	}
 
 	allPlayersReady() {
-		return this.players.length == this.ready.length;
+		return this.players.length > 0 && this.players.length == this.ready.length;
 	}
 
 	createGame() {
-		if (this.players.length > 0) {
+		if (this.allPlayersReady()) {
 			this.playersIndex = {};
 			for (let index = 0; index < this.players.length; index++) {
 				const player = this.players[index];
@@ -72,7 +87,7 @@ export default class Room {
 			// Start game after 5s
 			let count = 0;
 			const interval = setInterval(() => {
-				if (count == 5) {
+				if (this.game?.paused === false || count == 5) {
 					clearInterval(interval);
 					ioServer.to(`room:${this.id}`).emit('game:start');
 					this.startGame();
@@ -85,13 +100,29 @@ export default class Room {
 	}
 
 	startGame() {
-		if (this.game) {
+		if (this.game && this.game.paused) {
 			this.game.start();
 		}
 	}
 
+	stopGame() {
+		if (this.game && !this.game.paused) {
+			this.game.stop();
+		}
+	}
+
+	pauseGame() {
+		return this.stopGame();
+	}
+
+	/**
+	 * Check if a game exist for the rooom and is not over
+	 * It does *not* check if the game is actually "playing",
+	 * meaning that it returns true when the game still show "Starting in X seconds"
+	 * @returns true if a game exist and is not over
+	 */
 	isPlaying() {
-		return this.game && this.winner < 0;
+		return this.game !== undefined && this.winner < 0;
 	}
 
 	toClient(): ClientRoom {

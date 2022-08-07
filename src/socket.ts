@@ -2,57 +2,38 @@ import type GameBoard from '$client/lib/GameBoard';
 import type GamePiece from '$client/lib/GamePiece';
 import type Player from '$client/lib/Player';
 import type Room from '$client/lib/Room';
+import type { Server, Socket } from 'socket.io';
+import type { DefaultEventsMap } from 'socket.io/dist/typed-events';
 
 export type BasicError = { message: string };
 
+export type SuccessWithError = <T extends boolean, E extends T extends false ? BasicError : null>(
+	success: T,
+	error?: E
+) => void;
+
+export type ValueWithError<T> = <E extends T extends null ? BasicError : null>(
+	room: T,
+	error?: E
+) => void;
+
 export interface ClientToServerEvents {
 	// * Player
-	'set:username': (
-		username: string,
-		callback: <T extends boolean, E extends T extends false ? BasicError : null>(
-			success: T,
-			error?: E
-		) => void
-	) => void;
+	'set:username': (username: string, callback: SuccessWithError) => void;
 	// * Room
 	'room:getAll': (callback: (rooms: Room[]) => void) => void;
-	'room:get': (
-		roomId: string,
-		callback: <T extends Room | null, E extends T extends null ? BasicError : null>(
-			room: T,
-			error?: E
-		) => void
-	) => void;
-	'room:create': (
-		name: string,
-		callback: <T extends Room | null, E extends T extends null ? BasicError : null>(
-			room: T,
-			error?: E
-		) => void
-	) => void;
-	'room:join': (
-		roomId: string,
-		callback: <T extends Room | null, E extends T extends null ? BasicError : null>(
-			room: T,
-			error?: E
-		) => void
-	) => void;
-	'room:leave': (
-		callback: <T extends boolean, E extends T extends false ? BasicError : null>(
-			success: T,
-			error?: E
-		) => void
-	) => void;
-	'room:ready': (
-		callback: <T extends boolean, E extends T extends false ? BasicError : null>(
-			success: T,
-			error?: E
-		) => void
-	) => void;
+	'room:get': (roomId: string, callback: ValueWithError<Room | null>) => void;
+	'room:create': (name: string, callback: ValueWithError<Room | null>) => void;
+	'room:join': (roomId: string, callback: ValueWithError<Room | null>) => void;
+	'room:leave': (callback: SuccessWithError) => void;
+	'room:ready': (callback: SuccessWithError) => void;
 	'room:search': (
 		query: string,
 		callback: (rooms: Room[], error?: BasicError | null) => void
 	) => void;
+	// * Matchmaking
+	'matchmaking:join': (callback: SuccessWithError) => void;
+	'matchmaking:leave': (callback: SuccessWithError) => void;
 	// * Game
 	'game:test': () => void;
 	'game:move:left': (callback?: (ok: boolean) => void) => void;
@@ -71,6 +52,8 @@ export interface ServerToClientEvents {
 	'room:deleted': (roomId: string) => void;
 	'room:current': (roomId: string | null) => void;
 	'room:gameCreated': () => void;
+	// * Matchmaking
+	'matchmaking:found': (room: Room) => void;
 	// * Game
 	'game:startIn': (seconds: number) => void;
 	'game:start': () => void;
@@ -79,3 +62,21 @@ export interface ServerToClientEvents {
 	'game:piece': (piece: GamePiece) => void;
 	'game:board': (board: GameBoard) => void;
 }
+
+interface SocketData {
+	player: import('$server/lib/Player').default;
+}
+
+export type TypedSocket = Socket<
+	ClientToServerEvents,
+	ServerToClientEvents,
+	DefaultEventsMap,
+	NonNullable<SocketData>
+>;
+
+export type SocketServer = Server<
+	ClientToServerEvents,
+	ServerToClientEvents,
+	DefaultEventsMap,
+	NonNullable<SocketData>
+>;

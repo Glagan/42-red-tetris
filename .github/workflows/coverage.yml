@@ -1,20 +1,26 @@
 name: Coverage Tests
 on:
+  workflow_dispatch:
+    inputs:
+      reason:
+        description: Reason for the Workflow dispatch
+        required: false
   push:
     branches: [main, master]
   pull_request:
     branches: [main, master]
 jobs:
   test:
-    timeout-minutes: 60
+    timeout-minutes: 5
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v2
         with:
           node-version: '16.x'
+          cache: 'yarn'
       - name: Install dependencies
-        run: yarn
+        run: yarn --frozen-lockfile
       - name: Run Coverage tests
         run: yarn run coverage
       - uses: actions/upload-artifact@v2

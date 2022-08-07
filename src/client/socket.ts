@@ -30,7 +30,7 @@ if (browser) {
 
 	let gameInterval = 0;
 	socket.on('connect', () => {
-		socket.emit('room:create', 'my room', (room, error) => {
+		/* socket.emit('room:create', 'my room', (room, error) => {
 			if (room) {
 				currentRoom.set(room.id);
 				console.log('room', room);
@@ -45,6 +45,36 @@ if (browser) {
 			} else if (error) {
 				console.log(error.message);
 			}
+		}); */
+
+		socket.emit('room:create', 'Cool cat', (room) => {
+			console.log('created?', room != null);
+		});
+		socket.emit('room:create', 'Ben bean', (room) => {
+			console.log('created?', room != null);
+		});
+		socket.emit('room:create', 'Francois', (room) => {
+			console.log('created?', room != null);
+		});
+
+		socket.emit(
+			'set:username',
+			'riuwerwerwruuiruiwuiruiriuwerwerwruuiruiwuiruiriuwerwerwruuiruiwuiruiriuwerwerwruuiruiwuiruiriuwerwerwruuiruiwuirui',
+			(ok) => {
+				console.log('set username?', ok);
+			}
+		);
+
+		socket.emit('room:search', 'room', (rooms) => {
+			console.log('room', rooms);
+		});
+
+		socket.emit('room:search', 'ben', (rooms) => {
+			console.log('ben', rooms);
+		});
+
+		socket.emit('room:search', 'cat', (rooms) => {
+			console.log('cat', rooms);
 		});
 
 		// socket.emit('game:test');
