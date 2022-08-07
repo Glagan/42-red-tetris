@@ -169,7 +169,7 @@ export default function useRoomAPI(socket: TypedSocket) {
 			}
 
 			const room = socket.data.player.room;
-			room.markPlayerAsReady(socket.data.player.id);
+			room.togglePlayerAsReady(socket.data.player.id);
 			if (room.allPlayersReady()) {
 				room.createGame();
 				ioServer.to(`room:${room.id}`).emit('room:gameCreated');
@@ -198,8 +198,8 @@ export default function useRoomAPI(socket: TypedSocket) {
 			for (const part of parts) {
 				if (
 					room.name.indexOf(part) >= 0 ||
-					room.id == part ||
-					room.players.findIndex((player) => player.id == part || player.name.indexOf(part) >= 0)
+					room.id === part ||
+					room.players.findIndex((player) => player.id === part || player.name.indexOf(part) >= 0)
 				) {
 					results.push(room);
 					break;
