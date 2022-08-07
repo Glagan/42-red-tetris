@@ -126,6 +126,7 @@ export default function useRoomAPI(socket: TypedSocket) {
 			if (callback) {
 				callback(room.toClient());
 			}
+			ioServer.emit('room:playerJoined', socket.data.player.toClient(), room.toClient());
 		} else if (callback) {
 			callback(null, { message: 'The room is full or already in a game' });
 		}
