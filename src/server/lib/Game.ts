@@ -105,16 +105,14 @@ export default class Game {
 	}
 
 	emitBoardUpdate(index: number) {
-		if (ioServer) {
-			ioServer.to(this.room).emit('game:board', {
-				player: index,
-				board: this.boards[index].bitboard
-			});
-		}
+		ioServer.to(this.room).emit('game:board', {
+			player: index,
+			board: this.boards[index].bitboard
+		});
 	}
 
 	emitPieceUpdate(index: number) {
-		if (ioServer && this.boards[index].movingTetromino) {
+		if (this.boards[index].movingTetromino) {
 			// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 			const tetromino = this.boards[index].movingTetromino!;
 			ioServer.to(this.room).emit('game:piece', {
@@ -165,9 +163,7 @@ export default class Game {
 		} else {
 			this.winner = (loserBoardIndex + 1) % 2;
 		}
-		if (ioServer) {
-			ioServer.to(this.room).emit('game:over', this.winner);
-		}
+		ioServer.to(this.room).emit('game:over', this.winner);
 		console.log('loser');
 		console.log(this.boards[loserBoardIndex].repr());
 		this.onCompletion?.(this.winner);

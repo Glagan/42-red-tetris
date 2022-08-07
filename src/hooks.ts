@@ -18,67 +18,65 @@ type AuthPayload = {
 };
 
 // * Auth middleware to check user tokens
-if (ioServer) {
-	let bindMiddleware = false;
-	if (!bindMiddleware) {
-		bindMiddleware = true;
-		ioServer.use((socket, next) => {
-			const token = socket.handshake.auth.token;
-			if (!token) {
-				next(Error('Missing token in handshake'));
-			}
-
-			if (
-				!validatePayload(
-					{ token, username: socket.handshake.auth.username },
-					objectOf<AuthPayload>({
-						token: isValidID,
-						username: isValidName
-					})
-				)
-			) {
-				next(Error('Invalid handshake payload'));
-			}
-
-			const player = PlayerManager.get(token);
-			if (player) {
-				player.socket = socket;
-				socket.data.player = player;
-			} else {
-				const player = PlayerManager.add(socket.id, token, socket.handshake.auth.username);
-				player.socket = socket;
-				socket.data.player = player;
-			}
-
-			next();
-		});
-	}
-
-	ioServer.removeAllListeners('connection'); // Debug
-	ioServer.on('connection', (socket) => {
-		console.log(`[${socket.id}]  on:connection`);
-
-		socket.on('disconnect', () => {
-			console.log(`[${socket.id}]  on:disconnect`);
-			if (socket.data.player) {
-				RoomManager.removePlayerFromMatchmaking(socket.data.player.id);
-				socket.data.player.socket = undefined;
-			}
-			PlayerManager.removeSocket(socket.id);
-		});
-
-		useUserAPI(socket);
-		useRoomAPI(socket);
-		useMatchmakingAPI(socket);
-		useGameAPI(socket);
-
-		socket.emit('room:all', RoomManager.all());
-		if (socket.data.player?.room) {
-			socket.join(`room:${socket.data.player.room.id}`);
-			socket.emit('room:current', socket.data.player.room.id);
+let bindMiddleware = false;
+if (!bindMiddleware) {
+	bindMiddleware = true;
+	ioServer.use((socket, next) => {
+		const token = socket.handshake.auth.token;
+		if (!token) {
+			next(Error('Missing token in handshake'));
 		}
+
+		if (
+			!validatePayload(
+				{ token, username: socket.handshake.auth.username },
+				objectOf<AuthPayload>({
+					token: isValidID,
+					username: isValidName
+				})
+			)
+		) {
+			next(Error('Invalid handshake payload'));
+		}
+
+		const player = PlayerManager.get(token);
+		if (player) {
+			player.socket = socket;
+			socket.data.player = player;
+		} else {
+			const player = PlayerManager.add(socket.id, token, socket.handshake.auth.username);
+			player.socket = socket;
+			socket.data.player = player;
+		}
+
+		next();
 	});
 }
+
+ioServer.removeAllListeners('connection'); // Debug
+ioServer.on('connection', (socket) => {
+	console.log(`[${socket.id}]  on:connection`);
+
+	socket.on('disconnect', () => {
+		console.log(`[${socket.id}]  on:disconnect`);
+		if (socket.data.player) {
+			RoomManager.removePlayerFromMatchmaking(socket.data.player.id);
+			socket.data.player.socket = undefined;
+		}
+		PlayerManager.removeSocket(socket.id);
+	});
+
+	useUserAPI(socket);
+	useRoomAPI(socket);
+	useMatchmakingAPI(socket);
+	useGameAPI(socket);
+
+	socket.emit('room:all', RoomManager.all());
+	if (socket.data.player?.room) {
+		socket.join(`room:${socket.data.player.room.id}`);
+		socket.emit('room:current', socket.data.player.room.id);
+	}
+});
 
 // Add debug headers and check performances
 export const handle: Handle = async ({ event, resolve }) => {

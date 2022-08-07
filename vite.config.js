@@ -24,14 +24,17 @@ const config = {
 		// in-source testing
 		includeSource: ['src/**/*.{js,ts,svelte}'],
 		// Add @testing-library/jest-dom matchers
-		setupFiles: ['./setupTests/setupFile.ts'],
-		globalSetup: ['./setupTests/setupGlobal.ts'],
+		setupFiles: ['./setup-tests.ts'],
 		// Exclude files in c8
 		coverage: {
 			all: true,
 			exclude: [
 				'.svelte-kit/**',
-				'setupTest.ts',
+				'.coverage/**',
+				'node_modules/**',
+				'build/**',
+				'.yarn/**',
+				'setup-tests.ts',
 				'**/*.d.ts',
 				'**/*.test.ts',
 				'src/client/lib/*.ts'

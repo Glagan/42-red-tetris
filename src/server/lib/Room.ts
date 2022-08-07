@@ -89,14 +89,10 @@ export default class Room {
 			const interval = setInterval(() => {
 				if (this.game?.paused === false || count == 5) {
 					clearInterval(interval);
-					if (ioServer) {
-						ioServer.to(`room:${this.id}`).emit('game:start');
-					}
+					ioServer.to(`room:${this.id}`).emit('game:start');
 					this.startGame();
 				} else {
-					if (ioServer) {
-						ioServer.to(`room:${this.id}`).emit('game:startIn', 5 - count);
-					}
+					ioServer.to(`room:${this.id}`).emit('game:startIn', 5 - count);
 				}
 				count += 1;
 			}, 1000);
