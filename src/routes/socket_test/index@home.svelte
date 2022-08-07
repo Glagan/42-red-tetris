@@ -8,7 +8,7 @@
 		socket.emit('room:join', roomId, (room, error) => {
 			console.log('joined room ?', room);
 			if (room) {
-				$currentRoom = room.id;
+				$currentRoom = room;
 			} else {
 				console.log('failed to join room', roomId, error);
 			}
@@ -18,7 +18,7 @@
 	function leaveRoom(roomId: string) {
 		socket.emit('room:leave', (success, error) => {
 			if (success === true) {
-				$currentRoom = '';
+				$currentRoom = null;
 			} else {
 				console.log('failed to leave room', roomId, error);
 			}
@@ -36,7 +36,7 @@
 	<div>
 		{room.id}
 		{room.name}
-		{#if $currentRoom == room.id}
+		{#if $currentRoom == room}
 			<button class="text-orange-300" on:click={leaveRoom.bind(null, room.id)}>Leave</button>
 		{:else}
 			<button class="text-blue-300" on:click={joinRoom.bind(null, room.id)}>Join</button>

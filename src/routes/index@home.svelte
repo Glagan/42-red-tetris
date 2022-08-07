@@ -18,23 +18,8 @@
 
 	$: disabled_enter = username.length == 0;
 
-	// function handle_enter() {
-	// 	loading = true;
-	// 	if (username.length > 0) {
-	// 		Socket.emit('set:username', username, (success: boolean | BasicError) => {
-	// 			if (typeof success == 'boolean' && success) {
-	// 				localStorage.setItem('username', username);
-	// 				UsernameStore.set(username);
-	// 				NotificationStore.push({ id: uuidv4(), message: 'username updated', error: false });
-	// 				goto('/search');
-	// 			} else
-	// 				NotificationStore.push({ id: uuidv4(), message: 'username not updated', error: true });
-	// 			loading = false;
-	// 		});
-	// 	}
-	// }
-
 	function handle_enter() {
+		if ($UsernameStore == username) return goto('/search');
 		loading = true;
 		if (username.length > 0) {
 			Socket.emit(
@@ -57,6 +42,7 @@
 							});
 						}
 					}
+					loading = false;
 				}
 			);
 		}
@@ -64,7 +50,7 @@
 </script>
 
 <!-- ========================= HTML -->
-<CentralBox title="Username" bind:loading>
+<CentralBox title="Username" {loading}>
 	<input type="text" class="text-input" placeholder="Your username" bind:value={username} />
 	<button class="mt-5" on:click={handle_enter} disabled={disabled_enter}>Enter</button>
 </CentralBox>

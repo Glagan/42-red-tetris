@@ -45,7 +45,7 @@ button:not([disabled]):not(.cant-click):hover {
 	@apply bg-blue-400;
 }
 
-button:disabled {
+button:disabled, button.off {
 	@apply bg-neutral-300;
 }
 

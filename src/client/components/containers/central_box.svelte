@@ -1,12 +1,17 @@
 <!-- ========================= SCRIPT -->
 <script lang="ts">
 	import UsernameStore from '../../stores/username';
-	import SquareSpinner from '../spinners/square_spinner.svelte';
+	import CurrentRoomStore from '../../stores/currentRoom';
+	import SquareSpinner from '../loading/square_spinner.svelte';
 	import SocketStore from '../../stores/socket';
+	import ThreePoints from '../loading/three_points.svelte';
 
 	export let title = '';
 	export let show_username = false;
+	export let show_room = false;
 	export let loading = false;
+	export let loading_title = false;
+	export let waiting_time = 0;
 
 	$: _loading = loading || ($SocketStore != 'connect' && $SocketStore != 'reconnect');
 </script>
@@ -19,10 +24,18 @@
 	{/if}
 	<div style="opacity: {_loading ? 0.2 : 1};" disabled>
 		{#if title.length > 0}
-			<h2 class="absolute cant-select-text left-4 -top-4 text-2xl">{title}</h2>
+			<h2 class="absolute cant-select-text left-4 -top-4 text-2xl">
+				{title}{#if loading_title}<ThreePoints bind:waiting_time />{/if}
+			</h2>
 		{/if}
-		{#if show_username}
+		{#if show_username && show_room}
+			<p class="absolute right-4 -top-[11px]">
+				{$UsernameStore}&nbsp;<span class="text-neutral-500">@{$CurrentRoomStore?.name}</span>
+			</p>
+		{:else if show_username}
 			<p class="absolute text-neutral-500 right-4 -top-[11px]">Username: {$UsernameStore}</p>
+		{:else if show_room}
+			<p class="absolute text-neutral-500 right-4 -top-[11px]">Room: {$CurrentRoomStore}</p>
 		{/if}
 		<slot />
 	</div>
