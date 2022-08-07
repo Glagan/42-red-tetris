@@ -47,4 +47,18 @@ describe('PlayerManager', () => {
 		expect(PlayerManager.exists(token)).toBeTruthy();
 		expect(PlayerManager.exists(socket)).toBeFalsy();
 	});
+
+	it('Can cleanup players', () => {
+		const socketId = nanoid();
+		const token = nanoid();
+
+		PlayerManager.add(socketId, token);
+		expect(PlayerManager.exists(token)).toBeTruthy();
+		PlayerManager.cleanup();
+		expect(PlayerManager.exists(token)).toBeTruthy();
+
+		PlayerManager.playersBySocket = {};
+		PlayerManager.cleanup();
+		expect(PlayerManager.exists(token)).toBeFalsy();
+	});
 });

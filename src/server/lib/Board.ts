@@ -76,6 +76,7 @@ export default class Board {
 		for (let index = ROWS - 1; index >= 0; index--) {
 			if (this.checkLine(index)) {
 				this.removeLine(index);
+				index += 1;
 				count += 1;
 			} else {
 				break;
@@ -146,12 +147,8 @@ export default class Board {
 			this.clearTetrominoOnBitboard(this.movingTetromino);
 			this.movingTetromino.offset[0] += 1;
 			this.setTetrominoOnBitboard(this.movingTetromino);
-			if (this.movingTetrominoIsTouching()) {
-				this.movingTetromino.locked = true;
-			} else {
-				// Clear lock if the tetromino moved from a lock position
-				this.movingTetromino.locked = false;
-			}
+			// Clear lock if the tetromino moved from a lock position
+			this.movingTetromino.locked = false;
 		}
 		return -1;
 	}
@@ -324,7 +321,6 @@ export default class Board {
 
 	/**
 	 * Check if the given tetromino don't already have occupied space under it's position
-	 * TODO: Wall kick to allow a tetromino to "fill" top space ?
 	 * @param tetromino
 	 * @returns true if the tetromino can spawn or false
 	 */
@@ -350,6 +346,7 @@ export default class Board {
 		tetromino.offset[1] = Math.floor(COLUMNS / 2 - tetromino.matrix.length / 2);
 	}
 
+	/* c8 ignore start */
 	repr() {
 		let repr = '';
 		for (const row of this.bitboard) {
@@ -388,4 +385,5 @@ export default class Board {
 		}
 		return repr;
 	}
+	/* c8 ignore end */
 }

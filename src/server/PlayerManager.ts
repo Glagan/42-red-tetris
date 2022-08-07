@@ -47,7 +47,9 @@ export class PlayerManager {
 const manager = new PlayerManager();
 export default manager as PlayerManager;
 
+/* c8 ignore start */
 Cron.schedule('*/5 * * * *', () => {
 	console.log('Cleaning up players...');
 	manager.cleanup();
 });
+/* c8 ignore end */
