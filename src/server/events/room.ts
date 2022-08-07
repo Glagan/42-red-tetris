@@ -169,7 +169,7 @@ export default function useRoomAPI(socket: TypedSocket) {
 	});
 
 	socket.on('room:ready', (callback) => {
-		console.log(`[${socket.id}]  room:leave`);
+		console.log(`[${socket.id}]  room:ready`);
 
 		if (!socket.data.player) {
 			if (callback) {
@@ -187,13 +187,13 @@ export default function useRoomAPI(socket: TypedSocket) {
 			}
 
 			const room = socket.data.player.room;
-			room.togglePlayerAsReady(socket.data.player.id);
+			const ready = room.togglePlayerAsReady(socket.data.player.id);
 			if (room.allPlayersReady()) {
 				room.createGame();
 				ioServer.to(`room:${room.id}`).emit('room:gameCreated');
-				if (callback) {
-					callback(true);
-				}
+			}
+			if (callback) {
+				callback(ready);
 			}
 		} else if (callback) {
 			callback(false, { message: 'You are not currently in a room' });
