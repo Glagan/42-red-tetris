@@ -198,6 +198,7 @@ export default function useRoomAPI(socket: TypedSocket) {
 			if (callback) {
 				callback(ready);
 			}
+			ioServer.to(`room:${room.id}`).emit('room:playerReady', socket.data.player.toClient(), ready);
 		} else if (callback) {
 			callback(false, { message: 'You are not currently in a room' });
 		}

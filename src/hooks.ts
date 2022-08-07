@@ -71,6 +71,8 @@ ioServer.on('connection', (socket) => {
 	useMatchmakingAPI(socket);
 	useGameAPI(socket);
 
+	// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+	socket.emit('player:id', socket.data.player!.id);
 	socket.emit('room:all', RoomManager.all());
 	if (socket.data.player?.room) {
 		socket.join(`room:${socket.data.player.room.id}`);
