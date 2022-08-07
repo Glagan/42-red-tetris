@@ -1,30 +1,29 @@
 import { nanoid } from 'nanoid';
 import type Player from '$server/lib/Player';
-import { DateTime } from 'luxon';
 import type { Room as ClientRoom } from '$client/lib/Room';
 import Game from './Game';
+import { ioServer } from './SocketIO';
 
 export default class Room {
 	id: string;
 	name: string;
 	players: Player[];
 	ready: string[];
-	createdAt: DateTime;
-	lastUpdate: DateTime;
 	game?: Game;
+	winner: number;
+	playersIndex: Record<string, number>;
 
 	constructor(name: string) {
 		this.id = nanoid();
 		this.name = name;
 		this.players = [];
 		this.ready = [];
-		this.createdAt = DateTime.now();
-		this.lastUpdate = DateTime.now();
+		this.winner = 0;
+		this.playersIndex = {};
 	}
 
 	addPlayer(player: Player) {
 		this.players.push(player);
-		this.lastUpdate = DateTime.now();
 	}
 
 	removePlayer(playerId: string) {
@@ -36,7 +35,6 @@ export default class Room {
 		if (readyIndex >= 0) {
 			this.ready.splice(readyIndex, 1);
 		}
-		this.lastUpdate = DateTime.now();
 	}
 
 	isFull() {
@@ -59,13 +57,41 @@ export default class Room {
 	}
 
 	createGame() {
-		this.game = new Game();
+		if (this.players.length > 0) {
+			this.playersIndex = {};
+			for (let index = 0; index < this.players.length; index++) {
+				const player = this.players[index];
+				this.playersIndex[player.id] = index;
+			}
+			this.winner = -1;
+			this.game = new Game(`room:${this.id}`, this.players.length);
+			this.game.onCompletion = (winner) => {
+				this.winner = winner;
+			};
+			this.ready = [];
+			// Start game after 5s
+			let count = 0;
+			const interval = setInterval(() => {
+				if (count == 5) {
+					clearInterval(interval);
+					ioServer.to(`room:${this.id}`).emit('game:start');
+					this.startGame();
+				} else {
+					ioServer.to(`room:${this.id}`).emit('game:startIn', 5 - count);
+				}
+				count += 1;
+			}, 1000);
+		}
 	}
 
 	startGame() {
 		if (this.game) {
 			this.game.start();
 		}
+	}
+
+	isPlaying() {
+		return this.game && this.winner < 0;
 	}
 
 	toClient(): ClientRoom {
@@ -75,9 +101,7 @@ export default class Room {
 			players: this.players.map((player) => ({
 				id: player.id,
 				name: player.name
-			})),
-			createdAt: this.createdAt.toString(),
-			lastUpdate: this.lastUpdate.toString()
+			}))
 		};
 	}
 }

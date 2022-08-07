@@ -5,19 +5,24 @@
 	import currentRoom from '$client/stores/currentRoom';
 
 	function joinRoom(roomId: string) {
-		socket.emit('room:join', roomId, (room) => {
-			console.log('joined room', room);
-			if (room && !('message' in room)) {
+		socket.emit('room:join', roomId, (room, error) => {
+			console.log('joined room ?', room);
+			if (room) {
 				$currentRoom = room.id;
 			} else {
-				console.log('failed to join room', roomId);
+				console.log('failed to join room', roomId, error);
 			}
 		});
 	}
 
 	function leaveRoom(roomId: string) {
-		socket.emit('room:leave');
-		$currentRoom = '';
+		socket.emit('room:leave', (success, error) => {
+			if (success === true) {
+				$currentRoom = '';
+			} else {
+				console.log('failed to leave room', roomId, error);
+			}
+		});
 	}
 </script>
 

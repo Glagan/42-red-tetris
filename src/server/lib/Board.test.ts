@@ -1,5 +1,5 @@
 import Board, { COLUMNS, MoveDirection, RotationDirection, ROWS } from './Board';
-import { TetrominoType } from './Tetrominoes/Tetromino';
+import { TetrominoType } from '$shared/Tetromino';
 import TetrominoI from './Tetrominoes/TetrominoI';
 import TetrominoJ from './Tetrominoes/TetrominoJ';
 import TetrominoL from './Tetrominoes/TetrominoL';
@@ -17,7 +17,6 @@ describe('Test Boad', () => {
 		expect(
 			board.bitboard.every((row) => row.every((column) => column == TetrominoType.None))
 		).toBeTruthy();
-		expect(board.deepOffset).toBe(0);
 	});
 
 	it('Can validate a line', () => {
@@ -223,7 +222,7 @@ describe('Test Boad', () => {
 	it('Can rotate with wallkicks 1', () => {
 		const board = new Board();
 		expect(board.rotateWithWallKicks(RotationDirection.Clockwise)).toBeFalsy();
-		expect(board.rotateWithWallKicks(RotationDirection.Counterclockwise)).toBeFalsy();
+		expect(board.rotateWithWallKicks(RotationDirection.CounterClockwise)).toBeFalsy();
 
 		const tetrominoes = [
 			TetrominoI,
@@ -243,17 +242,17 @@ describe('Test Boad', () => {
 			expect(board.rotateWithWallKicks(RotationDirection.Clockwise)).toBeTruthy();
 			expect(board.rotateWithWallKicks(RotationDirection.Clockwise)).toBeTruthy();
 			expect(board.rotateWithWallKicks(RotationDirection.Clockwise)).toBeTruthy();
-			expect(board.rotateWithWallKicks(RotationDirection.Counterclockwise)).toBeTruthy();
-			expect(board.rotateWithWallKicks(RotationDirection.Counterclockwise)).toBeTruthy();
-			expect(board.rotateWithWallKicks(RotationDirection.Counterclockwise)).toBeTruthy();
-			expect(board.rotateWithWallKicks(RotationDirection.Counterclockwise)).toBeTruthy();
+			expect(board.rotateWithWallKicks(RotationDirection.CounterClockwise)).toBeTruthy();
+			expect(board.rotateWithWallKicks(RotationDirection.CounterClockwise)).toBeTruthy();
+			expect(board.rotateWithWallKicks(RotationDirection.CounterClockwise)).toBeTruthy();
+			expect(board.rotateWithWallKicks(RotationDirection.CounterClockwise)).toBeTruthy();
 		}
 	});
 
 	it('Can rotate with wallkicks 2', () => {
 		const board = new Board();
 		expect(board.rotateWithWallKicks(RotationDirection.Clockwise)).toBeFalsy();
-		expect(board.rotateWithWallKicks(RotationDirection.Counterclockwise)).toBeFalsy();
+		expect(board.rotateWithWallKicks(RotationDirection.CounterClockwise)).toBeFalsy();
 
 		const bottom = new TetrominoI();
 		Board.moveTetrominoToCenter(bottom);
@@ -273,20 +272,20 @@ describe('Test Boad', () => {
 		// console.log(board.repr());
 		expect(board.rotateWithWallKicks(RotationDirection.Clockwise)).toBeTruthy();
 		// console.log(board.repr());
-		expect(board.rotateWithWallKicks(RotationDirection.Counterclockwise)).toBeTruthy();
+		expect(board.rotateWithWallKicks(RotationDirection.CounterClockwise)).toBeTruthy();
 		// console.log(board.repr());
-		expect(board.rotateWithWallKicks(RotationDirection.Counterclockwise)).toBeTruthy();
+		expect(board.rotateWithWallKicks(RotationDirection.CounterClockwise)).toBeTruthy();
 		// console.log(board.repr());
-		expect(board.rotateWithWallKicks(RotationDirection.Counterclockwise)).toBeTruthy();
+		expect(board.rotateWithWallKicks(RotationDirection.CounterClockwise)).toBeTruthy();
 		// console.log(board.repr());
-		expect(board.rotateWithWallKicks(RotationDirection.Counterclockwise)).toBeTruthy();
+		expect(board.rotateWithWallKicks(RotationDirection.CounterClockwise)).toBeTruthy();
 		// console.log(board.repr());
 	});
 
 	it('Can rotate with wallkicks 3', () => {
 		const board = new Board();
 		expect(board.rotateWithWallKicks(RotationDirection.Clockwise)).toBeFalsy();
-		expect(board.rotateWithWallKicks(RotationDirection.Counterclockwise)).toBeFalsy();
+		expect(board.rotateWithWallKicks(RotationDirection.CounterClockwise)).toBeFalsy();
 
 		const bottom = new TetrominoS();
 		Board.moveTetrominoToCenter(bottom);
@@ -307,13 +306,13 @@ describe('Test Boad', () => {
 		// console.log(board.repr());
 		expect(board.rotateWithWallKicks(RotationDirection.Clockwise)).toBeTruthy();
 		// console.log(board.repr());
-		expect(board.rotateWithWallKicks(RotationDirection.Counterclockwise)).toBeTruthy();
+		expect(board.rotateWithWallKicks(RotationDirection.CounterClockwise)).toBeTruthy();
 		// console.log(board.repr());
-		expect(board.rotateWithWallKicks(RotationDirection.Counterclockwise)).toBeTruthy();
+		expect(board.rotateWithWallKicks(RotationDirection.CounterClockwise)).toBeTruthy();
 		// console.log(board.repr());
-		expect(board.rotateWithWallKicks(RotationDirection.Counterclockwise)).toBeTruthy();
+		expect(board.rotateWithWallKicks(RotationDirection.CounterClockwise)).toBeTruthy();
 		// console.log(board.repr());
-		expect(board.rotateWithWallKicks(RotationDirection.Counterclockwise)).toBeTruthy();
+		expect(board.rotateWithWallKicks(RotationDirection.CounterClockwise)).toBeTruthy();
 		// console.log(board.repr());
 	});
 });

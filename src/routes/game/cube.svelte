@@ -49,9 +49,7 @@
 		class="cube "
 		style="transform: translate3d({position_x_px}px, {position_y_px}px , {position_z_px}px); z-index: {z_index}; will-change: {background
 			? 'transform'
-			: 'transform'}; contain: {background
-			? 'layout'
-			: 'none'};"
+			: 'transform'}; contain: {background ? 'layout' : 'none'};"
 	>
 		{#if show_front}
 			<div class="front" style="background-image: url('{sprite_side}');" />

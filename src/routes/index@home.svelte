@@ -18,19 +18,47 @@
 
 	$: disabled_enter = username.length == 0;
 
+	// function handle_enter() {
+	// 	loading = true;
+	// 	if (username.length > 0) {
+	// 		Socket.emit('set:username', username, (success: boolean | BasicError) => {
+	// 			if (typeof success == 'boolean' && success) {
+	// 				localStorage.setItem('username', username);
+	// 				UsernameStore.set(username);
+	// 				NotificationStore.push({ id: uuidv4(), message: 'username updated', error: false });
+	// 				goto('/search');
+	// 			} else
+	// 				NotificationStore.push({ id: uuidv4(), message: 'username not updated', error: true });
+	// 			loading = false;
+	// 		});
+	// 	}
+	// }
+
 	function handle_enter() {
 		loading = true;
 		if (username.length > 0) {
-			Socket.emit('set:username', username, (success: boolean | BasicError) => {
-				if (typeof success == 'boolean' && success) {
-					localStorage.setItem('username', username);
-					UsernameStore.set(username);
-					NotificationStore.push({ id: uuidv4(), message: 'username updated', error: false });
-					goto('/search');
-				} else
-					NotificationStore.push({ id: uuidv4(), message: 'username not updated', error: true });
-				loading = false;
-			});
+			Socket.emit(
+				'set:username',
+				username,
+				(success: boolean, error: BasicError | null | undefined) => {
+					if (error != null && error != undefined) {
+						NotificationStore.push({ id: uuidv4(), message: error.message, error: true });
+					} else {
+						if (success) {
+							localStorage.setItem('username', username);
+							UsernameStore.set(username);
+							NotificationStore.push({ id: uuidv4(), message: 'username updated', error: false });
+							goto('/search');
+						} else {
+							NotificationStore.push({
+								id: uuidv4(),
+								message: 'username not updated',
+								error: true
+							});
+						}
+					}
+				}
+			);
 		}
 	}
 </script>

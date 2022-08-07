@@ -6,6 +6,16 @@ import PlayerManager from '$server/PlayerManager';
 import { ioServer } from '$server/lib/SocketIO';
 import useGameAPI from '$server/events/game';
 import useUserAPI from '$server/events/user';
+import ValidationError from '$server/lib/Errors/ValidationError';
+import { validatePayload } from '$server/lib/Validator';
+import { objectOf } from '@altostra/type-validations';
+import isValidID from '$server/lib/Validators/ID';
+import isValidName from '$server/lib/Validators/Name';
+
+type AuthPayload = {
+	token: string;
+	username?: string;
+};
 
 // * Auth middleware to check user tokens
 if (ioServer) {
@@ -18,20 +28,41 @@ if (ioServer) {
 				next(Error('Missing token in handshake'));
 			}
 
-			if (PlayerManager.exists(token) || PlayerManager.exists(socket.id)) {
-				PlayerManager.refreshPlayer(token);
-			} else {
-				PlayerManager.addPlayer(socket.id, token, socket.handshake.auth.username);
+			if (
+				!validatePayload(
+					{ token, username: socket.handshake.auth.username },
+					objectOf<AuthPayload>({
+						token: isValidID,
+						username: isValidName
+					})
+				)
+			) {
+				next(Error('Invalid handshake payload'));
 			}
 
-			next();
+			const player = PlayerManager.get(token);
+			if (player) {
+				socket.data.player = player;
+			} else {
+				const player = PlayerManager.add(socket.id, token, socket.handshake.auth.username);
+				socket.data.player = player;
+			}
+
+			try {
+				next();
+			} catch (error) {
+				if (error instanceof ValidationError) {
+					console.log(`[${socket.id}]  validation error`);
+				} else {
+					console.error(error);
+				}
+			}
 		});
 	}
 
 	ioServer.removeAllListeners('connection'); // Debug
 	ioServer.on('connection', (socket) => {
 		console.log(`[${socket.id}]  on:connection`);
-		const token = socket.handshake.auth.token;
 
 		socket.on('disconnect', () => {
 			console.log(`[${socket.id}]  on:disconnect`);
@@ -43,12 +74,9 @@ if (ioServer) {
 		useGameAPI(socket);
 
 		socket.emit('room:all', rooms.all());
-		const player = PlayerManager.getPlayer(token);
-		if (player && player?.room) {
-			socket.rooms.add(`room:${player.room.id}`);
-			socket.emit('room:current', player.room.id);
-		} else {
-			socket.emit('room:current', null);
+		if (socket.data.player?.room) {
+			socket.join(`room:${socket.data.player.room.id}`);
+			socket.emit('room:current', socket.data.player.room.id);
 		}
 	});
 }

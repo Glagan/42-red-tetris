@@ -28,7 +28,13 @@ const config = {
 		// Exclude files in c8
 		coverage: {
 			all: true,
-			exclude: ['.svelte-kit/**', 'setupTest.ts', '**/*.d.ts', '**/*.test.ts'],
+			exclude: [
+				'.svelte-kit/**',
+				'setupTest.ts',
+				'**/*.d.ts',
+				'**/*.test.ts',
+				'src/client/lib/*.ts'
+			],
 			extension: ['.js', '.cjs', '.ts', '.svelte'],
 			reporter: ['text', 'html'],
 			src: 'src/'

@@ -27,4 +27,5 @@ export class RoomManager {
 		}
 	}
 }
-export default new RoomManager();
+const manager = new RoomManager();
+export default manager as RoomManager;

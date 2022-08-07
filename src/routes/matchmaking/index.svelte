@@ -2,7 +2,7 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import CentralBox from '../../client/components/containers/central_box.svelte';
-	import sleep from '../../utils/sleep';
+	import sleep from '$utils/sleep';
 
 	let waiting_time = 0;
 	let waiting_points = '.';

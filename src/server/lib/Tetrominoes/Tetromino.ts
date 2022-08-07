@@ -1,4 +1,6 @@
-export type Matrix = number[][];
+import type { TetrominoType } from '$shared/Tetromino';
+
+export type Matrix = (0 | 1)[][];
 
 export type Coordinates = [number, number];
 export type TouchCoordinates = Coordinates[][];
@@ -12,17 +14,6 @@ export type Wallkicks = [
 	DirectionWallkicks,
 	DirectionWallkicks
 ];
-
-export enum TetrominoType {
-	None,
-	I,
-	J,
-	L,
-	O,
-	S,
-	T,
-	Z
-}
 
 /**
  * Shared wallkicks for the J, L, T, S and Z tetrominoes

@@ -11,7 +11,7 @@ describe('PlayerManager', () => {
 	});
 
 	it('Can add a player', () => {
-		PlayerManager.addPlayer(socket, token, 'Player');
+		PlayerManager.add(socket, token, 'Player');
 		expect(Object.keys(PlayerManager.players).length).toEqual(1);
 		expect(Object.keys(PlayerManager.playersBySocket).length).toEqual(1);
 
@@ -30,21 +30,14 @@ describe('PlayerManager', () => {
 	});
 
 	it('Can get an existing player', () => {
-		const player = PlayerManager.getPlayer(token);
+		const player = PlayerManager.get(token);
 		expect(player).toBeTruthy();
 		expect(player.name).toEqual('Player');
 	});
 
 	it("Doesn't find players that don't exist", () => {
-		const player = PlayerManager.getPlayer(nanoid());
+		const player = PlayerManager.get(nanoid());
 		expect(player).toBeFalsy();
-	});
-
-	it('Can refresh player', () => {
-		const player = PlayerManager.getPlayer(token);
-		const lastUpdate = player.lastUpdate;
-		PlayerManager.refreshPlayer(token);
-		expect(lastUpdate.toMillis() != player.lastUpdate.toMillis()).toBeTruthy();
 	});
 
 	it('Can remove socket', () => {

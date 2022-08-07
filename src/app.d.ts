@@ -12,3 +12,7 @@ declare namespace App {
 	// interface Session {}
 	// interface Stuff {}
 }
+
+interface SocketData {
+	player: import('$server/lib/Player').default;
+}

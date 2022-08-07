@@ -1,4 +1,4 @@
-import { DateTime } from 'luxon';
+import Cron from 'node-cron';
 import Player from '$server/lib/Player';
 
 export class PlayerManager {
@@ -14,25 +14,40 @@ export class PlayerManager {
 		);
 	}
 
-	getPlayer(token: string) {
+	get(token: string) {
 		return this.players[token];
 	}
 
-	addPlayer(socketId: string, token: string, username?: string | null) {
+	add(socketId: string, token: string, username?: string | null): Player {
 		this.playersBySocket[socketId] = token;
 		this.players[token] = new Player(username ?? 'Player');
 		return this.players[token];
 	}
 
-	refreshPlayer(token: string) {
-		const player = this.players[token];
-		if (player) {
-			player.lastUpdate = DateTime.now();
-		}
-	}
-
 	removeSocket(socketId: string) {
 		delete this.playersBySocket[socketId];
 	}
+
+	/**
+	 * Remove players without sockets that aren't in a game
+	 */
+	cleanup() {
+		const tokensInSockets = Object.values(this.playersBySocket);
+		for (const token of Object.keys(this.players)) {
+			if (tokensInSockets.indexOf(token) < 0) {
+				const room = this.players[token].room;
+				if (!room || !room.isPlaying()) {
+					this.players[token].leaveCurrentRoom();
+					delete this.players[token];
+				}
+			}
+		}
+	}
 }
-export default new PlayerManager();
+const manager = new PlayerManager();
+export default manager as PlayerManager;
+
+Cron.schedule('*/5 * * * *', () => {
+	console.log('Cleaning up players...');
+	manager.cleanup();
+});
