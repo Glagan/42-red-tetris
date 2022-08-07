@@ -1,7 +1,7 @@
 <script lang="ts">
 	import '$client/socket';
 	import rooms from '$client/stores/rooms';
-	import socket from '$client/socket';
+	import socket from '$client/home-socket';
 	import currentRoom from '$client/stores/currentRoom';
 
 	function joinRoom(roomId: string) {

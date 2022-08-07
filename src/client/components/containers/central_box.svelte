@@ -1,20 +1,31 @@
 <!-- ========================= SCRIPT -->
 <script lang="ts">
-	import PseudoStore from '../../stores/username';
+	import UsernameStore from '../../stores/username';
+	import SquareSpinner from '../spinners/square_spinner.svelte';
+	import SocketStore from '../../stores/socket';
 
 	export let title = '';
-	export let show_pseudo = false;
+	export let show_username = false;
+	export let loading = false;
+
+	$: _loading = loading || ($SocketStore != 'connect' && $SocketStore != 'reconnect');
 </script>
 
 <!-- ========================= HTML -->
-<div class="central-box">
-	{#if title.length > 0}
-		<h2 class="absolute cant-select-text left-4 -top-4 text-2xl">{title}</h2>
+<div class="central-box shadow">
+	{#if _loading}
+		<div class="absolute top-0 left-0 z-40 w-full h-full" />
+		<SquareSpinner />
 	{/if}
-	{#if show_pseudo}
-		<p class="absolute text-neutral-500 right-4 -top-[11px]">pseudo: {$PseudoStore}</p>
-	{/if}
-	<slot />
+	<div style="opacity: {_loading ? 0.2 : 1};" disabled>
+		{#if title.length > 0}
+			<h2 class="absolute cant-select-text left-4 -top-4 text-2xl">{title}</h2>
+		{/if}
+		{#if show_username}
+			<p class="absolute text-neutral-500 right-4 -top-[11px]">Username: {$UsernameStore}</p>
+		{/if}
+		<slot />
+	</div>
 </div>
 
 <!-- ========================= CSS -->
@@ -22,6 +33,5 @@
 	.central-box {
 		@apply relative bg-neutral-900 p-7 text-center m-5;
 		width: var(--central-box-width);
-		filter: drop-shadow(5px 5px 5px #000);
 	}
 </style>

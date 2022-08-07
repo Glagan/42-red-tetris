@@ -18,6 +18,8 @@ body {
     --grid-width: calc(var(--cube-size) * 10);
     --grid-height: calc(var(--cube-size) * 18);
 
+    --footer-height: 80px;
+
     --central-box-width: 500px;
 
     @apply text-gray-200;
@@ -99,4 +101,8 @@ button:disabled {
     background-color: #5e5e5e;
     border-radius: 0px;
     border: 0px solid #ffffff;
+}
+
+.shadow {
+    filter: drop-shadow(5px 5px 5px #000);
 }
