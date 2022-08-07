@@ -86,6 +86,7 @@ export default class Room {
 			this.ready = [];
 			// Start game after 5s
 			let count = 0;
+			/* c8 ignore start */
 			const interval = setInterval(() => {
 				if (this.game?.paused === false || count == 5) {
 					clearInterval(interval);
@@ -96,6 +97,7 @@ export default class Room {
 				}
 				count += 1;
 			}, 1000);
+			/* c8 ignore end */
 		}
 	}
 

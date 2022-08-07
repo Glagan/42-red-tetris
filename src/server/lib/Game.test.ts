@@ -1,4 +1,4 @@
-import Board from './Board';
+import Board, { COLUMNS, MoveDirection, RotationDirection, ROWS } from './Board';
 import Game from './Game';
 import { TetrominoType } from '$shared/Tetromino';
 import TetrominoI from './Tetrominoes/TetrominoI';
@@ -83,5 +83,130 @@ describe('Test Game', () => {
 		game.stop();
 		expect(game.paused).toBeTruthy();
 		expect(game.loop._running).toBeFalsy();
+	});
+
+	it('Can call move action on a board', () => {
+		const game = new Game('room:test', 1);
+
+		expect(game.move(0, MoveDirection.Left)).toBeTruthy();
+		expect(game.move(0, MoveDirection.Right)).toBeTruthy();
+	});
+
+	it('Can call rotate action on a board', () => {
+		const game = new Game('room:test', 1);
+
+		expect(game.rotate(0, RotationDirection.Clockwise)).toBeTruthy();
+		expect(game.rotate(0, RotationDirection.Clockwise)).toBeTruthy();
+		expect(game.rotate(0, RotationDirection.Clockwise)).toBeTruthy();
+		expect(game.rotate(0, RotationDirection.Clockwise)).toBeTruthy();
+		expect(game.rotate(0, RotationDirection.CounterClockwise)).toBeTruthy();
+		expect(game.rotate(0, RotationDirection.CounterClockwise)).toBeTruthy();
+		expect(game.rotate(0, RotationDirection.CounterClockwise)).toBeTruthy();
+		expect(game.rotate(0, RotationDirection.CounterClockwise)).toBeTruthy();
+
+		game.boards[0].movingTetromino = undefined;
+		expect(game.rotate(0, RotationDirection.Clockwise)).toBeFalsy();
+		expect(game.rotate(0, RotationDirection.Clockwise)).toBeFalsy();
+		expect(game.rotate(0, RotationDirection.Clockwise)).toBeFalsy();
+		expect(game.rotate(0, RotationDirection.Clockwise)).toBeFalsy();
+		expect(game.rotate(0, RotationDirection.CounterClockwise)).toBeFalsy();
+		expect(game.rotate(0, RotationDirection.CounterClockwise)).toBeFalsy();
+		expect(game.rotate(0, RotationDirection.CounterClockwise)).toBeFalsy();
+		expect(game.rotate(0, RotationDirection.CounterClockwise)).toBeFalsy();
+	});
+
+	it('Can call dash action on a board', () => {
+		const game = new Game('room:test', 1);
+
+		expect(game.dash(0)).toBeTruthy();
+
+		game.boards[0].movingTetromino = undefined;
+		expect(game.dash(0)).toBeFalsy();
+	});
+
+	it('Can finish a game', () => {
+		let game = new Game('room:test', 1);
+
+		game.gameOver(0);
+		expect(game.winner).toBe(0);
+		expect(game.paused).toBeTruthy();
+		expect(game.loop._running).toBeFalsy();
+
+		game = new Game('room:test', 2);
+		game.gameOver(0);
+		expect(game.winner).toBe(1);
+		expect(game.paused).toBeTruthy();
+		expect(game.loop._running).toBeFalsy();
+
+		game = new Game('room:test', 2);
+		game.gameOver(1);
+		expect(game.winner).toBe(0);
+		expect(game.paused).toBeTruthy();
+		expect(game.loop._running).toBeFalsy();
+	});
+
+	it('Can detect game over when trying to spawn the next tetromino', () => {
+		const game = new Game('room:test', 1);
+
+		// Fill the board so *no* tetromino can spawn
+		game.boards[0].bitboard = [];
+		for (let index = 0; index < ROWS; index++) {
+			game.boards[0].bitboard.push(new Array(COLUMNS).fill(TetrominoType.Blocked));
+		}
+
+		expect(game.spawnNextTetromino(0)).toBeFalsy();
+		expect(game.winner).toBe(0);
+		expect(game.paused).toBeTruthy();
+		expect(game.loop._running).toBeFalsy();
+	});
+
+	it('Correctly generate blocked lines for the enemy', async () => {
+		const game = new Game('room:test', 2);
+
+		// Generate 2 lines at the bottom of the board,
+		// -- move the current tetromino so it's touching
+		// -- to trigger clearAllCompletedLines in Board
+		// -- and generate blocked lines for the other player in Game
+		game.nextTickDown = 0;
+		game.boards[0].movingTetromino = new TetrominoI();
+		game.boards[0].movingTetromino.locked = true;
+		game.boards[0].movingTetromino.offset = [ROWS - 2, 0];
+		game.boards[0].setTetrominoOnBitboard(game.boards[0].movingTetromino);
+		game.boards[0].bitboard.push(new Array(COLUMNS).fill(TetrominoType.I));
+		game.boards[0].bitboard.push(new Array(COLUMNS).fill(TetrominoType.I));
+		game.boards[0].bitboard.splice(0, 2);
+		expect(await game.onTick()).toBeFalsy();
+
+		expect(game.boards[1].bitboard[ROWS - 1][0]).toBe(TetrominoType.Blocked);
+	});
+
+	it('Detect failure to spawn after completing a line', async () => {
+		const game = new Game('room:test', 2);
+
+		game.boards[0].bitboard = [];
+		for (let index = 0; index < ROWS; index++) {
+			game.boards[0].bitboard.push(new Array(COLUMNS).fill(TetrominoType.Blocked));
+			game.boards[0].bitboard[index][0] = TetrominoType.None;
+		}
+		game.boards[0].movingTetromino = new TetrominoI();
+		game.boards[0].movingTetromino.locked = true;
+		game.nextTickDown = 0;
+		expect(await game.onTick()).toBeTruthy();
+	});
+
+	it('Detect defeating an opponent after inserting blocking lines', async () => {
+		const game = new Game('room:test', 2);
+
+		game.boards[0].bitboard = [];
+		game.boards[1].bitboard = [];
+		for (let index = 0; index < ROWS; index++) {
+			game.boards[0].bitboard.push(new Array(COLUMNS).fill(TetrominoType.Blocked));
+			game.boards[1].bitboard.push(new Array(COLUMNS).fill(TetrominoType.Blocked));
+			game.boards[1].bitboard[index][0] = TetrominoType.None;
+		}
+		game.boards[0].movingTetromino = new TetrominoI();
+		game.boards[0].movingTetromino.locked = true;
+		game.nextTickDown = 0;
+		expect(await game.onTick()).toBeTruthy();
 	});
 });

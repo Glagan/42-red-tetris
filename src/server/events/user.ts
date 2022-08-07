@@ -2,16 +2,14 @@ import { validatePayload } from '$server/lib/Validator';
 import isValidName from '$server/lib/Validators/Name';
 import RoomManager from '$server/RoomManager';
 import { objectOf } from '@altostra/type-validations';
-import type { TypedSocket } from '../../socket';
+import type { ClientToServerEvents, TypedSocket } from '../../socket';
 
 export type SetUsernamePayload = {
 	username: string;
 };
 
 export default function useUserAPI(socket: TypedSocket) {
-	socket.on('set:username', (username, callback) => {
-		console.log(`[${socket.id}]  set:username`, username);
-
+	const seUsername: ClientToServerEvents['set:username'] = (username, callback) => {
 		if (
 			!validatePayload(
 				{ username },
@@ -41,5 +39,6 @@ export default function useUserAPI(socket: TypedSocket) {
 				message: "You can't change your username while in a room or in Matchmaking"
 			});
 		}
-	});
+	};
+	socket.on('set:username', seUsername);
 }

@@ -2,12 +2,10 @@ import Room from '$server/lib/Room';
 import { ioServer } from '$server/lib/SocketIO';
 import RoomManager from '$server/RoomManager';
 import { getRandomInt } from '$utils/random';
-import type { TypedSocket } from '../../socket';
+import type { ClientToServerEvents, TypedSocket } from '../../socket';
 
 export default function useMatchmakingAPI(socket: TypedSocket) {
-	socket.on('matchmaking:join', (callback) => {
-		console.log(`[${socket.id}]  matchmaking:join`);
-
+	const matchmakingJoin: ClientToServerEvents['matchmaking:join'] = (callback) => {
 		if (
 			socket.data.player &&
 			!socket.data.player.room &&
@@ -31,11 +29,12 @@ export default function useMatchmakingAPI(socket: TypedSocket) {
 		} else if (callback) {
 			callback(false, { message: 'You already are in a room or in queue' });
 		}
-	});
+	};
+	socket.on('matchmaking:join', matchmakingJoin);
 
-	socket.on('matchmaking:leave', (callback) => {
-		console.log(`[${socket.id}]  matchmaking:leave`);
+	// *
 
+	const matchmakingLeave: ClientToServerEvents['matchmaking:leave'] = (callback) => {
 		if (socket.data.player) {
 			RoomManager.removePlayerFromMatchmaking(socket.data.player.id);
 			if (callback) {
@@ -44,5 +43,6 @@ export default function useMatchmakingAPI(socket: TypedSocket) {
 		} else if (callback) {
 			callback(false, { message: 'You need to be logged in to leave Matchmaking' });
 		}
-	});
+	};
+	socket.on('matchmaking:leave', matchmakingLeave);
 }

@@ -164,8 +164,8 @@ export default class Game {
 			this.winner = (loserBoardIndex + 1) % 2;
 		}
 		ioServer.to(this.room).emit('game:over', this.winner);
-		console.log('loser');
-		console.log(this.boards[loserBoardIndex].repr());
+		// console.log('loser');
+		// console.log(this.boards[loserBoardIndex].repr());
 		this.onCompletion?.(this.winner);
 	}
 
@@ -197,7 +197,7 @@ export default class Game {
 			for (let index = 0; index < this.playerCount; index++) {
 				const completedLines = this.boards[index].tickDown();
 				if (completedLines >= 0 && !this.spawnNextTetromino(index)) {
-					return;
+					return true;
 				}
 				// Add blocked lines to the other player
 				if (this.playerCount > 1 && completedLines >= 2) {
@@ -207,13 +207,13 @@ export default class Game {
 							!this.boards[otherIndex].generateBlockedLine(completedLines - 1)
 						) {
 							this.gameOver(otherIndex);
-							return;
+							return true;
 						}
 						this.emitBoardUpdate(otherIndex);
 						this.emitPieceUpdate(otherIndex);
 					}
 				}
-				console.log(this.boards[index].repr());
+				// console.log(this.boards[index].repr());
 			}
 			this.nextTickDown = this.tick + this.tickDownRate;
 		}

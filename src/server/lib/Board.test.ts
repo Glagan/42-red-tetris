@@ -30,6 +30,9 @@ describe('Test Boad', () => {
 		board.bitboard[ROWS - 1][0] = TetrominoType.None;
 		expect(board.checkLine(ROWS - 1)).toBeFalsy();
 		expect(board.checkLine(ROWS - 2)).toBeFalsy();
+
+		expect(board.checkLine(-1)).toBeFalsy();
+		expect(board.checkLine(Infinity)).toBeFalsy();
 	});
 
 	it('Can remove a line', () => {
@@ -43,6 +46,21 @@ describe('Test Boad', () => {
 		expect(board.bitboard.every((row) => row.length == COLUMNS)).toBeTruthy();
 		expect(board.bitboard[ROWS - 2][0]).toBe(TetrominoType.None);
 		expect(board.bitboard[ROWS - 1][0]).toBe(TetrominoType.I);
+	});
+
+	it('Can clear completed lines', () => {
+		const board = new Board();
+
+		expect(board.clearAllCompletedLines()).toBe(0);
+
+		board.bitboard.splice(0, 1);
+		board.bitboard.push(new Array(COLUMNS).fill(TetrominoType.Blocked));
+		expect(board.clearAllCompletedLines()).toBe(1);
+
+		board.bitboard.splice(0, 2);
+		board.bitboard.push(new Array(COLUMNS).fill(TetrominoType.Blocked));
+		board.bitboard.push(new Array(COLUMNS).fill(TetrominoType.Blocked));
+		expect(board.clearAllCompletedLines()).toBe(2);
 	});
 
 	it('Can spawn a tetromino on an empty board', () => {
@@ -314,5 +332,76 @@ describe('Test Boad', () => {
 		// console.log(board.repr());
 		expect(board.rotateWithWallKicks(RotationDirection.CounterClockwise)).toBeTruthy();
 		// console.log(board.repr());
+	});
+
+	it('Manage the next blocked line empty column', () => {
+		const board = new Board();
+
+		expect(board.emptyLineBlockedColumn).toBeUndefined();
+		board.nextBlockedLineBlockedColumn();
+		expect(board.emptyLineBlockedColumn).toBeTruthy();
+		board.nextBlockedLineBlockedColumn();
+		expect(board.emptyLineBlockedColumn).toBeTruthy();
+	});
+
+	it('Can generate blocked lines', () => {
+		let board = new Board();
+
+		expect(board.bitboard[ROWS - 1].every((column) => column == TetrominoType.None));
+
+		board.generateBlockedLine(1);
+		expect(board.bitboard[ROWS - 2].every((column) => column == TetrominoType.None));
+		expect(
+			board.bitboard[ROWS - 1].reduce((carry, isSet) => {
+				if (isSet) carry += 1;
+				return carry;
+			}, 0)
+		).toBe(COLUMNS - 1);
+
+		board = new Board();
+		board.generateBlockedLine(2);
+		expect(board.bitboard[ROWS - 3].every((column) => column == TetrominoType.None));
+		expect(
+			board.bitboard[ROWS - 2].reduce((carry, isSet) => {
+				if (isSet) carry += 1;
+				return carry;
+			}, 0)
+		).toBe(COLUMNS - 1);
+		expect(
+			board.bitboard[ROWS - 1].reduce((carry, isSet) => {
+				if (isSet) carry += 1;
+				return carry;
+			}, 0)
+		).toBe(COLUMNS - 1);
+	});
+
+	it('Handle failure to rotate a tetromino', () => {
+		const board = new Board();
+
+		// Fill the board with blocks and clear only enough space for a tetromino with no space for arotation
+		board.bitboard = [];
+		for (let index = 0; index < ROWS; index++) {
+			board.bitboard.push(new Array(COLUMNS).fill(TetrominoType.Blocked));
+		}
+		board.bitboard[1][0] = TetrominoType.None;
+		board.bitboard[1][1] = TetrominoType.None;
+		board.bitboard[1][2] = TetrominoType.None;
+		board.bitboard[1][3] = TetrominoType.None;
+
+		board.movingTetromino = new TetrominoI();
+		board.setTetrominoOnBitboard(board.movingTetromino);
+		expect(board.rotateWithWallKicks(RotationDirection.Clockwise)).toBeFalsy();
+		expect(board.rotateWithWallKicks(RotationDirection.CounterClockwise)).toBeFalsy();
+	});
+
+	it('Can set tetromino on bitboard with wallkicks', () => {
+		const board = new Board();
+
+		const initialTetromino = new TetrominoI();
+		expect(board.setTetrominoOnBitboardWithWallkicks(initialTetromino)).toBeTruthy();
+
+		// This will apply the last wallkick below the initial tetromino
+		const tetromino = new TetrominoI();
+		expect(board.setTetrominoOnBitboardWithWallkicks(tetromino)).toBeTruthy();
 	});
 });
