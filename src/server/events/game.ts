@@ -1,17 +1,18 @@
-import type { TypedSocket } from '../../socket';
+import type { ClientToServerEvents, TypedSocket } from '../../socket';
 import Game from '$server/lib/Game';
 import { MoveDirection, RotationDirection } from '$server/lib/Board';
 
 export default function useGameAPI(socket: TypedSocket) {
+	/* c8 ignore start */
 	socket.on('game:test', () => {
-		console.log(`[${socket.id}]  game:test`);
 		const game = new Game(`room:test`, 1);
 		game.loop.start();
 	});
+	/* c8 ignore end */
 
-	socket.on('game:move:left', (callback) => {
-		console.log(`[${socket.id}]  game:move:left`);
+	// *
 
+	const gameMoveLeft: ClientToServerEvents['game:move:left'] = (callback) => {
 		if (!socket.data.player) {
 			if (callback) callback(false);
 			return;
@@ -24,15 +25,15 @@ export default function useGameAPI(socket: TypedSocket) {
 			if (callback) {
 				callback(ok);
 			}
-			// TODO: emit game state
 		} else if (callback) {
 			callback(false);
 		}
-	});
+	};
+	socket.on('game:move:left', gameMoveLeft);
 
-	socket.on('game:move:right', (callback) => {
-		console.log(`[${socket.id}]  game:move:right`);
+	// *
 
+	const gameMoveRight: ClientToServerEvents['game:move:right'] = (callback) => {
 		if (!socket.data.player) {
 			if (callback) callback(false);
 			return;
@@ -45,15 +46,15 @@ export default function useGameAPI(socket: TypedSocket) {
 			if (callback) {
 				callback(ok);
 			}
-			// TODO: emit game state
 		} else if (callback) {
 			callback(false);
 		}
-	});
+	};
+	socket.on('game:move:right', gameMoveRight);
 
-	socket.on('game:rotate:clockwise', (callback) => {
-		console.log(`[${socket.id}]  game:rotate:clockwise`);
+	// *
 
+	const gameRotateClockwise: ClientToServerEvents['game:rotate:clockwise'] = (callback) => {
 		if (!socket.data.player) {
 			if (callback) callback(false);
 			return;
@@ -66,15 +67,17 @@ export default function useGameAPI(socket: TypedSocket) {
 			if (callback) {
 				callback(ok);
 			}
-			// TODO: emit game state
 		} else if (callback) {
 			callback(false);
 		}
-	});
+	};
+	socket.on('game:rotate:clockwise', gameRotateClockwise);
 
-	socket.on('game:rotate:counter-clockwise', (callback) => {
-		console.log(`[${socket.id}]  game:rotate:counter-clockwise`);
+	// *
 
+	const gameRotateCounterClockwise: ClientToServerEvents['game:rotate:counter-clockwise'] = (
+		callback
+	) => {
 		if (!socket.data.player) {
 			if (callback) callback(false);
 			return;
@@ -87,15 +90,15 @@ export default function useGameAPI(socket: TypedSocket) {
 			if (callback) {
 				callback(ok);
 			}
-			// TODO: emit game state
 		} else if (callback) {
 			callback(false);
 		}
-	});
+	};
+	socket.on('game:rotate:counter-clockwise', gameRotateCounterClockwise);
 
-	socket.on('game:dash', (callback) => {
-		console.log(`[${socket.id}]  game:dash`);
+	// *
 
+	const gameDash: ClientToServerEvents['game:dash'] = (callback) => {
 		if (!socket.data.player) {
 			if (callback) callback(false);
 			return;
@@ -108,9 +111,9 @@ export default function useGameAPI(socket: TypedSocket) {
 			if (callback) {
 				callback(ok);
 			}
-			// TODO: emit game state
 		} else if (callback) {
 			callback(false);
 		}
-	});
+	};
+	socket.on('game:dash', gameDash);
 }

@@ -2,7 +2,7 @@ import Room from '$server/lib/Room';
 import { validatePayload } from '$server/lib/Validator';
 import isValidName from '$server/lib/Validators/Name';
 import { objectOf } from '@altostra/type-validations';
-import type { TypedSocket } from '../../socket';
+import type { ClientToServerEvents, TypedSocket } from '../../socket';
 import isValidID from '$server/lib/Validators/ID';
 import RoomManager from '$server/RoomManager';
 import { ioServer } from '$server/lib/SocketIO';
@@ -21,9 +21,7 @@ export type SearchPayload = {
 };
 
 export default function useRoomAPI(socket: TypedSocket) {
-	socket.on('room:create', (name, callback) => {
-		console.log(`[${socket.id}]  room:create`, name);
-
+	const roomCreate: ClientToServerEvents['room:create'] = (name, callback) => {
 		if (
 			!validatePayload(
 				{ name },
@@ -64,11 +62,12 @@ export default function useRoomAPI(socket: TypedSocket) {
 		} else if (callback) {
 			callback(null, { message: 'You already are in a room or in matchmaking' });
 		}
-	});
+	};
+	socket.on('room:create', roomCreate);
 
-	socket.on('room:get', (roomId, callback) => {
-		console.log(`[${socket.id}]  room:get`, roomId);
+	// *
 
+	const roomGet: ClientToServerEvents['room:get'] = (roomId, callback) => {
 		if (
 			!validatePayload(
 				{ id: roomId },
@@ -100,11 +99,12 @@ export default function useRoomAPI(socket: TypedSocket) {
 		if (callback) {
 			return callback(null);
 		}
-	});
+	};
+	socket.on('room:get', roomGet);
 
-	socket.on('room:join', (roomId, callback) => {
-		console.log(`[${socket.id}]  room:join`);
+	// *
 
+	const roomJoin: ClientToServerEvents['room:join'] = (roomId, callback) => {
 		if (!socket.data.player) {
 			if (callback) {
 				callback(null, { message: 'You need to be logged in to join a room' });
@@ -130,11 +130,12 @@ export default function useRoomAPI(socket: TypedSocket) {
 		} else if (callback) {
 			callback(null, { message: 'The room is full or already in a game' });
 		}
-	});
+	};
+	socket.on('room:join', roomJoin);
 
-	socket.on('room:leave', (callback) => {
-		console.log(`[${socket.id}]  room:leave`);
+	// *
 
+	const roomLeave: ClientToServerEvents['room:leave'] = (callback) => {
 		if (!socket.data.player) {
 			if (callback) {
 				callback(false, { message: 'You need to be logged in to join a room' });
@@ -167,11 +168,12 @@ export default function useRoomAPI(socket: TypedSocket) {
 				ioServer.emit('room:playerLeft', socket.data.player.toClient(), previousRoom.toClient());
 			}
 		}
-	});
+	};
+	socket.on('room:leave', roomLeave);
 
-	socket.on('room:ready', (callback) => {
-		console.log(`[${socket.id}]  room:ready`);
+	// *
 
+	const roomReady: ClientToServerEvents['room:ready'] = (callback) => {
 		if (!socket.data.player) {
 			if (callback) {
 				callback(false, { message: 'You need to be logged in to join a room' });
@@ -199,11 +201,12 @@ export default function useRoomAPI(socket: TypedSocket) {
 		} else if (callback) {
 			callback(false, { message: 'You are not currently in a room' });
 		}
-	});
+	};
+	socket.on('room:ready', roomReady);
 
-	socket.on('room:search', (query, callback) => {
-		console.log(`[${socket.id}]  room:search`, query);
+	// *
 
+	const roomSearch: ClientToServerEvents['room:search'] = (query, callback) => {
 		if (
 			!validatePayload(
 				{ query },
@@ -241,5 +244,6 @@ export default function useRoomAPI(socket: TypedSocket) {
 		if (callback) {
 			callback(results.map((room) => room.toClient()));
 		}
-	});
+	};
+	socket.on('room:search', roomSearch);
 }
