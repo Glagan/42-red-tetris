@@ -9,6 +9,8 @@
 	import ThreePoints from '$client/components/loading/three_points.svelte';
 	import NotificationStore from '../../client/stores/notification';
 	import Socket from '../../client/home-socket';
+	import type Room from '$client/lib/Room';
+	import type Player from '$client/lib/Player';
 
 	// prevent come back <-
 	if ($CurrentRoomStore == null || $CurrentRoomStore == undefined) {
@@ -37,6 +39,12 @@
 		'When you complete more than two lines, your opponent receives additional lines.'
 	];
 
+	Socket.on('room:playerJoined', (player: Player, room: Room) => {
+		if (room.id == $CurrentRoomStore?.id) {
+			CurrentRoomStore.add_player(player);
+		}
+	});
+
 	function handle_abort() {
 		loading = true;
 		Socket.emit('room:leave', (success: boolean | null, error: BasicError | null | undefined) => {
@@ -62,6 +70,7 @@
 
 <!-- ========================= HTML -->
 <CentralBox title="Room" {loading} show_room show_username>
+	<h1>{$CurrentRoomStore?.players.length}</h1>
 	<p class="mt-3">{start_message}</p>
 	<p class="text-neutral-400 mt-7">{tips[0]}</p>
 	<div class="flex justify-between mt-6">

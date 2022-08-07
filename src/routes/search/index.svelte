@@ -124,7 +124,7 @@
 		{:else}
 			{#each $RoomsStore as room}
 				<p class="cant-select-text scale-hover" on:click={() => handle_join(room.id)}>
-					{room.name}&nbsp;<span class="text-neutral-500">@{room.players[0]}</span>
+					{room.name}&nbsp;<span class="text-neutral-500">@{room.players[0].name}</span>
 				</p>
 			{/each}
 		{/if}

@@ -33,7 +33,7 @@
 				{$UsernameStore}&nbsp;<span class="text-neutral-500">@{$CurrentRoomStore?.name}</span>
 			</p>
 		{:else if show_username}
-			<p class="absolute text-neutral-500 right-4 -top-[11px]">Username: {$UsernameStore}</p>
+			<p class="absolute text-neutral-500 right-4 -top-[11px]">@{$UsernameStore}</p>
 		{:else if show_room}
 			<p class="absolute text-neutral-500 right-4 -top-[11px]">Room: {$CurrentRoomStore}</p>
 		{/if}
