@@ -30,7 +30,7 @@ if (browser) {
 
 	let gameInterval = 0;
 	socket.on('connect', () => {
-		socket.emit('room:create', 'my room', (room, error) => {
+		/* socket.emit('room:create', 'my room', (room, error) => {
 			if (room) {
 				currentRoom.set(room.id);
 				console.log('room', room);
@@ -45,7 +45,15 @@ if (browser) {
 			} else if (error) {
 				console.log(error.message);
 			}
-		});
+		}); */
+
+		socket.emit(
+			'set:username',
+			'riuwerwerwruuiruiwuiruiriuwerwerwruuiruiwuiruiriuwerwerwruuiruiwuiruiriuwerwerwruuiruiwuiruiriuwerwerwruuiruiwuirui',
+			(ok) => {
+				console.log('set username?', ok);
+			}
+		);
 
 		// socket.emit('game:test');
 	});

@@ -24,12 +24,21 @@ export default function useRoomAPI(socket: TypedSocket) {
 	socket.on('room:create', (name, callback) => {
 		console.log(`[${socket.id}]  room:create`, name);
 
-		validatePayload(
-			{ name },
-			objectOf<CreateRoomPayload>({
-				name: isValidName
-			})
-		);
+		if (
+			!validatePayload(
+				{ name },
+				objectOf<CreateRoomPayload>({
+					name: isValidName
+				})
+			)
+		) {
+			if (callback) {
+				callback(null, {
+					message: 'Invalid Room name, must be non-empty and at most 20 characters'
+				});
+			}
+			return;
+		}
 
 		const roomName = name.trim();
 		if (
@@ -60,12 +69,21 @@ export default function useRoomAPI(socket: TypedSocket) {
 	socket.on('room:get', (roomId, callback) => {
 		console.log(`[${socket.id}]  room:get`, roomId);
 
-		validatePayload(
-			{ id: roomId },
-			objectOf<GetRoomPayload>({
-				id: isValidID
-			})
-		);
+		if (
+			!validatePayload(
+				{ id: roomId },
+				objectOf<GetRoomPayload>({
+					id: isValidID
+				})
+			)
+		) {
+			if (callback) {
+				callback(null, {
+					message: 'Invalid Room ID, must be non-empty string of 21 characters'
+				});
+			}
+			return;
+		}
 
 		const room = RoomManager.getRoom(roomId);
 		if (room && callback) {
@@ -185,12 +203,21 @@ export default function useRoomAPI(socket: TypedSocket) {
 	socket.on('room:search', (query, callback) => {
 		console.log(`[${socket.id}]  room:search`, query);
 
-		validatePayload(
-			{ query },
-			objectOf<SearchPayload>({
-				query: isValidQuery
-			})
-		);
+		if (
+			!validatePayload(
+				{ query },
+				objectOf<SearchPayload>({
+					query: isValidQuery
+				})
+			)
+		) {
+			if (callback) {
+				callback([], {
+					message: 'Invalid query, must be non-empty string of at most 50 characters'
+				});
+			}
+			return;
+		}
 
 		const parts = query.trim().split(' ');
 		const results: Room[] = [];

@@ -8,14 +8,13 @@ describe('Test Validator', () => {
 		const name = '';
 
 		expect(
-			validatePayload.bind(
-				null,
+			validatePayload(
 				{ name },
 				objectOf<CreateRoomPayload>({
 					name: isValidName
 				})
 			)
-		).toThrowError();
+		).toBeFalsy();
 	});
 
 	it('Can detect a valid payload', () => {

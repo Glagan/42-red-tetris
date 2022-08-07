@@ -6,7 +6,6 @@ import PlayerManager from '$server/PlayerManager';
 import { ioServer } from '$server/lib/SocketIO';
 import useGameAPI from '$server/events/game';
 import useUserAPI from '$server/events/user';
-import ValidationError from '$server/lib/Errors/ValidationError';
 import { validatePayload } from '$server/lib/Validator';
 import { objectOf } from '@altostra/type-validations';
 import isValidID from '$server/lib/Validators/ID';
@@ -51,15 +50,7 @@ if (ioServer) {
 				socket.data.player = player;
 			}
 
-			try {
-				next();
-			} catch (error) {
-				if (error instanceof ValidationError) {
-					console.log(`[${socket.id}]  validation error`);
-				} else {
-					console.error(error);
-				}
-			}
+			next();
 		});
 	}
 

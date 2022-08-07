@@ -12,12 +12,21 @@ export default function useUserAPI(socket: TypedSocket) {
 	socket.on('set:username', (username, callback) => {
 		console.log(`[${socket.id}]  set:username`, username);
 
-		validatePayload(
-			{ username },
-			objectOf<SetUsernamePayload>({
-				username: isValidName
-			})
-		);
+		if (
+			!validatePayload(
+				{ username },
+				objectOf<SetUsernamePayload>({
+					username: isValidName
+				})
+			)
+		) {
+			if (callback) {
+				callback(false, {
+					message: 'Invalid username, must be non-empty and at most 20 characters'
+				});
+			}
+			return;
+		}
 
 		username = username.trim();
 		if (
