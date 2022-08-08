@@ -1,4 +1,5 @@
 import type GameBoard from '$client/lib/GameBoard';
+import type { NextGamePiece } from '$client/lib/GamePiece';
 import type GamePiece from '$client/lib/GamePiece';
 import type Player from '$client/lib/Player';
 import type Room from '$client/lib/Room';
@@ -31,11 +32,11 @@ export interface ClientToServerEvents {
 		query: string,
 		callback: (rooms: Room[], error?: BasicError | null) => void
 	) => void;
+	'room:kick': (callback: SuccessWithError) => void;
 	// * Matchmaking
 	'matchmaking:join': (callback: SuccessWithError) => void;
 	'matchmaking:leave': (callback: SuccessWithError) => void;
 	// * Game
-	'game:test': () => void;
 	'game:move:left': (callback?: (ok: boolean) => void) => void;
 	'game:move:right': (callback?: (ok: boolean) => void) => void;
 	'game:rotate:clockwise': (callback?: (ok: boolean) => void) => void;
@@ -53,8 +54,19 @@ export interface ServerToClientEvents {
 	'room:playerLeft': (player: Player, room: Room) => void;
 	'room:deleted': (roomId: string) => void;
 	'room:current': (roomId: string | null) => void;
-	'room:gameCreated': () => void;
+	'room:gameCreated': (
+		playerOne: {
+			current: GamePiece | undefined;
+			next: NextGamePiece[];
+		},
+		playerTwo: {
+			current: GamePiece | undefined;
+			next: NextGamePiece[];
+		}
+	) => void;
 	'room:playerReady': (player: Player, ready: boolean) => void;
+	'room:playerStatus': (player: Player, loggedIn: boolean) => void;
+	'room:kicked': () => void;
 	// * Matchmaking
 	'matchmaking:found': (room: Room) => void;
 	// * Game
@@ -63,6 +75,7 @@ export interface ServerToClientEvents {
 	'game:tick': (tick: number) => void;
 	'game:over': (winner: number) => void;
 	'game:piece': (piece: GamePiece) => void;
+	'game:nextPieces': (player: number, pieces: NextGamePiece[]) => void;
 	'game:board': (board: GameBoard) => void;
 }
 

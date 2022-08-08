@@ -44,6 +44,18 @@ export default class Room {
 		}
 	}
 
+	kickSecondPlayer() {
+		if (this.players.length < 2 || this.isPlaying()) {
+			return undefined;
+		}
+		this.ready = [];
+
+		const secondPlayer = this.players[1];
+		secondPlayer.leaveCurrentRoom();
+		this.players.splice(1, 1);
+		return secondPlayer;
+	}
+
 	isFull() {
 		return this.players.length >= 2;
 	}
@@ -101,6 +113,22 @@ export default class Room {
 		}
 	}
 
+	currentPiece(playerIndex: number) {
+		const index = this.playersIndex[playerIndex];
+		if (index !== undefined && this.game) {
+			return this.game.currentPiece(index);
+		}
+		return undefined;
+	}
+
+	nextPieces(playerIndex: number) {
+		const index = this.playersIndex[playerIndex];
+		if (index !== undefined && this.game) {
+			return this.game.nextPieces(index);
+		}
+		return [];
+	}
+
 	startGame() {
 		if (this.game && this.game.paused) {
 			this.game.start();
@@ -131,10 +159,7 @@ export default class Room {
 		return {
 			id: this.id,
 			name: this.name,
-			players: this.players.map((player) => ({
-				id: player.id,
-				name: player.name
-			}))
+			players: this.players.map((player) => player.toClient())
 		};
 	}
 }

@@ -25,6 +25,15 @@ export class RoomManager {
 			(room) => room === roomIdentifier || room.id === roomIdentifier
 		);
 		if (index >= 0) {
+			// Avoid removing room that are in game
+			// -- and cleanup players for room before removing it
+			const room = this.rooms[index];
+			if (room.isPlaying()) {
+				return;
+			}
+			for (const player of room.players) {
+				player.leaveCurrentRoom();
+			}
 			this.rooms.splice(index, 1);
 		}
 	}

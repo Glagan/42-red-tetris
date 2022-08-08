@@ -209,4 +209,25 @@ describe('Test Game', () => {
 		game.nextTickDown = 0;
 		expect(await game.onTick()).toBeTruthy();
 	});
+
+	it('Can get the current piece', () => {
+		let game = new Game('room:test', 1);
+		expect(game.currentPiece(0)).toBeTruthy();
+
+		game = new Game('room:test', 2);
+		expect(game.currentPiece(0)).toBeTruthy();
+		expect(game.currentPiece(1)).toBeTruthy();
+	});
+
+	it('Can get the next pieces', () => {
+		let game = new Game('room:test', 1);
+		expect(game.nextPieces(0)).toBeTruthy();
+		expect(game.nextPieces(0).length).toBe(3);
+
+		game = new Game('room:test', 2);
+		expect(game.nextPieces(0)).toBeTruthy();
+		expect(game.nextPieces(0).length).toBe(3);
+		expect(game.nextPieces(1)).toBeTruthy();
+		expect(game.nextPieces(1).length).toBe(3);
+	});
 });

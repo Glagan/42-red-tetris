@@ -41,6 +41,7 @@ describe('Test Player', () => {
 		expect(playerForClient.id).toBe(player.id);
 		expect(playerForClient.name).toBe(player.name);
 		expect(playerForClient.room).toBeUndefined();
+		expect(playerForClient.status).toBeFalsy();
 		// @ts-expect-error Check if the socket doesn't leak in the client object
 		expect(playerForClient.socket).toBeUndefined();
 
@@ -51,6 +52,7 @@ describe('Test Player', () => {
 		expect(playerForClient.id).toBe(player.id);
 		expect(playerForClient.name).toBe(player.name);
 		expect(playerForClient.room).toBe(room.id);
+		expect(playerForClient.status).toBeFalsy();
 		// @ts-expect-error Check if the socket doesn't leak in the client object
 		expect(playerForClient.socket).toBeUndefined();
 	});

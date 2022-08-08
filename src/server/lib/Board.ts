@@ -91,11 +91,10 @@ export default class Board {
 	dash() {
 		if (this.movingTetromino) {
 			while (!this.movingTetrominoIsTouching()) {
-				this.clearTetrominoOnBitboard(this.movingTetromino);
 				this.movingTetromino.offset[0] += 1;
-				this.setTetrominoOnBitboard(this.movingTetromino);
 			}
 			this.tetrominoes.push(this.movingTetromino);
+			this.setTetrominoOnBitboard(this.movingTetromino);
 			this.movingTetromino = undefined;
 			return true;
 		}
@@ -104,26 +103,12 @@ export default class Board {
 
 	move(direction: MoveDirection) {
 		if (this.movingTetromino) {
-			this.clearTetrominoOnBitboard(this.movingTetromino);
 			const offset = direction == MoveDirection.Left ? -1 : 1;
 			this.movingTetromino.offset[1] += offset;
-			for (const [x, y] of this.movingTetromino.blocks) {
-				const xOffset = this.movingTetromino.offset[0] + x;
-				const yOffset = this.movingTetromino.offset[1] + y;
-				if (
-					xOffset < 0 ||
-					yOffset < 0 ||
-					xOffset >= ROWS ||
-					yOffset >= COLUMNS ||
-					this.bitboard[xOffset][yOffset] != TetrominoType.None
-				) {
-					this.movingTetromino.offset[1] -= offset;
-					this.setTetrominoOnBitboard(this.movingTetromino);
-					return false;
-				}
+			if (this.canSetTetrominoOnBitboard(this.movingTetromino)) {
+				return true;
 			}
-			this.setTetrominoOnBitboard(this.movingTetromino);
-			return true;
+			this.movingTetromino.offset[1] -= offset;
 		}
 		return false;
 	}
@@ -137,6 +122,7 @@ export default class Board {
 			if (this.movingTetrominoIsTouching()) {
 				if (this.movingTetromino.locked) {
 					this.tetrominoes.push(this.movingTetromino);
+					this.setTetrominoOnBitboard(this.movingTetromino);
 					this.movingTetromino = undefined;
 					return this.clearAllCompletedLines();
 				} else {
@@ -144,9 +130,7 @@ export default class Board {
 					return -1;
 				}
 			}
-			this.clearTetrominoOnBitboard(this.movingTetromino);
 			this.movingTetromino.offset[0] += 1;
-			this.setTetrominoOnBitboard(this.movingTetromino);
 			// Clear lock if the tetromino moved from a lock position
 			this.movingTetromino.locked = false;
 		}
@@ -174,13 +158,7 @@ export default class Board {
 		const emptyColumn = this.nextBlockedLineBlockedColumn();
 		for (let index = 0; index < amount; index++) {
 			// Check if the new line *can* be inserted, or else it's a lose (Ignore moving tetromino)
-			if (this.movingTetromino) {
-				this.clearTetrominoOnBitboard(this.movingTetromino);
-			}
 			if (!this.bitboard[0].every((column) => column == TetrominoType.None)) {
-				if (this.movingTetromino) {
-					this.setTetrominoOnBitboard(this.movingTetromino);
-				}
 				return false;
 			}
 			// Append the new line at the bottom of the board
@@ -190,7 +168,7 @@ export default class Board {
 			// Remove the line at the top and try to keep the current tetromino position
 			this.bitboard.splice(0, 1);
 			if (this.movingTetromino) {
-				return this.setTetrominoOnBitboardWithWallkicks(this.movingTetromino);
+				return this.translateTetrominoWithWallkicks(this.movingTetromino);
 			}
 		}
 		return true;
@@ -202,7 +180,6 @@ export default class Board {
 	rotateWithWallKicks(rotationDirection: RotationDirection) {
 		if (this.movingTetromino) {
 			const tetromino = this.movingTetromino;
-			this.clearTetrominoOnBitboard(tetromino);
 			if (rotationDirection == RotationDirection.Clockwise) {
 				tetromino.rotateClockwise();
 			} else {
@@ -211,7 +188,6 @@ export default class Board {
 			// If the initial position can be rotated
 			// The tetromino is simply added back to the board
 			if (this.canSetTetrominoOnBitboard(tetromino)) {
-				this.setTetrominoOnBitboard(tetromino);
 				return true;
 			}
 			// Wallkicks
@@ -221,7 +197,6 @@ export default class Board {
 					// Apply translate and check if the tetromino fit on the board
 					tetromino.translate(wallkick);
 					if (this.canSetTetrominoOnBitboard(tetromino)) {
-						this.setTetrominoOnBitboard(tetromino);
 						return true;
 					}
 					// Remove translate
@@ -235,40 +210,22 @@ export default class Board {
 			} else {
 				tetromino.rotateClockwise();
 			}
-			this.setTetrominoOnBitboard(tetromino);
 		}
 		return false;
 	}
 
-	/**
-	 * Update the bitboard to remove the Tetromino from it
-	 * @param tetromino
-	 */
-	clearTetrominoOnBitboard(tetromino: Tetromino) {
-		for (const [x, y] of tetromino.blocks) {
-			const xOffset = tetromino.offset[0] + x;
-			const yOffset = tetromino.offset[1] + y;
-			if (xOffset >= 0 && yOffset >= 0 && xOffset < ROWS && yOffset < COLUMNS) {
-				this.bitboard[xOffset][yOffset] = TetrominoType.None;
-			}
-		}
-	}
-
 	canSetTetrominoOnBitboard(tetromino: Tetromino) {
-		for (const [x, y] of tetromino.blocks) {
+		return tetromino.blocks.every(([x, y]) => {
 			const xOffset = tetromino.offset[0] + x;
 			const yOffset = tetromino.offset[1] + y;
-			if (
-				xOffset < 0 ||
-				yOffset < 0 ||
-				xOffset >= ROWS ||
-				yOffset >= COLUMNS ||
-				this.bitboard[xOffset][yOffset]
-			) {
-				return false;
-			}
-		}
-		return true;
+			return (
+				xOffset >= 0 &&
+				yOffset >= 0 &&
+				xOffset < ROWS &&
+				yOffset < COLUMNS &&
+				!this.bitboard[xOffset][yOffset]
+			);
+		});
 	}
 
 	/**
@@ -285,15 +242,13 @@ export default class Board {
 		}
 	}
 
-	setTetrominoOnBitboardWithWallkicks(tetromino: Tetromino) {
+	translateTetrominoWithWallkicks(tetromino: Tetromino) {
 		if (this.canSetTetrominoOnBitboard(tetromino)) {
-			this.setTetrominoOnBitboard(tetromino);
 			return true;
 		}
 		for (const wallkick of PositionWallkicks) {
 			tetromino.translate(wallkick);
 			if (this.canSetTetrominoOnBitboard(tetromino)) {
-				this.setTetrominoOnBitboard(tetromino);
 				return true;
 			}
 			tetromino.translate([-wallkick[0], -wallkick[1]]);
@@ -335,14 +290,14 @@ export default class Board {
 	 */
 	spawnTetromino(tetromino: Tetromino) {
 		this.movingTetromino = tetromino;
-		return this.setTetrominoOnBitboardWithWallkicks(this.movingTetromino);
+		return this.translateTetrominoWithWallkicks(this.movingTetromino);
 	}
 
 	/**
 	 * Set the given tetromino offset to the horizontal center of the board
 	 * @param tetromino
 	 */
-	static moveTetrominoToCenter(tetromino: Tetromino) {
+	static translateTetrominoToCenter(tetromino: Tetromino) {
 		tetromino.offset[1] = Math.floor(COLUMNS / 2 - tetromino.matrix.length / 2);
 	}
 

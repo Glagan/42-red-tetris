@@ -1,17 +1,7 @@
 import type { ClientToServerEvents, TypedSocket } from '../../socket';
-import Game from '$server/lib/Game';
 import { MoveDirection, RotationDirection } from '$server/lib/Board';
 
 export default function useGameAPI(socket: TypedSocket) {
-	/* c8 ignore start */
-	socket.on('game:test', () => {
-		const game = new Game(`room:test`, 1);
-		game.loop.start();
-	});
-	/* c8 ignore end */
-
-	// *
-
 	const gameMoveLeft: ClientToServerEvents['game:move:left'] = (callback) => {
 		if (!socket.data.player) {
 			if (callback) callback(false);

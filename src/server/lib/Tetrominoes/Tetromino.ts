@@ -277,4 +277,14 @@ export default abstract class Tetromino {
 		// Access instance static variable
 		return (this.constructor as typeof Tetromino).wallKicks?.[this.direction];
 	}
+
+	toClient(player: number) {
+		return {
+			player: player,
+			x: this.offset[0],
+			y: this.offset[1],
+			type: this.type,
+			matrix: this.matrix
+		};
+	}
 }

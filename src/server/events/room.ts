@@ -52,10 +52,7 @@ export default function useRoomAPI(socket: TypedSocket) {
 				callback({
 					id: room.id,
 					name: room.name,
-					players: room.players.map((player) => ({
-						id: player.id,
-						name: player.name
-					}))
+					players: room.players.map((player) => player.toClient())
 				});
 			}
 			ioServer.emit('room:created', room.toClient());
@@ -89,10 +86,7 @@ export default function useRoomAPI(socket: TypedSocket) {
 			return callback({
 				id: room.id,
 				name: room.name,
-				players: room.players.map((player) => ({
-					id: player.id,
-					name: player.name
-				}))
+				players: room.players.map((player) => player.toClient())
 			});
 		}
 
@@ -128,7 +122,11 @@ export default function useRoomAPI(socket: TypedSocket) {
 			}
 			ioServer.emit('room:playerJoined', socket.data.player.toClient(), room.toClient());
 		} else if (callback) {
-			callback(null, { message: 'The room is full or already in a game' });
+			if (room) {
+				callback(null, { message: 'The room is full or already in a game' });
+			} else {
+				callback(null, { message: "The room doesn't exists" });
+			}
 		}
 	};
 	socket.on('room:join', roomJoin);
@@ -193,7 +191,17 @@ export default function useRoomAPI(socket: TypedSocket) {
 			const ready = room.togglePlayerAsReady(socket.data.player.id);
 			if (room.allPlayersReady()) {
 				room.createGame();
-				ioServer.to(`room:${room.id}`).emit('room:gameCreated');
+				ioServer.to(`room:${room.id}`).emit(
+					'room:gameCreated',
+					{
+						current: room.currentPiece(0),
+						next: room.nextPieces(0)
+					},
+					{
+						current: room.currentPiece(1),
+						next: room.nextPieces(1)
+					}
+				);
 			}
 			if (callback) {
 				callback(ready);
@@ -208,6 +216,15 @@ export default function useRoomAPI(socket: TypedSocket) {
 	// *
 
 	const roomSearch: ClientToServerEvents['room:search'] = (query, callback) => {
+		query = query.trim();
+
+		if (query == '') {
+			if (callback) {
+				callback(RoomManager.all());
+			}
+			return;
+		}
+
 		if (
 			!validatePayload(
 				{ query },
@@ -218,7 +235,7 @@ export default function useRoomAPI(socket: TypedSocket) {
 		) {
 			if (callback) {
 				callback([], {
-					message: 'Invalid query, must be non-empty string of at most 50 characters'
+					message: 'Invalid query, must be a string of at most 50 characters'
 				});
 			}
 			return;
@@ -247,4 +264,45 @@ export default function useRoomAPI(socket: TypedSocket) {
 		}
 	};
 	socket.on('room:search', roomSearch);
+
+	// *
+
+	const roomKick: ClientToServerEvents['room:kick'] = (callback) => {
+		if (!socket.data.player) {
+			if (callback) {
+				callback(false, { message: 'You need to be logged in to manage a room' });
+			}
+			return;
+		}
+
+		const room = socket.data.player.room;
+		if (!room || room.players.length < 1) {
+			if (callback) {
+				callback(false, { message: 'You need to be in a room to manage it' });
+			}
+			return;
+		}
+
+		if (room.players[0].id != socket.data.player.id) {
+			if (callback) {
+				callback(false, { message: 'Only the owner of a room can manage it' });
+			}
+			return;
+		}
+
+		const kicked = room.kickSecondPlayer();
+		if (kicked) {
+			if (kicked.socket) {
+				kicked.socket.leave(`room:${room.id}`);
+				kicked.socket.emit('room:kicked');
+			}
+			ioServer.emit('room:playerLeft', kicked.toClient(), room.toClient());
+		}
+		ioServer.to(`room:${room.id}`).emit('room:playerReady', socket.data.player.toClient(), false);
+
+		if (callback) {
+			callback(true);
+		}
+	};
+	socket.on('room:kick', roomKick);
 }

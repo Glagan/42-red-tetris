@@ -228,6 +228,30 @@ describe('Test Room', () => {
 		expect(room.isPlaying()).toBeFalsy();
 	});
 
+	it('Can kick the second player', () => {
+		const room = new Room('Room');
+		const playerOne = new Player('Player 1');
+		const playerTwo = new Player('Player 2');
+
+		expect(room.kickSecondPlayer()).toBeUndefined();
+		expect(room.players.length).toBe(0);
+		playerOne.joinRoom(room);
+		expect(room.kickSecondPlayer()).toBeUndefined();
+		expect(room.players.length).toBe(1);
+		playerTwo.joinRoom(room);
+		expect(room.kickSecondPlayer()).toBe(playerTwo);
+		expect(room.players.length).toBe(1);
+		expect(room.kickSecondPlayer()).toBeUndefined();
+		expect(room.players.length).toBe(1);
+
+		playerTwo.joinRoom(room);
+		room.togglePlayerAsReady(playerOne.id);
+		room.togglePlayerAsReady(playerTwo.id);
+		expect(room.kickSecondPlayer()).toBe(playerTwo);
+		expect(room.ready.length).toBe(0);
+		expect(room.players.length).toBe(1);
+	});
+
 	it('Correctly translate to a client object', () => {
 		const room = new Room('Room');
 
@@ -243,10 +267,7 @@ describe('Test Room', () => {
 		expect(roomForClient.id).toBe(room.id);
 		expect(roomForClient.name).toBe(room.name);
 		expect(roomForClient.players.length).toBe(1);
-		expect(roomForClient.players[0]).toStrictEqual({
-			id: player.id,
-			name: player.name
-		});
+		expect(roomForClient.players[0]).toStrictEqual(player.toClient());
 		// @ts-expect-error Check if the socket doesn't leak in the client object
 		expect(roomForClient.players[0].socket).toBeUndefined();
 	});
