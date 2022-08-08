@@ -2,7 +2,6 @@ import chalk from 'chalk';
 import { TetrominoType } from '$shared/Tetromino';
 import type Tetromino from './Tetrominoes/Tetromino';
 import { getRandomInt } from '$utils/random';
-import type { Coordinates } from './Tetrominoes/Tetromino';
 
 export const ROWS = 20;
 export const COLUMNS = 10;
@@ -16,15 +15,6 @@ export enum MoveDirection {
 	Left,
 	Right
 }
-
-const PositionWallkicks: Coordinates[] = [
-	[-1, 0],
-	[0, 1],
-	[0, -1],
-	[-1, 1],
-	[-1, -1],
-	[1, 0]
-];
 
 export default class Board {
 	movingTetromino: Tetromino | undefined;
@@ -168,7 +158,7 @@ export default class Board {
 			// Remove the line at the top and try to keep the current tetromino position
 			this.bitboard.splice(0, 1);
 			if (this.movingTetromino) {
-				return this.translateTetrominoWithWallkicks(this.movingTetromino);
+				return this.fixTetrominoPosition(this.movingTetromino);
 			}
 		}
 		return true;
@@ -242,18 +232,38 @@ export default class Board {
 		}
 	}
 
-	translateTetrominoWithWallkicks(tetromino: Tetromino) {
+	/**
+	 * Check if at least one of the block in the tetromino is out of the board, trigerring a loss
+	 * @param tetromino
+	 * @returns true if the tetromino is out of the board or false
+	 */
+	tetrominoIsOut(tetromino: Tetromino) {
+		for (const [x, y] of tetromino.blocks) {
+			const xOffset = tetromino.offset[0] + x;
+			const yOffset = tetromino.offset[1] + y;
+			if (xOffset < 0 || yOffset < 0 || xOffset >= ROWS || yOffset >= COLUMNS) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * Fix the tetromino position so it can be set on the board, going up if needed
+	 * @param tetromino
+	 * @returns true if the tetromino can be set on the board or false
+	 */
+	fixTetrominoPosition(tetromino: Tetromino) {
 		if (this.canSetTetrominoOnBitboard(tetromino)) {
 			return true;
 		}
-		for (const wallkick of PositionWallkicks) {
-			tetromino.translate(wallkick);
-			if (this.canSetTetrominoOnBitboard(tetromino)) {
-				return true;
+		while (!this.canSetTetrominoOnBitboard(tetromino)) {
+			tetromino.translate([-1, 0]);
+			if (this.tetrominoIsOut(tetromino)) {
+				return false;
 			}
-			tetromino.translate([-wallkick[0], -wallkick[1]]);
 		}
-		return false;
+		return true;
 	}
 
 	/**
@@ -290,7 +300,7 @@ export default class Board {
 	 */
 	spawnTetromino(tetromino: Tetromino) {
 		this.movingTetromino = tetromino;
-		return this.translateTetrominoWithWallkicks(this.movingTetromino);
+		return this.fixTetrominoPosition(this.movingTetromino);
 	}
 
 	/**
