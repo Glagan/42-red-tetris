@@ -1,9 +1,18 @@
+import { cleanupWebSocketTestServer, setupWebSocketTestServer } from '$utils/test';
 import { nanoid } from 'nanoid';
 import Game from './Game';
 import Player from './Player';
 import Room from './Room';
 
 describe('Test Room', () => {
+	beforeAll(async () => {
+		setupWebSocketTestServer();
+	});
+
+	afterAll(() => {
+		cleanupWebSocketTestServer();
+	});
+
 	it('Can create a room', () => {
 		const room = new Room('Room');
 		expect(room).toBeInstanceOf(Room);

@@ -1,3 +1,4 @@
+import { cleanupWebSocketTestServer, setupWebSocketTestServer } from '$utils/test';
 import Board, { COLUMNS, MoveDirection, RotationDirection, ROWS } from './Board';
 import Game from './Game';
 import { TetrominoType } from '$shared/Tetromino';
@@ -11,6 +12,14 @@ import TetrominoZ from './Tetrominoes/TetrominoZ';
 
 describe('Test Game', () => {
 	const game = new Game('room:test', 2);
+
+	beforeAll(async () => {
+		setupWebSocketTestServer();
+	});
+
+	afterAll(() => {
+		cleanupWebSocketTestServer();
+	});
 
 	it('Has a valid default state', () => {
 		expect(game.winner).toBe(0);
@@ -175,7 +184,7 @@ describe('Test Game', () => {
 		game.boards[0].bitboard.push(new Array(COLUMNS).fill(TetrominoType.I));
 		game.boards[0].bitboard.push(new Array(COLUMNS).fill(TetrominoType.I));
 		game.boards[0].bitboard.splice(0, 2);
-		expect(await game.onTick()).toBeFalsy();
+		expect(game.onTick()).toBeFalsy();
 
 		expect(game.boards[1].bitboard[ROWS - 1][0]).toBe(TetrominoType.Blocked);
 	});
@@ -191,7 +200,7 @@ describe('Test Game', () => {
 		game.boards[0].movingTetromino = new TetrominoI();
 		game.boards[0].movingTetromino.locked = true;
 		game.nextTickDown = 0;
-		expect(await game.onTick()).toBeTruthy();
+		expect(game.onTick()).toBeTruthy();
 	});
 
 	it('Detect defeating an opponent after inserting blocking lines', async () => {
@@ -207,7 +216,21 @@ describe('Test Game', () => {
 		game.boards[0].movingTetromino = new TetrominoI();
 		game.boards[0].movingTetromino.locked = true;
 		game.nextTickDown = 0;
-		expect(await game.onTick()).toBeTruthy();
+		expect(game.onTick()).toBeTruthy();
+	});
+
+	it('Clear completed lines after a dash', () => {
+		const game = new Game('room:test', 1);
+
+		for (let index = 0; index < ROWS; index++) {
+			game.boards[0].bitboard.push(new Array(COLUMNS).fill(TetrominoType.Blocked));
+		}
+		game.boards[0].movingTetromino = new TetrominoI();
+
+		expect(game.dash(0)).toBeTruthy();
+		expect(
+			game.boards[0].bitboard[ROWS - 2].every((column) => column === TetrominoType.None)
+		).toBeTruthy();
 	});
 
 	it('Can get the current piece', () => {
@@ -229,5 +252,20 @@ describe('Test Game', () => {
 		expect(game.nextPieces(0).length).toBe(3);
 		expect(game.nextPieces(1)).toBeTruthy();
 		expect(game.nextPieces(1).length).toBe(3);
+	});
+
+	it('Increase score when completing lines', () => {
+		const game = new Game('room:test', 1);
+		expect(game.score[0]).toBe(0);
+
+		for (let index = 0; index < ROWS; index++) {
+			game.boards[0].bitboard.push(new Array(COLUMNS).fill(TetrominoType.Blocked));
+		}
+		game.boards[0].movingTetromino = new TetrominoI();
+		game.boards[0].movingTetromino.offset[0] = ROWS - 2;
+		game.boards[0].movingTetromino.locked = true;
+		game.nextTickDown = 0;
+		expect(game.onTick()).toBeFalsy();
+		expect(game.score[0]).toBeGreaterThan(0);
 	});
 });
