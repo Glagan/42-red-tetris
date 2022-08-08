@@ -1,9 +1,14 @@
 import type { Handle } from '@sveltejs/kit';
 import { nanoid } from 'nanoid';
 import SetupSocketServer from '$server/setup';
+import WebSocket from '$server/lib/SocketIO';
+
+export { WebSocket, SetupSocketServer };
 
 // Create and initialize the server socket
-SetupSocketServer();
+if (WebSocket.server) {
+	SetupSocketServer();
+}
 
 // Add debug headers and check performances
 export const handle: Handle = async ({ event, resolve }) => {
