@@ -99,7 +99,7 @@ export default class Game {
 
 		for (let index = 0; index < this.playerCount; index++) {
 			const playerTetromino = this.generateTetromino(type);
-			Board.moveTetrominoToCenter(playerTetromino);
+			Board.translateTetrominoToCenter(playerTetromino);
 			this.tetrominoesBags[index].unshift(playerTetromino);
 		}
 	}
@@ -141,7 +141,7 @@ export default class Game {
 	 */
 	nextPieces(index: number) {
 		return this.tetrominoesBags[index]
-			.slice(-1, -3)
+			.slice(-3)
 			.reverse()
 			.map((tetromino) => ({
 				type: tetromino.type,

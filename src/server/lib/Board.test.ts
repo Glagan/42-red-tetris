@@ -66,7 +66,7 @@ describe('Test Board', () => {
 	it('Can spawn a tetromino on an empty board', () => {
 		const board = new Board();
 		const tetromino = new TetrominoI();
-		Board.moveTetrominoToCenter(tetromino);
+		Board.translateTetrominoToCenter(tetromino);
 		expect(board.canSpawnTetromino(tetromino)).toBeTruthy();
 
 		expect(board.movingTetromino).toBeUndefined();
@@ -74,22 +74,21 @@ describe('Test Board', () => {
 		expect(board.movingTetromino).toBe(tetromino);
 		expect(
 			board.bitboard.every((row) => row.every((column) => column == TetrominoType.None))
-		).toBeFalsy();
+		).toBeTruthy();
 	});
 
 	it("Can't spawn a tetromino on an occupied space", () => {
 		const board = new Board();
 		const tetromino = new TetrominoI();
-		Board.moveTetrominoToCenter(tetromino);
-		board.spawnTetromino(tetromino);
+		board.setTetrominoOnBitboard(tetromino);
 
 		const blockedTetromino = new TetrominoI();
-		Board.moveTetrominoToCenter(blockedTetromino);
+		Board.translateTetrominoToCenter(blockedTetromino);
 		blockedTetromino.offset[1] -= 1;
 		expect(board.canSpawnTetromino(blockedTetromino)).toBeFalsy();
 	});
 
-	it('Correctly add and remove a tetromino from the bitboard', () => {
+	it('Correctly add a tetromino to the bitboard', () => {
 		const board = new Board();
 		const tetromino = new TetrominoI();
 
@@ -98,17 +97,14 @@ describe('Test Board', () => {
 		).toBeTruthy();
 		board.spawnTetromino(tetromino);
 		expect(board.bitboard[0].every((column) => column == TetrominoType.None)).toBeTruthy();
+		board.setTetrominoOnBitboard(tetromino);
 		const expectedRow = new Array(COLUMNS).fill(TetrominoType.None);
 		for (let index = 0; index < 4; index++) {
 			expectedRow[index] = TetrominoType.I;
 		}
+		expect(board.bitboard[0].every((column) => column == TetrominoType.None)).toBeTruthy();
 		expect(board.bitboard[1]).toEqual(expectedRow);
 		expect(board.bitboard[2].every((column) => column == TetrominoType.None)).toBeTruthy();
-
-		board.clearTetrominoOnBitboard(tetromino);
-		expect(
-			board.bitboard.every((row) => row.every((column) => column == TetrominoType.None))
-		).toBeTruthy();
 	});
 
 	it('Can correctly attach the moving tetromino to the board', () => {
@@ -163,7 +159,6 @@ describe('Test Board', () => {
 		board.spawnTetromino(tetromino);
 		expect(board.movingTetrominoIsTouching()).toBeFalsy();
 
-		board.clearTetrominoOnBitboard(tetromino);
 		tetromino.offset[0] = ROWS - 3;
 		board.spawnTetromino(tetromino);
 		expect(board.movingTetrominoIsTouching()).toBeTruthy();
@@ -178,45 +173,29 @@ describe('Test Board', () => {
 
 		// Tied to the left
 		expect(board.move(MoveDirection.Left)).toBeFalsy();
-		let expectedRow = new Array(COLUMNS).fill(TetrominoType.None);
-		for (let index = 0; index < 4; index++) {
-			expectedRow[index] = TetrominoType.I;
-		}
-		expect(board.bitboard[1]).toEqual(expectedRow);
+		expect(board.movingTetromino?.offset[1]).toBe(0);
 
 		expect(board.move(MoveDirection.Right)).toBeTruthy();
-		expectedRow.unshift(TetrominoType.None);
-		expectedRow.pop();
-		expect(board.bitboard[1]).toEqual(expectedRow);
+		expect(board.movingTetromino?.offset[1]).toBe(1);
 
 		expect(board.move(MoveDirection.Left)).toBeTruthy();
-		expectedRow.splice(0, 1);
-		expectedRow.push(TetrominoType.None);
-		expect(board.bitboard[1]).toEqual(expectedRow);
+		expect(board.movingTetromino?.offset[1]).toBe(0);
 
 		// Tied to the right
-
 		board = new Board();
 		tetromino = new TetrominoI();
-		tetromino.offset[1] = COLUMNS - 4;
+		const originalOffset = COLUMNS - 4;
+		tetromino.offset[1] = originalOffset;
 		board.spawnTetromino(tetromino);
 
 		expect(board.move(MoveDirection.Right)).toBeFalsy();
-		expectedRow = new Array(COLUMNS).fill(TetrominoType.None);
-		for (let index = 1; index <= 4; index++) {
-			expectedRow[COLUMNS - index] = TetrominoType.I;
-		}
-		expect(board.bitboard[1]).toEqual(expectedRow);
+		expect(board.movingTetromino?.offset[1]).toBe(originalOffset);
 
 		expect(board.move(MoveDirection.Left)).toBeTruthy();
-		expectedRow.splice(0, 1);
-		expectedRow.push(TetrominoType.None);
-		expect(board.bitboard[1]).toEqual(expectedRow);
+		expect(board.movingTetromino?.offset[1]).toBe(originalOffset - 1);
 
 		expect(board.move(MoveDirection.Right)).toBeTruthy();
-		expectedRow.splice(-1, 1);
-		expectedRow.unshift(TetrominoType.None);
-		expect(board.bitboard[1]).toEqual(expectedRow);
+		expect(board.movingTetromino?.offset[1]).toBe(originalOffset);
 	});
 
 	it('Can dash the current tetromino', () => {
@@ -254,7 +233,7 @@ describe('Test Board', () => {
 		for (const tetrominoClass of tetrominoes) {
 			const board = new Board();
 			const tetromino = new tetrominoClass();
-			Board.moveTetrominoToCenter(tetromino);
+			Board.translateTetrominoToCenter(tetromino);
 			board.spawnTetromino(tetromino);
 			expect(board.rotateWithWallKicks(RotationDirection.Clockwise)).toBeTruthy();
 			expect(board.rotateWithWallKicks(RotationDirection.Clockwise)).toBeTruthy();
@@ -273,11 +252,11 @@ describe('Test Board', () => {
 		expect(board.rotateWithWallKicks(RotationDirection.CounterClockwise)).toBeFalsy();
 
 		const bottom = new TetrominoI();
-		Board.moveTetrominoToCenter(bottom);
+		Board.translateTetrominoToCenter(bottom);
 		bottom.offset[0] = 5;
 		board.spawnTetromino(bottom);
 		const top = new TetrominoI();
-		Board.moveTetrominoToCenter(top);
+		Board.translateTetrominoToCenter(top);
 		top.offset[0] = 4;
 		board.spawnTetromino(top);
 
@@ -306,11 +285,11 @@ describe('Test Board', () => {
 		expect(board.rotateWithWallKicks(RotationDirection.CounterClockwise)).toBeFalsy();
 
 		const bottom = new TetrominoS();
-		Board.moveTetrominoToCenter(bottom);
+		Board.translateTetrominoToCenter(bottom);
 		bottom.offset[0] = 5;
 		board.spawnTetromino(bottom);
 		const top = new TetrominoS();
-		Board.moveTetrominoToCenter(top);
+		Board.translateTetrominoToCenter(top);
 		top.offset[0] = 5;
 		top.offset[1] -= 2;
 		board.spawnTetromino(top);
@@ -394,14 +373,32 @@ describe('Test Board', () => {
 		expect(board.rotateWithWallKicks(RotationDirection.CounterClockwise)).toBeFalsy();
 	});
 
+	it('Can rotate a tetromino with wallkicks', () => {
+		const board = new Board();
+
+		const initialTetromino = new TetrominoI();
+		board.spawnTetromino(initialTetromino);
+		expect(board.rotateWithWallKicks(RotationDirection.Clockwise)).toBeTruthy();
+		board.setTetrominoOnBitboard(initialTetromino);
+
+		// This will rotate the tetromino and apply the first wallkick it find
+		let tetromino = new TetrominoI();
+		board.spawnTetromino(tetromino);
+		expect(board.rotateWithWallKicks(RotationDirection.Clockwise)).toBeTruthy();
+		tetromino = new TetrominoI();
+		board.spawnTetromino(tetromino);
+		expect(board.rotateWithWallKicks(RotationDirection.CounterClockwise)).toBeTruthy();
+	});
+
 	it('Can set tetromino on bitboard with wallkicks', () => {
 		const board = new Board();
 
 		const initialTetromino = new TetrominoI();
-		expect(board.setTetrominoOnBitboardWithWallkicks(initialTetromino)).toBeTruthy();
+		expect(board.translateTetrominoWithWallkicks(initialTetromino)).toBeTruthy();
+		board.setTetrominoOnBitboard(initialTetromino);
 
 		// This will apply the last wallkick below the initial tetromino
 		const tetromino = new TetrominoI();
-		expect(board.setTetrominoOnBitboardWithWallkicks(tetromino)).toBeTruthy();
+		expect(board.translateTetrominoWithWallkicks(tetromino)).toBeTruthy();
 	});
 });
