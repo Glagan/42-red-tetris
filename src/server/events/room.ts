@@ -191,7 +191,17 @@ export default function useRoomAPI(socket: TypedSocket) {
 			const ready = room.togglePlayerAsReady(socket.data.player.id);
 			if (room.allPlayersReady()) {
 				room.createGame();
-				ioServer.to(`room:${room.id}`).emit('room:gameCreated');
+				ioServer.to(`room:${room.id}`).emit(
+					'room:gameCreated',
+					{
+						current: room.currentPiece(0),
+						next: room.nextPieces(0)
+					},
+					{
+						current: room.currentPiece(1),
+						next: room.nextPieces(1)
+					}
+				);
 			}
 			if (callback) {
 				callback(ready);

@@ -113,6 +113,22 @@ export default class Room {
 		}
 	}
 
+	currentPiece(playerIndex: number) {
+		const index = this.playersIndex[playerIndex];
+		if (index !== undefined && this.game) {
+			return this.game.currentPiece(index);
+		}
+		return undefined;
+	}
+
+	nextPieces(playerIndex: number) {
+		const index = this.playersIndex[playerIndex];
+		if (index !== undefined && this.game) {
+			return this.game.nextPieces(index);
+		}
+		return [];
+	}
+
 	startGame() {
 		if (this.game && this.game.paused) {
 			this.game.start();

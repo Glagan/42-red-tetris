@@ -115,19 +115,38 @@ export default class Game {
 		if (this.boards[index].movingTetromino) {
 			// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 			const tetromino = this.boards[index].movingTetromino!;
-			ioServer.to(this.room).emit('game:piece', {
-				player: index,
-				x: tetromino.offset[0],
-				y: tetromino.offset[1],
-				type: tetromino.type,
-				matrix: tetromino.matrix
-			});
+			ioServer.to(this.room).emit('game:piece', tetromino.toClient(index));
+			ioServer.to(this.room).emit('game:nextPieces', index, this.nextPieces(index));
 		}
 	}
 
 	start() {
 		this.paused = false;
 		this.loop.start();
+	}
+
+	/**
+	 * Return the currently active tetromino for the given player
+	 * @param index
+	 * @returns A tetromino if the board has one or undefined
+	 */
+	currentPiece(index: number) {
+		return this.boards[index].movingTetromino?.toClient(index);
+	}
+
+	/**
+	 * Return the next 3 tetrominoes for the given player
+	 * @param index
+	 * @returns An array of Tetrominoes
+	 */
+	nextPieces(index: number) {
+		return this.tetrominoesBags[index]
+			.slice(-1, -3)
+			.reverse()
+			.map((tetromino) => ({
+				type: tetromino.type,
+				matrix: tetromino.matrix
+			}));
 	}
 
 	move(index: number, direction: MoveDirection) {

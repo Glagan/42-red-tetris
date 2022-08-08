@@ -8,7 +8,7 @@ import TetrominoS from './Tetrominoes/TetrominoS';
 import TetrominoT from './Tetrominoes/TetrominoT';
 import TetrominoZ from './Tetrominoes/TetrominoZ';
 
-describe('Test Boad', () => {
+describe('Test Board', () => {
 	const board = new Board();
 
 	it('Has a valid default state', () => {
