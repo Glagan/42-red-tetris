@@ -251,12 +251,11 @@ export default class Game {
 		if (this.tick >= this.nextTickDown) {
 			for (let index = 0; index < this.playerCount; index++) {
 				const completedLines = this.boards[index].tickDown();
-				if (completedLines >= 0) {
-					this.emitBoardUpdate(index);
-					this.emitPieceUpdate(index);
-				}
 				if (completedLines >= 0 && this.handleAfterTetrominoSet(index, completedLines)) {
 					return true;
+				} else {
+					this.emitBoardUpdate(index);
+					this.emitPieceUpdate(index);
 				}
 			}
 			this.nextTickDown = this.tick + this.tickDownRate;
