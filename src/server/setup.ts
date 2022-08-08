@@ -48,7 +48,7 @@ export default function SetupSocketServer(server?: SocketServer) {
 				player.socket = socket;
 				socket.data.player = player;
 			} else {
-				const player = PlayerManager.add(socket.id, token, socket.handshake.auth.username);
+				const player = PlayerManager.add(token, socket.handshake.auth.username);
 				player.socket = socket;
 				socket.data.player = player;
 			}
@@ -67,11 +67,15 @@ export default function SetupSocketServer(server?: SocketServer) {
 
 		socket.on('disconnect', () => {
 			console.log(`[${socket.id}]  on:disconnect`);
+			if (socket.data.player?.room) {
+				socket
+					.to(`room:${socket.data.player.room.id}`)
+					.emit('room:playerStatus', socket.data.player.toClient(), false);
+			}
 			if (socket.data.player) {
 				RoomManager.removePlayerFromMatchmaking(socket.data.player.id);
 				socket.data.player.socket = undefined;
 			}
-			PlayerManager.removeSocket(socket.id);
 		});
 
 		// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
@@ -79,6 +83,9 @@ export default function SetupSocketServer(server?: SocketServer) {
 		socket.emit('room:all', RoomManager.all());
 		if (socket.data.player?.room) {
 			socket.join(`room:${socket.data.player.room.id}`);
+			socket
+				.to(`room:${socket.data.player.room.id}`)
+				.emit('room:playerStatus', socket.data.player.toClient(), true);
 			socket.emit('room:current', socket.data.player.room.id);
 		}
 

@@ -52,10 +52,7 @@ export default function useRoomAPI(socket: TypedSocket) {
 				callback({
 					id: room.id,
 					name: room.name,
-					players: room.players.map((player) => ({
-						id: player.id,
-						name: player.name
-					}))
+					players: room.players.map((player) => player.toClient())
 				});
 			}
 			ioServer.emit('room:created', room.toClient());
@@ -89,10 +86,7 @@ export default function useRoomAPI(socket: TypedSocket) {
 			return callback({
 				id: room.id,
 				name: room.name,
-				players: room.players.map((player) => ({
-					id: player.id,
-					name: player.name
-				}))
+				players: room.players.map((player) => player.toClient())
 			});
 		}
 

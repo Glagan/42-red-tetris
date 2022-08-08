@@ -131,10 +131,7 @@ export default class Room {
 		return {
 			id: this.id,
 			name: this.name,
-			players: this.players.map((player) => ({
-				id: player.id,
-				name: player.name
-			}))
+			players: this.players.map((player) => player.toClient())
 		};
 	}
 }

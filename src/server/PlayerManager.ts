@@ -1,6 +1,7 @@
 import Cron from 'node-cron';
 import Player from '$server/lib/Player';
 import RoomManager from './RoomManager';
+import ioServer from './lib/SocketIO';
 
 export class PlayerManager {
 	// References to User given a token
@@ -31,8 +32,13 @@ export class PlayerManager {
 					const previousRoom = this.players[token].leaveCurrentRoom();
 					delete this.players[token];
 					// Cleanup room
-					if (previousRoom && previousRoom.isEmpty()) {
-						RoomManager.removeRoom(previousRoom.id);
+					if (previousRoom) {
+						if (previousRoom.isEmpty()) {
+							RoomManager.removeRoom(previousRoom.id);
+							ioServer.emit('room:deleted', previousRoom.id);
+						} else {
+							ioServer.emit('room:playerLeft', player.toClient(), previousRoom.toClient());
+						}
 					}
 				}
 			}

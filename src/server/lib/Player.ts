@@ -33,7 +33,8 @@ export default class Player {
 		return {
 			id: this.id,
 			name: this.name,
-			room: this.room?.id
+			room: this.room?.id,
+			status: this.socket !== undefined
 		};
 	}
 }
