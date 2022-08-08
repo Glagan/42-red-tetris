@@ -11,7 +11,7 @@ import TetrominoS from './Tetrominoes/TetrominoS';
 import TetrominoT from './Tetrominoes/TetrominoT';
 import TetrominoZ from './Tetrominoes/TetrominoZ';
 import { getRandomInt } from '$utils/random';
-import { ioServer } from './SocketIO';
+import WebSocket from './SocketIO';
 
 const TICK_RATE = 60;
 const GRAVITY_PER_SEC = 0.5;
@@ -108,7 +108,7 @@ export default class Game {
 	}
 
 	emitBoardUpdate(index: number) {
-		ioServer.to(this.room).emit('game:board', {
+		WebSocket.server.to(this.room).emit('game:board', {
 			player: index,
 			score: this.score[index],
 			board: this.boards[index].bitboard
@@ -119,8 +119,8 @@ export default class Game {
 		if (this.boards[index].movingTetromino) {
 			// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 			const tetromino = this.boards[index].movingTetromino!;
-			ioServer.to(this.room).emit('game:piece', tetromino.toClient(index));
-			ioServer.to(this.room).emit('game:nextPieces', index, this.nextPieces(index));
+			WebSocket.server.to(this.room).emit('game:piece', tetromino.toClient(index));
+			WebSocket.server.to(this.room).emit('game:nextPieces', index, this.nextPieces(index));
 		}
 	}
 
@@ -218,7 +218,7 @@ export default class Game {
 		} else {
 			this.winner = (loserBoardIndex + 1) % 2;
 		}
-		ioServer.to(this.room).emit('game:over', this.winner);
+		WebSocket.server.to(this.room).emit('game:over', this.winner);
 		// console.log('loser');
 		// console.log(this.boards[loserBoardIndex].repr());
 		this.onCompletion?.(this.winner);
@@ -247,10 +247,14 @@ export default class Game {
 	 */
 	onTick(/* deltaMs: number */) {
 		// console.log('tick', deltaMs, this.tick, this.nextTickDown);
-		// ioServer.to(this.room).emit('game:tick', this.tick + 1);
+		// WebSocket.server.to(this.room).emit('game:tick', this.tick + 1);
 		if (this.tick >= this.nextTickDown) {
 			for (let index = 0; index < this.playerCount; index++) {
 				const completedLines = this.boards[index].tickDown();
+				if (completedLines >= 0) {
+					this.emitBoardUpdate(index);
+					this.emitPieceUpdate(index);
+				}
 				if (completedLines >= 0 && this.handleAfterTetrominoSet(index, completedLines)) {
 					return true;
 				}

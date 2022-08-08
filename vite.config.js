@@ -35,6 +35,7 @@ const config = {
 				'build/**',
 				'.yarn/**',
 				'setup-tests.ts',
+				'setup-global.ts',
 				'**/*.d.ts',
 				'**/*.test.ts',
 				'src/client/lib/*.ts'

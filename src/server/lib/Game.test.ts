@@ -1,3 +1,4 @@
+import { cleanupWebSocketTestServer, setupWebSocketTestServer } from '$utils/test';
 import Board, { COLUMNS, MoveDirection, RotationDirection, ROWS } from './Board';
 import Game from './Game';
 import { TetrominoType } from '$shared/Tetromino';
@@ -11,6 +12,14 @@ import TetrominoZ from './Tetrominoes/TetrominoZ';
 
 describe('Test Game', () => {
 	const game = new Game('room:test', 2);
+
+	beforeAll(async () => {
+		setupWebSocketTestServer();
+	});
+
+	afterAll(() => {
+		cleanupWebSocketTestServer();
+	});
 
 	it('Has a valid default state', () => {
 		expect(game.winner).toBe(0);

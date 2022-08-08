@@ -1,5 +1,5 @@
 import Room from '$server/lib/Room';
-import { ioServer } from '$server/lib/SocketIO';
+import WebSocket from '$server/lib/SocketIO';
 import RoomManager from '$server/RoomManager';
 import { getRandomInt } from '$utils/random';
 import type { ClientToServerEvents, TypedSocket } from '../../socket';
@@ -19,7 +19,7 @@ export default function useMatchmakingAPI(socket: TypedSocket) {
 				RoomManager.removePlayerFromMatchmaking(opponent.id);
 				socket.data.player.joinRoom(room);
 				socket.join(`room:${room.id}`);
-				ioServer.emit('room:created', room.toClient());
+				WebSocket.server.emit('room:created', room.toClient());
 			} else {
 				RoomManager.addPlayerToMatchmaking(socket.data.player);
 				if (callback) {

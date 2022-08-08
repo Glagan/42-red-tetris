@@ -1,7 +1,7 @@
 import Cron from 'node-cron';
 import Player from '$server/lib/Player';
 import RoomManager from './RoomManager';
-import ioServer from './lib/SocketIO';
+import WebSocket from './lib/SocketIO';
 
 export class PlayerManager {
 	// References to User given a token
@@ -35,9 +35,9 @@ export class PlayerManager {
 					if (previousRoom) {
 						if (previousRoom.isEmpty()) {
 							RoomManager.removeRoom(previousRoom.id);
-							ioServer?.emit('room:deleted', previousRoom.id);
+							WebSocket.server.emit('room:deleted', previousRoom.id);
 						} else {
-							ioServer?.emit('room:playerLeft', player.toClient(), previousRoom.toClient());
+							WebSocket.server.emit('room:playerLeft', player.toClient(), previousRoom.toClient());
 						}
 					}
 				}

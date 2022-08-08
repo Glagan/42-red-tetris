@@ -1,10 +1,8 @@
 import type { SocketServer } from '../../socket';
 
-/* c8 ignore next 2 */
-// eslint-disable-next-line prefer-const
-export let ioServer = (global as unknown as { io: SocketServer }).io;
-export default ioServer;
-
-export function setIoServer(server: SocketServer) {
-	ioServer = server;
-}
+/* c8 ignore start */
+export const WebSocket: { server: SocketServer } = {
+	server: (global as unknown as { io: SocketServer }).io
+};
+export default WebSocket;
+/* c8 ignore end */

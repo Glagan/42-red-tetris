@@ -2,7 +2,7 @@ import { nanoid } from 'nanoid';
 import type Player from '$server/lib/Player';
 import type { Room as ClientRoom } from '$client/lib/Room';
 import Game from './Game';
-import { ioServer } from './SocketIO';
+import WebSocket from './SocketIO';
 
 export default class Room {
 	id: string;
@@ -102,10 +102,10 @@ export default class Room {
 			const interval = setInterval(() => {
 				if (this.game?.paused === false || count == 5) {
 					clearInterval(interval);
-					ioServer.to(`room:${this.id}`).emit('game:start');
+					WebSocket.server.to(`room:${this.id}`).emit('game:start');
 					this.startGame();
 				} else {
-					ioServer.to(`room:${this.id}`).emit('game:startIn', 5 - count);
+					WebSocket.server.to(`room:${this.id}`).emit('game:startIn', 5 - count);
 				}
 				count += 1;
 			}, 1000);

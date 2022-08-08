@@ -1,3 +1,4 @@
+import { cleanupWebSocketTestServer, setupWebSocketTestServer } from '$utils/test';
 import { nanoid } from 'nanoid';
 import Room from './lib/Room';
 import PlayerManager from './PlayerManager';
@@ -6,6 +7,14 @@ import RoomManager from './RoomManager';
 describe('PlayerManager', () => {
 	const socket = nanoid();
 	const token = nanoid();
+
+	beforeAll(async () => {
+		setupWebSocketTestServer();
+	});
+
+	afterAll(() => {
+		cleanupWebSocketTestServer();
+	});
 
 	it('Is empty by default', () => {
 		expect(PlayerManager.players).toEqual({});
