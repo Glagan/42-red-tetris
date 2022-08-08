@@ -35,9 +35,9 @@ export class PlayerManager {
 					if (previousRoom) {
 						if (previousRoom.isEmpty()) {
 							RoomManager.removeRoom(previousRoom.id);
-							ioServer.emit('room:deleted', previousRoom.id);
+							ioServer?.emit('room:deleted', previousRoom.id);
 						} else {
-							ioServer.emit('room:playerLeft', player.toClient(), previousRoom.toClient());
+							ioServer?.emit('room:playerLeft', player.toClient(), previousRoom.toClient());
 						}
 					}
 				}

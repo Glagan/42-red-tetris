@@ -31,6 +31,7 @@ export interface ClientToServerEvents {
 		query: string,
 		callback: (rooms: Room[], error?: BasicError | null) => void
 	) => void;
+	'room:kick': (callback: SuccessWithError) => void;
 	// * Matchmaking
 	'matchmaking:join': (callback: SuccessWithError) => void;
 	'matchmaking:leave': (callback: SuccessWithError) => void;
@@ -56,6 +57,7 @@ export interface ServerToClientEvents {
 	'room:gameCreated': () => void;
 	'room:playerReady': (player: Player, ready: boolean) => void;
 	'room:playerStatus': (player: Player, loggedIn: boolean) => void;
+	'room:kicked': () => void;
 	// * Matchmaking
 	'matchmaking:found': (room: Room) => void;
 	// * Game

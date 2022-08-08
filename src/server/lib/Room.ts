@@ -44,6 +44,18 @@ export default class Room {
 		}
 	}
 
+	kickSecondPlayer() {
+		if (this.players.length < 2 || this.isPlaying()) {
+			return undefined;
+		}
+		this.ready = [];
+
+		const secondPlayer = this.players[1];
+		secondPlayer.leaveCurrentRoom();
+		this.players.splice(1, 1);
+		return secondPlayer;
+	}
+
 	isFull() {
 		return this.players.length >= 2;
 	}

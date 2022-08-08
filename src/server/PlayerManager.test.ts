@@ -77,4 +77,29 @@ describe('PlayerManager', () => {
 		expect(PlayerManager.exists(token)).toBeFalsy();
 		expect(RoomManager.getRoom(room.id)).toBeFalsy();
 	});
+
+	it('Players cleanup do not delete non-empty rooms', () => {
+		const tokenOne = nanoid();
+		const tokenTwo = nanoid();
+
+		PlayerManager.add(tokenOne, 'Player 1');
+		PlayerManager.add(tokenTwo, 'Player 2');
+		const playerOne = PlayerManager.get(tokenOne);
+		const playerTwo = PlayerManager.get(tokenTwo);
+		// @ts-expect-error We only need to have a truthy value here
+		PlayerManager.players[tokenOne].socket = true;
+		const room = new Room('My room');
+		playerOne.joinRoom(room);
+		playerTwo.joinRoom(room);
+		RoomManager.addRoom(room);
+
+		expect(PlayerManager.exists(tokenOne)).toBeTruthy();
+		expect(PlayerManager.exists(tokenTwo)).toBeTruthy();
+		expect(RoomManager.getRoom(room.id)).toBeTruthy();
+
+		PlayerManager.cleanup();
+		expect(PlayerManager.exists(tokenOne)).toBeTruthy();
+		expect(PlayerManager.exists(tokenTwo)).toBeFalsy();
+		expect(RoomManager.getRoom(room.id)).toBeTruthy();
+	});
 });
