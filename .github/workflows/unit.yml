@@ -1,4 +1,4 @@
-name: Coverage Tests
+name: Unit Tests
 on:
   workflow_dispatch:
     inputs:
@@ -20,7 +20,6 @@ jobs:
           node-version: '16.x'
           cache: 'yarn'
       - name: Install dependencies
-        run: yarn --frozen-lockfile
+        run: yarn
       - name: Run Unit tests
         run: yarn run test:unit
-

@@ -20,7 +20,7 @@ jobs:
           node-version: '16.x'
           cache: 'yarn'
       - name: Install dependencies
-        run: yarn --frozen-lockfile
+        run: yarn
       - name: Run Coverage tests
         run: yarn run coverage
       - uses: actions/upload-artifact@v2

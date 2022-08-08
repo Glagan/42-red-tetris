@@ -20,7 +20,7 @@ jobs:
           node-version: '16.x'
           cache: 'yarn'
       - name: Install dependencies
-        run: yarn --frozen-lockfile
+        run: yarn
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
       - name: Run Playwright tests
