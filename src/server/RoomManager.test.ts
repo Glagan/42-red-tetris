@@ -37,6 +37,44 @@ describe('RoomManager', () => {
 		expect(RoomManager.rooms.length).toEqual(0);
 	});
 
+	it("Removing a room remove it's players", () => {
+		const room = new Room('My room');
+		const player = new Player('Player');
+
+		RoomManager.addRoom(room);
+		player.joinRoom(room);
+		expect(room.players.length).toBe(1);
+		expect(RoomManager.rooms.length).toEqual(1);
+		expect(player.room).toBeTruthy();
+
+		RoomManager.removeRoom(room.id);
+		expect(room.players.length).toBe(0);
+		expect(RoomManager.rooms.length).toEqual(0);
+		expect(player.room).toBeFalsy();
+	});
+
+	it("A playing room can't be removed", () => {
+		const room = new Room('My room');
+		const player = new Player('Player');
+
+		RoomManager.addRoom(room);
+		player.joinRoom(room);
+		room.togglePlayerAsReady(player.id);
+		room.createGame();
+		expect(room.game).toBeTruthy();
+		expect(RoomManager.rooms.length).toEqual(1);
+
+		RoomManager.removeRoom(room.id);
+		expect(room.game).toBeTruthy();
+		expect(RoomManager.rooms.length).toEqual(1);
+
+		// ! Cleanup before a real game starts
+		delete room.game;
+		RoomManager.removeRoom(room.id);
+		expect(room.game).toBeFalsy();
+		expect(RoomManager.rooms.length).toEqual(0);
+	});
+
 	it('Can add and remove a player from matchmaking', () => {
 		const player = new Player('Player');
 
