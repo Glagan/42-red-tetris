@@ -281,8 +281,8 @@ export default abstract class Tetromino {
 	toClient(player: number) {
 		return {
 			player: player,
-			x: this.offset[0],
-			y: this.offset[1],
+			x: this.offset[1],
+			y: this.offset[0],
 			type: this.type,
 			matrix: this.matrix
 		};
