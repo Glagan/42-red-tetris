@@ -96,9 +96,9 @@ export default class Board {
 			this.tetrominoes.push(this.movingTetromino);
 			this.setTetrominoOnBitboard(this.movingTetromino);
 			this.movingTetromino = undefined;
-			return true;
+			return this.clearAllCompletedLines();
 		}
-		return false;
+		return -1;
 	}
 
 	move(direction: MoveDirection) {

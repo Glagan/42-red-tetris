@@ -200,11 +200,11 @@ describe('Test Board', () => {
 
 	it('Can dash the current tetromino', () => {
 		const board = new Board();
-		expect(board.dash()).toBeFalsy();
+		expect(board.dash()).toBe(-1);
 
 		const tetromino = new TetrominoI();
 		board.spawnTetromino(tetromino);
-		expect(board.dash()).toBeTruthy();
+		expect(board.dash()).toBe(0);
 		expect(board.movingTetromino).toBeUndefined();
 		expect(board.tetrominoes.length).toBe(1);
 

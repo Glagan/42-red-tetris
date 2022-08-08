@@ -24,6 +24,7 @@ export default class Game {
 	boards: Board[];
 	lastTetromino?: TetrominoType;
 	tetrominoesBags: Tetromino[][];
+	score: number[];
 	paused: boolean;
 	loop: Loop.Loop;
 	tick: number;
@@ -35,11 +36,13 @@ export default class Game {
 		this.room = room;
 		this.playerCount = playerCount;
 		this.winner = 0;
+		this.score = [];
 		// Always keep 3 next tetrominoes
 		// -- +1 at the start for the initial tetromino
 		this.tetrominoesBags = [];
 		this.boards = [];
 		for (let index = 0; index < this.playerCount; index++) {
+			this.score.push(0);
 			this.tetrominoesBags.push([]);
 			this.boards.push(new Board());
 		}
@@ -107,6 +110,7 @@ export default class Game {
 	emitBoardUpdate(index: number) {
 		ioServer.to(this.room).emit('game:board', {
 			player: index,
+			score: this.score[index],
 			board: this.boards[index].bitboard
 		});
 	}
@@ -164,12 +168,44 @@ export default class Game {
 		}
 		return ok;
 	}
+	/**
+	 * Calculate some logic after a tetromino is set (written) on the board of the given player
+	 * @param index Player index
+	 * @param completedLines
+	 * @returns true if the game is over or false
+	 */
+	handleAfterTetrominoSet(index: number, completedLines: number) {
+		if (completedLines > 0) {
+			this.score[index] += completedLines * 1000;
+		} else {
+			this.score[index] += getRandomInt(10, 99);
+		}
+		if (completedLines >= 0 && !this.spawnNextTetromino(index)) {
+			return true;
+		}
+		// Add blocked lines to the other player
+		if (this.playerCount > 1 && completedLines >= 2) {
+			for (let otherIndex = 0; otherIndex < this.playerCount; otherIndex++) {
+				if (
+					otherIndex != index &&
+					!this.boards[otherIndex].generateBlockedLine(completedLines - 1)
+				) {
+					this.gameOver(otherIndex);
+					return true;
+				}
+				this.emitBoardUpdate(otherIndex);
+				this.emitPieceUpdate(otherIndex);
+			}
+		}
+		// console.log(this.boards[index].repr());
+		return false;
+	}
 
 	dash(index: number) {
-		const ok = this.boards[index].dash();
-		if (ok) {
-			this.spawnNextTetromino(index);
-			return ok;
+		const completedLines = this.boards[index].dash();
+		if (completedLines >= 0) {
+			this.handleAfterTetrominoSet(index, completedLines);
+			return true;
 		}
 		return false;
 	}
@@ -189,7 +225,7 @@ export default class Game {
 	}
 
 	/**
-	 * Spawn the next tetromino for the given board and return true if the board can't handle a new tetromino
+	 * Spawn the next tetromino for the given board and return false if the board can't handle a new tetromino
 	 * @param boardIndex
 	 * @returns false if the game is over or true
 	 */
@@ -209,30 +245,15 @@ export default class Game {
 	/**
 	 * Run every ~16.6667ms
 	 */
-	async onTick(/* deltaMs: number */) {
+	onTick(/* deltaMs: number */) {
 		// console.log('tick', deltaMs, this.tick, this.nextTickDown);
 		// ioServer.to(this.room).emit('game:tick', this.tick + 1);
 		if (this.tick >= this.nextTickDown) {
 			for (let index = 0; index < this.playerCount; index++) {
 				const completedLines = this.boards[index].tickDown();
-				if (completedLines >= 0 && !this.spawnNextTetromino(index)) {
+				if (completedLines >= 0 && this.handleAfterTetrominoSet(index, completedLines)) {
 					return true;
 				}
-				// Add blocked lines to the other player
-				if (this.playerCount > 1 && completedLines >= 2) {
-					for (let otherIndex = 0; otherIndex < this.playerCount; otherIndex++) {
-						if (
-							otherIndex != index &&
-							!this.boards[otherIndex].generateBlockedLine(completedLines - 1)
-						) {
-							this.gameOver(otherIndex);
-							return true;
-						}
-						this.emitBoardUpdate(otherIndex);
-						this.emitPieceUpdate(otherIndex);
-					}
-				}
-				// console.log(this.boards[index].repr());
 			}
 			this.nextTickDown = this.tick + this.tickDownRate;
 		}
