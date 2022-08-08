@@ -1,7 +1,7 @@
-import type Theme from './theme.info';
+import type Theme from '../lib/Theme';
 import * as Generator from './generators/background';
 
-let pieces_block_textures = [
+const pieces_block_textures = [
 	[
 		// 0
 		'/sprites/minecraft/tile003.png',
@@ -32,10 +32,14 @@ let pieces_block_textures = [
 	[
 		// 6
 		'/sprites/minecraft/water.webp'
+	],
+	[
+		// 7
+		'/sprites/minecraft/tile017.webp'
 	]
 ];
 
-let other_block_textures = [
+const other_block_textures = [
 	[
 		// 0 Diamond
 		'/sprites/minecraft/tile024.png'

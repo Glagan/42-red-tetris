@@ -1,20 +1,21 @@
 <!-- ========================= SCRIPT -->
 <script lang="ts">
 	import Board from './board.svelte';
-	import Config from '../../client/configs/game';
-	import { left_cubes, right_cubes } from './temp';
-	import MinecraftTheme from '../../client/themes/minecraft';
+	import GeneratedBoardsStore from '../../client/stores/generatedBoards';
+	import ThemeStore from '../../client/stores/theme';
+	import GeneratedPiecesStore from '../../client/stores/generatedPieces';
+	import Config from '../../client/config';
 	import _3Dto2D from '../../client/themes/generators/3Dto2D';
 	import { browser } from '$app/env';
 
-	let background_theme = MinecraftTheme.backgrounds[2];
+	let background_theme = $ThemeStore.backgrounds[2];
 	let background_3Dto2D_left: string | undefined = undefined;
 	let background_3Dto2D_right: string | undefined = undefined;
 
 	$: background_without_front =
 		background_3Dto2D_left != undefined && background_3Dto2D_right != undefined;
 
-	if (browser && Config.background._2Dto3D) {
+	if (browser && Config.game.background._2Dto3D) {
 		(async () => {
 			if (background_theme.left._3d != undefined && background_theme.right._3d != undefined) {
 				background_3Dto2D_left = await _3Dto2D(
@@ -28,13 +29,16 @@
 			}
 		})();
 	}
+
+	console.log($GeneratedPiecesStore);
 </script>
 
 <!-- ========================= HTML -->
 <div class="mt-6">
-	<div class="board-wrap" style="margin: 0 {Config.block_size}px;">
+	<div class="board-wrap" style="margin: 0 {Config.game.block_size}px;">
 		<Board
-			cubes={left_cubes}
+			piece={$GeneratedPiecesStore[0]}
+			cubes={$GeneratedBoardsStore[0]}
 			horizontal_alignement={1}
 			layer={0}
 			background_picture={background_theme.left.picture}
@@ -52,7 +56,7 @@
 			{/each}
 		{/if}
 	</div>
-	<div class="board-wrap" style="margin: 0 {Config.block_size}px;">
+	<div class="board-wrap" style="margin: 0 {Config.game.block_size}px;">
 		{#if background_theme.right._3d != undefined}
 			{#each background_theme.right._3d.cubes as board}
 				<Board
@@ -65,7 +69,8 @@
 			{/each}
 		{/if}
 		<Board
-			cubes={right_cubes}
+			piece={$GeneratedPiecesStore[1]}
+			cubes={$GeneratedBoardsStore[1]}
 			horizontal_alignement={-1}
 			layer={0}
 			background_picture={background_theme.left.picture}

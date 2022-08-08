@@ -16,7 +16,9 @@ body {
 	--cube-half-size: calc(var(--cube-size) / 2);
 	--cube-half-size-negative: calc(var(--cube-half-size) * -1);
 	--grid-width: calc(var(--cube-size) * 10);
-	--grid-height: calc(var(--cube-size) * 18);
+	--grid-height: calc(var(--cube-size) * 20);
+
+    --footer-height: 80px;
 
 	--central-box-width: 500px;
 
@@ -43,7 +45,7 @@ button:not([disabled]):not(.cant-click):hover {
 	@apply bg-blue-400;
 }
 
-button:disabled {
+button:disabled, button.off {
 	@apply bg-neutral-300;
 }
 
@@ -96,7 +98,15 @@ button:disabled {
 }
 
 *::-webkit-scrollbar-thumb {
-	background-color: #5e5e5e;
-	border-radius: 0px;
-	border: 0px solid #ffffff;
+    background-color: #5e5e5e;
+    border-radius: 0px;
+    border: 0px solid #ffffff;
+}
+
+.shadow {
+    filter: drop-shadow(5px 5px 5px #000);
+}
+
+.transparant {
+	opacity: 0.2;
 }

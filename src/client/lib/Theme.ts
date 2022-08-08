@@ -1,4 +1,4 @@
-import type CubeInfo from '../../routes/game/cube.info';
+import type Cube from './Cube';
 
 export default interface theme {
 	block_textures: {
@@ -8,11 +8,11 @@ export default interface theme {
 	backgrounds: Array<{
 		left: {
 			picture: string | undefined;
-			_3d: { cube_size: number; cubes: Array<Array<CubeInfo>> } | undefined;
+			_3d: { cube_size: number; cubes: Array<Array<Cube>> } | undefined;
 		};
 		right: {
 			picture: string | undefined;
-			_3d: { cube_size: number; cubes: Array<Array<CubeInfo>> } | undefined;
+			_3d: { cube_size: number; cubes: Array<Array<Cube>> } | undefined;
 		};
 	}>;
 }
