@@ -24,7 +24,12 @@ function createPiecesStore() {
 		subscribe,
 		updatePiece: (piece: GamePiece) =>
 			update((pieces) => {
+				console.log('-------------------------------------- store [pieces] 1');
+				console.log('avant:');
+				console.log(pieces);
 				pieces[piece.player] = piece;
+				console.log('apres:');
+				console.log(pieces);
 				return pieces;
 			})
 	};

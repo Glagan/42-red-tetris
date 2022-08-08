@@ -4,14 +4,14 @@ import BoardsStore from './boards';
 import ThemeStore from './theme';
 
 export default derived([BoardsStore, ThemeStore], ($Stores): Array<Cube[]> => {
-	const board: Array<Cube[]> = [[], []];
+	const boards: Array<Cube[]> = [[], []];
 
 	for (let i = 0; i < $Stores[0].length; i++) {
 		for (let y = 0; y < $Stores[0][i].length; y++) {
 			for (let x = 0; x < $Stores[0][i][0].length; x++) {
 				const cube_value = $Stores[0][i][y][x] - 1;
 				if (cube_value != -1)
-					board[i].push({
+					boards[i].push({
 						id: y * 1000 + x * 100 + cube_value,
 						x,
 						y,
@@ -22,5 +22,5 @@ export default derived([BoardsStore, ThemeStore], ($Stores): Array<Cube[]> => {
 		}
 	}
 
-	return board;
+	return boards;
 });

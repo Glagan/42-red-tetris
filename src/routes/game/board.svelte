@@ -1,9 +1,7 @@
 <!-- ========================= SCRIPT -->
 <script lang="ts">
 	import Cube from './cube.svelte';
-	import GeneratedPieceStore from '../../client/stores/generatedPieces';
 	import Config from '../../client/config';
-	import { browser } from '$app/env';
 	import type _Cube from '../../client/lib/Cube';
 
 	export let cubes: Array<_Cube>;
@@ -22,24 +20,6 @@
 			-Math.abs(y - 9) * 20 + // y
 			x * horizontal_alignement // x
 		);
-	}
-
-	let xx = 7;
-
-	if (browser) {
-		document.onkeypress = function (event) {
-			const char = event?.keyCode;
-
-			if (char != undefined) {
-				if (char == 97) {
-					xx--;
-					console.log('droite', xx);
-				} else if (char == 100) {
-					xx++;
-					console.log('gauche', xx);
-				}
-			}
-		};
 	}
 </script>
 
@@ -69,7 +49,7 @@
 			<Cube
 				position_x={cube.x}
 				position_y={cube.y}
-				z_index={100000}
+				z_index={calculate_z_index(cube.x, cube.y)}
 				sprites={cube.sprites}
 				{layer}
 				{background}
@@ -77,17 +57,6 @@
 			/>
 		{/each}
 	{/if}
-	<!-- {#if !background}
-		<Cube
-			position_x={xx}
-			position_y={8}
-			z_index={100000}
-			sprites={cubes[0].sprites}
-			{layer}
-			{background}
-			{horizontal_alignement}
-		/>
-	{/if} -->
 
 	{#each cubes as cube (cube.id)}
 		<Cube

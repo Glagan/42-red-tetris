@@ -3,7 +3,7 @@
 	import Board from './board.svelte';
 	import GeneratedBoardsStore from '../../client/stores/generatedBoards';
 	import ThemeStore from '../../client/stores/theme';
-	import GeneratedPieceStore from '../../client/stores/generatedPieces';
+	import GeneratedPiecesStore from '../../client/stores/generatedPieces';
 	import Config from '../../client/config';
 	import _3Dto2D from '../../client/themes/generators/3Dto2D';
 	import { browser } from '$app/env';
@@ -29,13 +29,15 @@
 			}
 		})();
 	}
+
+	console.log($GeneratedPiecesStore);
 </script>
 
 <!-- ========================= HTML -->
 <div class="mt-6">
 	<div class="board-wrap" style="margin: 0 {Config.game.block_size}px;">
 		<Board
-			piece={$GeneratedPieceStore[0]}
+			piece={$GeneratedPiecesStore[0]}
 			cubes={$GeneratedBoardsStore[0]}
 			horizontal_alignement={1}
 			layer={0}
@@ -67,7 +69,7 @@
 			{/each}
 		{/if}
 		<Board
-			piece={$GeneratedPieceStore[1]}
+			piece={$GeneratedPiecesStore[1]}
 			cubes={$GeneratedBoardsStore[1]}
 			horizontal_alignement={-1}
 			layer={0}

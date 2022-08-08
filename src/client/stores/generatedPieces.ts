@@ -4,9 +4,10 @@ import PiecesStore from './pieces';
 import IdGenerator from '../../utils/id.generator';
 import ThemeStore from './theme';
 
-export default derived([PiecesStore, ThemeStore], ($Stores): Array<Array<Cube>> => {
-	const pieces: Array<Cube[]> = Array($Stores[0].length).fill([]);
+export default derived([PiecesStore, ThemeStore], ($Stores): Array<Cube[]> => {
+	const pieces: Array<Cube[]> = [[], []];
 
+	console.log($Stores[0]);
 	for (let i = 0; i < $Stores[0].length; i++) {
 		const matrix = $Stores[0][i].matrix;
 		for (let y = 0; y < matrix.length; y++) {

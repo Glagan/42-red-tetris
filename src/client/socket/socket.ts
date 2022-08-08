@@ -84,8 +84,10 @@ if (browser) {
 	});
 
 	socket.on('game:piece', (piece: GamePiece) => {
+		console.log('-------------------------------------- on game:piece 0');
+		console.log('on update la piece:', piece.player);
+		console.log(piece.matrix);
 		PiecesStore.updatePiece(piece);
-		console.log('on update la piece');
 	});
 
 	socket.on('player:id', (id: string) => {
