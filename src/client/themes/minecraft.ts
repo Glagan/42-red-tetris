@@ -1,4 +1,4 @@
-import type Theme from './theme.info';
+import type Theme from '../lib/Theme';
 import * as Generator from './generators/background';
 
 const pieces_block_textures = [

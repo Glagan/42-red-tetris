@@ -12,11 +12,13 @@ import type Player from '../lib/Player';
 import type Room from '../lib/Room';
 import CurrentRoomStore from '../stores/currentRoom';
 import OpponentReadyStore from '../stores/opponentReady';
+import PiecesStore from '../stores/pieces';
 import GameStartStore from '../stores/gameStart';
 import BoardsStore from '../stores/boards';
 import { get } from 'svelte/store';
 import { goto } from '$app/navigation';
 import type GameBoard from '../lib/GameBoard';
+import type GamePiece from '../lib/GamePiece';
 
 let socket: Socket<ServerToClientEvents, ClientToServerEvents>;
 
@@ -79,6 +81,11 @@ if (browser) {
 		) {
 			OpponentReadyStore.set(ready);
 		}
+	});
+
+	socket.on('game:piece', (piece: GamePiece) => {
+		PiecesStore.updatePiece(piece);
+		console.log('on update la piece');
 	});
 
 	socket.on('player:id', (id: string) => {

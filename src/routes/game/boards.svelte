@@ -3,9 +3,8 @@
 	import Board from './board.svelte';
 	import GeneratedBoardsStore from '../../client/stores/generatedBoards';
 	import ThemeStore from '../../client/stores/theme';
+	import GeneratedPieceStore from '../../client/stores/generatedPieces';
 	import Config from '../../client/config';
-	// import { left_cubes, right_cubes } from './temp';
-	// import MinecraftTheme from '../../client/themes/minecraft';
 	import _3Dto2D from '../../client/themes/generators/3Dto2D';
 	import { browser } from '$app/env';
 
@@ -36,13 +35,14 @@
 <div class="mt-6">
 	<div class="board-wrap" style="margin: 0 {Config.game.block_size}px;">
 		<Board
+			piece={$GeneratedPieceStore[0]}
 			cubes={$GeneratedBoardsStore[0]}
 			horizontal_alignement={1}
 			layer={0}
 			background_picture={background_theme.left.picture}
 			background_3Dto2D={background_3Dto2D_left}
 		/>
-		<!-- {#if background_theme.left._3d != undefined}
+		{#if background_theme.left._3d != undefined}
 			{#each background_theme.left._3d.cubes as board}
 				<Board
 					cubes={board}
@@ -52,10 +52,10 @@
 					{background_without_front}
 				/>
 			{/each}
-		{/if} -->
+		{/if}
 	</div>
 	<div class="board-wrap" style="margin: 0 {Config.game.block_size}px;">
-		<!-- {#if background_theme.right._3d != undefined}
+		{#if background_theme.right._3d != undefined}
 			{#each background_theme.right._3d.cubes as board}
 				<Board
 					cubes={board}
@@ -65,8 +65,9 @@
 					{background_without_front}
 				/>
 			{/each}
-		{/if} -->
+		{/if}
 		<Board
+			piece={$GeneratedPieceStore[1]}
 			cubes={$GeneratedBoardsStore[1]}
 			horizontal_alignement={-1}
 			layer={0}

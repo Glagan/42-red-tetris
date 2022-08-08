@@ -1,7 +1,7 @@
 import mergeImages from 'merge-images';
-import type CubeInfo from '../../../routes/game/cube.info';
+import type Cube from '../../lib/Cube';
 
-export default function (sprite_size: number, cubes: CubeInfo[]): Promise<string> {
+export default function (sprite_size: number, cubes: Cube[]): Promise<string> {
 	return new Promise((resolve) => {
 		mergeImages(
 			cubes.map((cube): mergeImages.ImageSource => {
