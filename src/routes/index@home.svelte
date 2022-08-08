@@ -1,5 +1,6 @@
 <!-- ========================= SCRIPT -->
 <script lang="ts">
+	import { nanoid } from 'nanoid';
 	import UsernameStore from '../client/stores/username';
 	import { browser } from '$app/env';
 	import { goto } from '$app/navigation';
@@ -7,7 +8,6 @@
 	import Socket from '../client/socket/socket';
 	import type { BasicError } from '../socket';
 	import NotificationStore from '../client/stores/notification';
-	import { v4 as uuidv4 } from 'uuid';
 
 	let username = '';
 	let loading = false;
@@ -27,16 +27,16 @@
 				username,
 				(success: boolean, error: BasicError | null | undefined) => {
 					if (error != null && error != undefined) {
-						NotificationStore.push({ id: uuidv4(), message: error.message, error: true });
+						NotificationStore.push({ id: nanoid(), message: error.message, error: true });
 					} else {
 						if (success) {
 							localStorage.setItem('username', username);
 							UsernameStore.set(username);
-							NotificationStore.push({ id: uuidv4(), message: 'username updated', error: false });
+							NotificationStore.push({ id: nanoid(), message: 'username updated', error: false });
 							goto('/search');
 						} else {
 							NotificationStore.push({
-								id: uuidv4(),
+								id: nanoid(),
 								message: 'username not updated',
 								error: true
 							});

@@ -16,8 +16,6 @@
 	},
 	"dependencies": {
 		"@altostra/type-validations": "^2.6.3",
-		"@types/merge-images": "^1.2.1",
-		"@types/uuid": "^8.3.4",
 		"accurate-game-loop": "^2.0.0",
 		"chalk": "^5.0.1",
 		"express": "^4.18.1",
@@ -28,8 +26,7 @@
 		"node-cron": "3.0.0",
 		"socket.io": "^4.5.1",
 		"socket.io-client": "^4.5.1",
-		"tailwindcss": "^3.1.7",
-		"uuid": "^8.3.2"
+		"tailwindcss": "^3.1.7"
 	},
 	"devDependencies": {
 		"@playwright/test": "^1.24.2",

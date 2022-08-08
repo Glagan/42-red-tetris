@@ -1,5 +1,5 @@
-import { v4 as uuidv4 } from 'uuid';
+import { getRandomInt } from './random';
 
 export default function username_generator(): string {
-	return uuidv4().slice(24);
+	return `Player#${getRandomInt(1000, 9999)}`;
 }
