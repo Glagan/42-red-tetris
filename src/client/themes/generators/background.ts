@@ -1,7 +1,7 @@
-import type CubeInfo from '../../routes/game/cube.info';
+import type CubeInfo from '../../../routes/game/cube.info';
 
 export function background_uniform(sprites: Array<string>, id_start: number): Array<CubeInfo> {
-	return [...new Array(180)].map(
+	return [...new Array(200)].map(
 		(_, index) =>
 			<CubeInfo>{
 				id: id_start + index,
@@ -18,7 +18,7 @@ export function background_chess(
 	b_sprites: Array<string>,
 	id_start: number
 ): Array<CubeInfo> {
-	return [...new Array(180)].map((_, index) => {
+	return [...new Array(200)].map((_, index) => {
 		const x = index % 10;
 		const y = Math.floor(index / 10);
 

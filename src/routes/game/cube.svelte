@@ -1,6 +1,6 @@
 <!-- ========================= SCRIPT -->
 <script lang="ts">
-	import Config from '../../client/configs/game';
+	import Config from '../../client/config';
 
 	export let sprites: Array<string> = ['/sprites/default/cross.png'];
 
@@ -17,9 +17,9 @@
 	export let opacity = 1;
 	export let no_front = false;
 
-	$: position_x_px = position_x * Config.block_size;
-	$: position_y_px = position_y * Config.block_size;
-	$: position_z_px = layer * Config.block_size;
+	$: position_x_px = position_x * Config.game.block_size;
+	$: position_y_px = position_y * Config.game.block_size;
+	$: position_z_px = layer * Config.game.block_size;
 
 	$: show_front = !no_front;
 

@@ -4,7 +4,7 @@
 	import { browser } from '$app/env';
 	import { goto } from '$app/navigation';
 	import CentralBox from '../client/components/containers/central_box.svelte';
-	import Socket from '../client/home-socket';
+	import Socket from '../client/socket/socket';
 	import type { BasicError } from '../socket';
 	import NotificationStore from '../client/stores/notification';
 	import { v4 as uuidv4 } from 'uuid';

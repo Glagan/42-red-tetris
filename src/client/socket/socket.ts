@@ -1,15 +1,22 @@
 import { nanoid } from 'nanoid';
 import { io, Socket } from 'socket.io-client';
-import { get } from 'svelte/store';
 import { browser } from '$app/env';
-import type { ServerToClientEvents, ClientToServerEvents } from '../socket';
-import rooms from '$client/stores/rooms';
-import currentRoom from './stores/currentRoom';
-import UsernameStore from './stores/username';
-import SocketStore from './stores/socket';
-import NotificationStore from './stores/notification';
+import type { ServerToClientEvents, ClientToServerEvents } from '../../socket';
+import UsernameStore from '../stores/username';
+import SocketStore from '../stores/socket';
+import IdStore from '../stores/id';
+import NotificationStore from '../stores/notification';
 import { v4 as uuidv4 } from 'uuid';
-import username_generator from '../utils/username.generator';
+import username_generator from '../../utils/username.generator';
+import type Player from '../lib/Player';
+import type Room from '../lib/Room';
+import CurrentRoomStore from '../stores/currentRoom';
+import OpponentReadyStore from '../stores/opponentReady';
+import GameStartStore from '../stores/gameStart';
+import BoardsStore from '../stores/boards';
+import { get } from 'svelte/store';
+import { goto } from '$app/navigation';
+import type GameBoard from '../lib/GameBoard';
 
 let socket: Socket<ServerToClientEvents, ClientToServerEvents>;
 
@@ -34,6 +41,49 @@ if (browser) {
 		reconnectionDelay: 1000,
 		reconnectionDelayMax: 5000,
 		reconnectionAttempts: 5
+	});
+
+	socket.on('game:startIn', (seconds: number) => {
+		GameStartStore.startIn(seconds);
+	});
+
+	socket.on('game:start', () => {
+		GameStartStore.start();
+		goto('/game');
+	});
+
+	socket.on('game:board', (board: GameBoard) => {
+		BoardsStore.refreshBoard(board);
+	});
+
+	socket.on('room:playerLeft', (player: Player, room: Room) => {
+		if (room.id == get(CurrentRoomStore)?.id && player.id != get(IdStore)) {
+			NotificationStore.push({ id: uuidv4(), message: 'player left', error: false });
+			CurrentRoomStore.set(room);
+			OpponentReadyStore.set(false);
+		}
+	});
+
+	socket.on('room:playerJoined', (player: Player, room: Room) => {
+		if (room.id == get(CurrentRoomStore)?.id) {
+			NotificationStore.push({ id: uuidv4(), message: 'player joined', error: false });
+			CurrentRoomStore.add_player(player);
+		}
+	});
+
+	socket.on('room:playerReady', (player: Player, ready: boolean) => {
+		if (
+			player.id != get(IdStore) &&
+			(get(CurrentRoomStore)?.players[0].id === player.id ||
+				get(CurrentRoomStore)?.players[1].id === player.id)
+		) {
+			OpponentReadyStore.set(ready);
+		}
+	});
+
+	socket.on('player:id', (id: string) => {
+		IdStore.set(id);
+		NotificationStore.push({ id: uuidv4(), message: 'id: ' + id, error: false });
 	});
 
 	socket.on('connect', () => {

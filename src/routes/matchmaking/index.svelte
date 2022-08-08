@@ -2,11 +2,8 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import CentralBox from '../../client/components/containers/central_box.svelte';
-	import { v4 as uuidv4 } from 'uuid';
-	import type { BasicError } from 'src/socket';
-	import NotificationStore from '../../client/stores/notification';
-	import Socket from '../../client/home-socket';
 	import CurrentRoomStore from '../../client/stores/currentRoom';
+	import Leave from '../../client/socket/leave.emit';
 
 	// prevent come back <-
 	if ($CurrentRoomStore == null || $CurrentRoomStore == undefined) {
@@ -23,22 +20,7 @@
 
 	function handle_abort() {
 		loading = true;
-		Socket.emit('room:leave', (success: boolean | null, error: BasicError | null | undefined) => {
-			if (error != null && error != undefined) {
-				NotificationStore.push({ id: uuidv4(), message: error.message, error: true });
-			} else {
-				if (success) {
-					CurrentRoomStore.set(null);
-					NotificationStore.push({ id: uuidv4(), message: 'room leaved', error: false });
-					goto('/search');
-				} else {
-					NotificationStore.push({
-						id: uuidv4(),
-						message: 'room not leaved',
-						error: true
-					});
-				}
-			}
+		Leave(() => {
 			loading = false;
 		});
 	}

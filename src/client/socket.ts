@@ -84,11 +84,11 @@ if (browser) {
 		rooms.set(serverRooms);
 	});
 
-	socket.on('room:current', (currentRoomId) => {
-		if (currentRoomId) {
-			currentRoom.set(currentRoomId);
-		}
-	});
+	// socket.on('room:current', (currentRoomId) => {
+	// 	if (currentRoomId) {
+	// 		currentRoom.set(currentRoomId);
+	// 	}
+	// });
 
 	socket.on('room:created', (room) => {
 		const roomList = get(rooms);

@@ -1,7 +1,7 @@
 <!-- ========================= SCRIPT -->
 <script lang="ts">
 	import Cube from './cube.svelte';
-	import Config from '../../client/configs/game';
+	import Config from '../../client/config';
 	import { browser } from '$app/env';
 	import type CubeInfo from './cube.info';
 
@@ -21,24 +21,6 @@
 			x * horizontal_alignement // x
 		);
 	}
-
-	let xx = 7;
-
-	if (browser) {
-		document.onkeypress = function (event) {
-			const char = event?.keyCode;
-
-			if (char != undefined) {
-				if (char == 97) {
-					xx--;
-					console.log('droite', xx);
-				} else if (char == 100) {
-					xx++;
-					console.log('gauche', xx);
-				}
-			}
-		};
-	}
 </script>
 
 <!-- ========================= HTML -->
@@ -50,8 +32,8 @@
 	{#if background_picture != undefined}
 		<div
 			class="board-background"
-			style="background-image: url({background_picture}); transform: translateZ(-{Config.block_size /
-				2}px);"
+			style="background-image: url({background_picture}); transform: translateZ(-{Config.game
+				.block_size / 2}px);"
 			alt=""
 		/>
 	{:else if background_3Dto2D != undefined}
@@ -59,21 +41,9 @@
 			src={background_3Dto2D}
 			alt="board background"
 			class="board-background"
-			style="transform: translateZ(-{Config.block_size / 2}px);"
+			style="transform: translateZ(-{Config.game.block_size / 2}px);"
 		/>
 	{/if}
-	{#if !background}
-		<Cube
-			position_x={xx}
-			position_y={8}
-			z_index={100000}
-			sprites={cubes[0].sprites}
-			{layer}
-			{background}
-			{horizontal_alignement}
-		/>
-	{/if}
-
 	{#each cubes as cube (cube.id)}
 		<Cube
 			position_x={cube.x}

@@ -1,14 +1,12 @@
 <!-- ========================= SCRIPT -->
 <script lang="ts">
-	import { goto } from '$app/navigation';
-	import Socket from '../../client/home-socket';
 	import CentralBox from '../../client/components/containers/central_box.svelte';
-	import type { BasicError } from 'src/socket';
-	import type { Room } from '../../client/lib/Room';
-	import { v4 as uuidv4 } from 'uuid';
-	import NotificationStore from '../../client/stores/notification';
 	import CurrentRoomStore from '../../client/stores/currentRoom';
 	import RoomsStore from '../../client/stores/rooms';
+	import Leave from '../../client/socket/leave.emit';
+	import Search from '../../client/socket/search.emit';
+	import Join from '../../client/socket/join.emit';
+	import Create from '../../client/socket/create.emit';
 
 	let create = '';
 	let search = '';
@@ -21,33 +19,12 @@
 	}
 
 	function handle_search() {
-		Socket.emit('room:search', search, (rooms: Room[], error: BasicError | null | undefined) => {
-			if (error != null && error != undefined) {
-				NotificationStore.push({ id: uuidv4(), message: error.message, error: true });
-			} else {
-				RoomsStore.set(rooms);
-			}
-		});
+		Search(search);
 	}
 
 	function handle_join(id: string) {
 		loading = true;
-		Socket.emit('room:join', id, (room: Room | null, error: BasicError | null | undefined) => {
-			if (error != null && error != undefined) {
-				NotificationStore.push({ id: uuidv4(), message: error.message, error: true });
-			} else {
-				if (room != null) {
-					CurrentRoomStore.set(room);
-					NotificationStore.push({ id: uuidv4(), message: 'room joined', error: false });
-					goto('/room');
-				} else {
-					NotificationStore.push({
-						id: uuidv4(),
-						message: 'room not joined',
-						error: true
-					});
-				}
-			}
+		Join(id, () => {
 			loading = false;
 		});
 	}
@@ -55,52 +32,16 @@
 	function handle_create() {
 		loading = true;
 		if (create.length > 0) {
-			Socket.emit(
-				'room:create',
-				create,
-				(room: Room | null, error: BasicError | null | undefined) => {
-					if (error != null && error != undefined) {
-						NotificationStore.push({ id: uuidv4(), message: error.message, error: true });
-					} else {
-						if (room != null) {
-							CurrentRoomStore.set(room);
-							NotificationStore.push({ id: uuidv4(), message: 'room created', error: false });
-							goto('/room');
-						} else {
-							NotificationStore.push({
-								id: uuidv4(),
-								message: 'room not created',
-								error: true
-							});
-						}
-					}
-					loading = false;
-				}
-			);
+			Create(create, () => {
+				loading = false;
+			});
 		}
 	}
 
 	function leave_current_room() {
-		console.log('start leave_current_room');
 		if ($CurrentRoomStore != null) {
-			console.log('on rentre dans leave_current_room');
 			loading = true;
-			Socket.emit('room:leave', (success: boolean | null, error: BasicError | null | undefined) => {
-				if (error != null && error != undefined) {
-					NotificationStore.push({ id: uuidv4(), message: error.message, error: true });
-				} else {
-					if (success) {
-						CurrentRoomStore.set(null);
-						NotificationStore.push({ id: uuidv4(), message: 'room leaved', error: false });
-						goto('/search');
-					} else {
-						NotificationStore.push({
-							id: uuidv4(),
-							message: 'room not leaved',
-							error: true
-						});
-					}
-				}
+			Leave(() => {
 				loading = false;
 			});
 		}

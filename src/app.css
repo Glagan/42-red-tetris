@@ -16,7 +16,7 @@ body {
 	--cube-half-size: calc(var(--cube-size) / 2);
 	--cube-half-size-negative: calc(var(--cube-half-size) * -1);
 	--grid-width: calc(var(--cube-size) * 10);
-	--grid-height: calc(var(--cube-size) * 18);
+	--grid-height: calc(var(--cube-size) * 20);
 
     --footer-height: 80px;
 
@@ -105,4 +105,8 @@ button:disabled, button.off {
 
 .shadow {
     filter: drop-shadow(5px 5px 5px #000);
+}
+
+.transparant {
+	opacity: 0.2;
 }

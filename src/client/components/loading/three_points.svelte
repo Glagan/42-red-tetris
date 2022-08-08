@@ -1,8 +1,11 @@
 <!-- ========================= SCRIPT -->
 <script lang="ts">
 	import sleep from '$utils/sleep';
+
 	let waiting_points = '.';
 	export let waiting_time = 0;
+	export let hidden = false;
+	export let grey = false;
 
 	async function add_one_second() {
 		await sleep(1000);
@@ -18,4 +21,13 @@
 </script>
 
 <!-- ========================= HTML -->
-{@html waiting_points_or_space}
+<span style={hidden ? 'display: none;' : ''} class:grey>
+	{@html waiting_points_or_space}
+</span>
+
+<!-- ========================= CSS -->
+<style lang="postcss">
+	.grey {
+		@apply text-neutral-500;
+	}
+</style>

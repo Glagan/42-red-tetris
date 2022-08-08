@@ -3,7 +3,7 @@
 	import Notification from './notification.svelte';
 	import NotificationStore from '../../stores/notification';
 	import type _Notification from '../../lib/Notification';
-	import Socket from '../../../client/home-socket';
+	import Socket from '../../socket/socket';
 	import { browser } from '$app/env';
 	import { v4 as uuidv4 } from 'uuid';
 

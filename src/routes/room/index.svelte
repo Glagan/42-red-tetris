@@ -2,20 +2,20 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import CentralBox from '../../client/components/containers/central_box.svelte';
-	import type { BasicError } from 'src/socket';
 	import CurrentRoomStore from '$client/stores/currentRoom';
 	import UsernameStore from '$client/stores/username';
-	import { v4 as uuidv4 } from 'uuid';
+	import OpponentReady from '$client/stores/opponentReady';
 	import ThreePoints from '$client/components/loading/three_points.svelte';
-	import NotificationStore from '../../client/stores/notification';
-	import Socket from '../../client/home-socket';
-	import type Room from '$client/lib/Room';
-	import type Player from '$client/lib/Player';
+	import GameStartStore from '$client/stores/gameStart';
+	import Leave from '../../client/socket/leave.emit';
+	import Ready from '../../client/socket/ready.emit';
 
 	// prevent come back <-
 	if ($CurrentRoomStore == null || $CurrentRoomStore == undefined) {
 		goto('/search');
 	}
+
+	$: game_will_start = $GameStartStore != -1;
 
 	$: start_message =
 		$CurrentRoomStore != null && $CurrentRoomStore.players.length > 1
@@ -32,56 +32,32 @@
 
 	let waiting_time = 0;
 	let ready = false;
-	let opponent_ready = opponent_username != null;
+
 	let loading = false;
+
+	$: opponent_is_absent = opponent_username == null;
 
 	const tips: Array<string> = [
 		'When you complete more than two lines, your opponent receives additional lines.'
 	];
 
-	Socket.on('room:playerJoined', (player: Player, room: Room) => {
-		if (room.id == $CurrentRoomStore?.id) {
-			CurrentRoomStore.add_player(player);
-		}
-	});
-
 	function handle_abort() {
-		loading = true;
-		Socket.emit('room:leave', (success: boolean | null, error: BasicError | null | undefined) => {
-			if (error != null && error != undefined) {
-				NotificationStore.push({ id: uuidv4(), message: error.message, error: true });
-			} else {
-				if (success) {
-					CurrentRoomStore.set(null);
-					NotificationStore.push({ id: uuidv4(), message: 'room leaved', error: false });
-					goto('/search');
-				} else {
-					NotificationStore.push({
-						id: uuidv4(),
-						message: 'room not leaved',
-						error: true
-					});
-				}
-			}
-			loading = false;
-		});
+		if (!game_will_start) {
+			loading = true;
+			Leave(() => {
+				loading = false;
+			});
+		}
 	}
 
 	function handle_ready() {
-		loading = true;
-		Socket.emit('room:ready', (new_ready: boolean, error: BasicError | null | undefined) => {
-			if (error != null && error != undefined) {
-				NotificationStore.push({ id: uuidv4(), message: error.message, error: true });
-			} else {
+		if (!game_will_start) {
+			loading = true;
+			Ready((new_ready: boolean) => {
 				ready = new_ready;
-				NotificationStore.push({
-					id: uuidv4(),
-					message: (new_ready ? '' : 'not ') + 'ready',
-					error: false
-				});
-			}
-			loading = false;
-		});
+				loading = false;
+			});
+		}
 	}
 </script>
 
@@ -92,25 +68,46 @@
 	<div class="button-container flex justify-between mt-6">
 		<div>
 			<p>
-				{#if opponent_username != null}
+				{#if !opponent_is_absent}
 					@{opponent_username}
-				{:else}
-					<ThreePoints bind:waiting_time />
 				{/if}
+				<ThreePoints bind:waiting_time hidden={!opponent_is_absent} grey />
 			</p>
-			<button class="mt-2 cant-click" class:off={!opponent_ready}>Ready</button>
+			<button
+				class="mt-2 cant-click"
+				class:transparant={opponent_is_absent || game_will_start}
+				class:off={!$OpponentReady}>Ready</button
+			>
 		</div>
 		<div>
-			<p class="text-neutral-800 text-center" disabled={ready && opponent_ready}>
-				{waiting_time} seconds
-			</p>
-			<button class="mt-2" on:click={handle_abort}>Abort</button>
+			{#if game_will_start}
+				<p class="text-center">
+					start in {$GameStartStore} seconds
+				</p>
+			{:else}
+				<p class="text-neutral-800 text-center">
+					{waiting_time} seconds
+				</p>
+			{/if}
+			<button
+				class="mt-2"
+				class:cant-click={game_will_start}
+				class:transparant={game_will_start}
+				class:off={game_will_start}
+				on:click={handle_abort}>Abort</button
+			>
 		</div>
 		<div>
 			<p>
 				@{$UsernameStore}&nbsp;<span class="text-neutral-500">(you)</span>
 			</p>
-			<button class="mt-2" class:off={!ready} on:click={handle_ready}>Ready</button>
+			<button
+				class="mt-2"
+				class:cant-click={game_will_start}
+				class:transparant={game_will_start}
+				class:off={!ready}
+				on:click={handle_ready}>Ready</button
+			>
 		</div>
 	</div>
 </CentralBox>

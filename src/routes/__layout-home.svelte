@@ -2,7 +2,6 @@
 <script lang="ts">
 	import '../app.css';
 	import Header from '../client/components/layout/header.svelte';
-	import Socket from '../client/home-socket';
 	import Notifications from '../client/components/layout/notifications.svelte';
 </script>
 
