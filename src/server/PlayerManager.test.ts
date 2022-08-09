@@ -1,5 +1,11 @@
-import { cleanupWebSocketTestServer, setupWebSocketTestServer } from '$utils/test';
+import { getRandomInt } from '$utils/random';
+import {
+	cleanupWebSocketTestServer,
+	connectTestWebSocket,
+	setupWebSocketTestServer
+} from '$utils/test';
 import { nanoid } from 'nanoid';
+import type { TypedSocket } from 'src/socket';
 import Room from './lib/Room';
 import PlayerManager from './PlayerManager';
 import RoomManager from './RoomManager';
@@ -7,6 +13,7 @@ import RoomManager from './RoomManager';
 describe('PlayerManager', () => {
 	const socket = nanoid();
 	const token = nanoid();
+	const username = `Player#${getRandomInt(1000, 9999)}`;
 
 	beforeAll(async () => {
 		setupWebSocketTestServer();
@@ -50,12 +57,12 @@ describe('PlayerManager', () => {
 		expect(PlayerManager.exists(socket)).toBeFalsy();
 	});
 
-	it('Can cleanup players', () => {
+	it('Can cleanup players', async () => {
 		const token = nanoid();
+		const socket = await connectTestWebSocket(token, username);
 
 		PlayerManager.add(token, 'Player');
-		// @ts-expect-error We only need to have a truthy value here
-		PlayerManager.players[token].socket = true;
+		PlayerManager.players[token].socket = socket as unknown as TypedSocket;
 		expect(PlayerManager.exists(token)).toBeTruthy();
 		PlayerManager.cleanup();
 		expect(PlayerManager.exists(token)).toBeTruthy();
@@ -63,15 +70,18 @@ describe('PlayerManager', () => {
 		PlayerManager.players[token].socket = undefined;
 		PlayerManager.cleanup();
 		expect(PlayerManager.exists(token)).toBeFalsy();
+
+		// Cleanup
+		socket.disconnect();
 	});
 
-	it('Players cleanup delete rooms', () => {
+	it('Players cleanup delete rooms', async () => {
 		const token = nanoid();
+		const socket = await connectTestWebSocket(token, username);
 
 		PlayerManager.add(token, 'Player');
 		const player = PlayerManager.get(token);
-		// @ts-expect-error We only need to have a truthy value here
-		PlayerManager.players[token].socket = true;
+		PlayerManager.players[token].socket = socket as unknown as TypedSocket;
 		const room = new Room('My room');
 		player.joinRoom(room);
 		RoomManager.addRoom(room);
@@ -85,6 +95,9 @@ describe('PlayerManager', () => {
 		PlayerManager.cleanup();
 		expect(PlayerManager.exists(token)).toBeFalsy();
 		expect(RoomManager.getRoom(room.id)).toBeFalsy();
+
+		// Cleanup
+		socket.disconnect();
 	});
 
 	it('Players cleanup do not delete non-empty rooms', () => {

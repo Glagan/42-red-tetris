@@ -1,7 +1,16 @@
+import { cleanupWebSocketTestServer, setupWebSocketTestServer } from '$utils/test';
 import Player from './Player';
 import Room from './Room';
 
 describe('Test Player', () => {
+	beforeAll(async () => {
+		setupWebSocketTestServer();
+	});
+
+	afterAll(() => {
+		cleanupWebSocketTestServer();
+	});
+
 	it('Can create a player', () => {
 		const player = new Player('Player');
 		expect(player).toBeInstanceOf(Player);

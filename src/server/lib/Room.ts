@@ -22,6 +22,10 @@ export default class Room {
 		this.playersIndex = {};
 	}
 
+	get socketRoom() {
+		return `room:${this.id}`;
+	}
+
 	addPlayer(player: Player) {
 		if (
 			this.players.length < 2 &&
@@ -50,9 +54,15 @@ export default class Room {
 		}
 		this.ready = [];
 
+		const firstPlayer = this.players[0];
 		const secondPlayer = this.players[1];
 		secondPlayer.leaveCurrentRoom();
+		if (secondPlayer.socket) {
+			secondPlayer.socket.emit('room:kicked');
+		}
 		this.players.splice(1, 1);
+
+		WebSocket.server.to(this.socketRoom).emit('room:playerReady', firstPlayer.toClient(), false);
 		return secondPlayer;
 	}
 
@@ -65,14 +75,16 @@ export default class Room {
 	}
 
 	togglePlayerAsReady(playerId: string) {
-		const index = this.players.findIndex((player) => player.id === playerId);
-		if (index >= 0) {
+		const player = this.players.find((player) => player.id === playerId);
+		if (player) {
 			const readyIndex = this.ready.indexOf(playerId);
 			if (readyIndex >= 0) {
 				this.ready.splice(readyIndex, 1);
+				WebSocket.server.to(this.socketRoom).emit('room:playerReady', player.toClient(), false);
 				return false;
 			} else {
 				this.ready.push(playerId);
+				WebSocket.server.to(this.socketRoom).emit('room:playerReady', player.toClient(), true);
 				return true;
 			}
 		}
@@ -109,6 +121,17 @@ export default class Room {
 				count += 1;
 			}, 1000);
 			/* c8 ignore end */
+			WebSocket.server.to(this.socketRoom).emit(
+				'room:gameCreated',
+				{
+					current: this.currentPiece(0),
+					next: this.nextPieces(0)
+				},
+				{
+					current: this.currentPiece(1),
+					next: this.nextPieces(1)
+				}
+			);
 		}
 	}
 

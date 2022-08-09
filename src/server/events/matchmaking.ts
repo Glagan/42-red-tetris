@@ -21,9 +21,6 @@ export default function useMatchmakingAPI(socket: TypedSocket) {
 				opponent.joinRoom(room);
 				socket.data.player.joinRoom(room);
 				RoomManager.addRoom(room);
-				opponent.socket.join(`room:${room.id}`);
-				socket.join(`room:${room.id}`);
-				WebSocket.server.emit('room:created', room.toClient());
 				WebSocket.server.to(`room:${room.id}`).emit('matchmaking:found', room.toClient());
 			} else {
 				RoomManager.addPlayerToMatchmaking(socket.data.player);

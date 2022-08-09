@@ -17,16 +17,16 @@ export function setupWebSocketTestServer() {
 	testPort = (httpServer.address() as { port: number }).port;
 }
 
-export async function connectTestWebSocket(
-	token: string,
-	username: string
-): Promise<Socket<ServerToClientEvents, ClientToServerEvents>> {
-	const socket = io(`http://localhost:${testPort}`, {
-		auth: {
-			token,
-			username
+export async function connectTestWebSocket(token: string, username: string) {
+	const socket: Socket<ServerToClientEvents, ClientToServerEvents> = io(
+		`http://localhost:${testPort}`,
+		{
+			auth: {
+				token,
+				username
+			}
 		}
-	});
+	);
 	// socket.on('connect', () => {
 	// 	console.log('connected', socket.id);
 	// });

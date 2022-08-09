@@ -5,7 +5,6 @@ import { objectOf } from '@altostra/type-validations';
 import type { ClientToServerEvents, TypedSocket } from '../../socket';
 import isValidID from '$server/lib/Validators/ID';
 import RoomManager from '$server/RoomManager';
-import WebSocket from '$server/lib/SocketIO';
 import isValidQuery from '$server/lib/Validators/Query';
 
 export type CreateRoomPayload = {
@@ -46,16 +45,10 @@ export default function useRoomAPI(socket: TypedSocket) {
 			const roomName = name.trim();
 			const room = new Room(roomName);
 			socket.data.player.joinRoom(room);
-			socket.join(`room:${room.id}`);
 			RoomManager.addRoom(room);
 			if (callback) {
-				callback({
-					id: room.id,
-					name: room.name,
-					players: room.players.map((player) => player.toClient())
-				});
+				callback(room.toClient());
 			}
-			WebSocket.server.emit('room:created', room.toClient());
 		} else if (callback) {
 			callback(null, { message: 'You already are in a room or in matchmaking' });
 		}
@@ -117,11 +110,9 @@ export default function useRoomAPI(socket: TypedSocket) {
 		const room = RoomManager.getRoom(roomId);
 		if (room && !room.isFull() && !room.isPlaying()) {
 			socket.data.player.joinRoom(room);
-			socket.join(`room:${roomId}`);
 			if (callback) {
 				callback(room.toClient());
 			}
-			WebSocket.server.emit('room:playerJoined', socket.data.player.toClient(), room.toClient());
 		} else if (callback) {
 			if (room) {
 				callback(null, { message: 'The room is full or already in a game' });
@@ -151,26 +142,11 @@ export default function useRoomAPI(socket: TypedSocket) {
 		}
 
 		const previousRoom = socket.data.player.leaveCurrentRoom();
-		if (previousRoom) {
-			socket.leave(`room:${previousRoom.id}`);
-		}
-		if (previousRoom) {
+		if (previousRoom && callback) {
 			if (previousRoom.isEmpty()) {
 				RoomManager.removeRoom(previousRoom.id);
-				if (callback) {
-					callback(true);
-				}
-				WebSocket.server.emit('room:deleted', previousRoom.id);
-			} else {
-				if (callback) {
-					callback(false);
-				}
-				WebSocket.server.emit(
-					'room:playerLeft',
-					socket.data.player.toClient(),
-					previousRoom.toClient()
-				);
 			}
+			callback(previousRoom.isEmpty());
 		} else if (callback) {
 			callback(false);
 		}
@@ -200,24 +176,10 @@ export default function useRoomAPI(socket: TypedSocket) {
 			const ready = room.togglePlayerAsReady(socket.data.player.id);
 			if (room.allPlayersReady()) {
 				room.createGame();
-				WebSocket.server.to(`room:${room.id}`).emit(
-					'room:gameCreated',
-					{
-						current: room.currentPiece(0),
-						next: room.nextPieces(0)
-					},
-					{
-						current: room.currentPiece(1),
-						next: room.nextPieces(1)
-					}
-				);
 			}
 			if (callback) {
 				callback(ready);
 			}
-			WebSocket.server
-				.to(`room:${room.id}`)
-				.emit('room:playerReady', socket.data.player.toClient(), ready);
 		} else if (callback) {
 			callback(false, { message: 'You are not currently in a room' });
 		}
@@ -302,18 +264,7 @@ export default function useRoomAPI(socket: TypedSocket) {
 			return;
 		}
 
-		const kicked = room.kickSecondPlayer();
-		if (kicked) {
-			if (kicked.socket) {
-				kicked.socket.leave(`room:${room.id}`);
-				kicked.socket.emit('room:kicked');
-			}
-			WebSocket.server.emit('room:playerLeft', kicked.toClient(), room.toClient());
-		}
-		WebSocket.server
-			.to(`room:${room.id}`)
-			.emit('room:playerReady', socket.data.player.toClient(), false);
-
+		room.kickSecondPlayer();
 		if (callback) {
 			callback(true);
 		}

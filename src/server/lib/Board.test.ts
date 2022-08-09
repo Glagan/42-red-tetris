@@ -1,3 +1,4 @@
+import { cleanupWebSocketTestServer, setupWebSocketTestServer } from '$utils/test';
 import Board, { COLUMNS, MoveDirection, RotationDirection, ROWS } from './Board';
 import { TetrominoType } from '$shared/Tetromino';
 import TetrominoI from './Tetrominoes/TetrominoI';
@@ -10,6 +11,14 @@ import TetrominoZ from './Tetrominoes/TetrominoZ';
 
 describe('Test Board', () => {
 	const board = new Board();
+
+	beforeAll(async () => {
+		setupWebSocketTestServer();
+	});
+
+	afterAll(() => {
+		cleanupWebSocketTestServer();
+	});
 
 	it('Has a valid default state', () => {
 		expect(board.movingTetromino).toBeUndefined();

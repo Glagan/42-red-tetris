@@ -81,7 +81,7 @@ export interface ServerToClientEvents {
 	'game:board': (board: GameBoard) => void;
 }
 
-interface SocketData {
+export interface SocketData {
 	player: import('$server/lib/Player').default;
 }
 
