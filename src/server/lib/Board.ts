@@ -68,8 +68,6 @@ export default class Board {
 				this.removeLine(index);
 				index += 1;
 				count += 1;
-			} else {
-				break;
 			}
 		}
 		return count;

@@ -63,6 +63,23 @@ describe('Test Board', () => {
 		expect(board.clearAllCompletedLines()).toBe(2);
 	});
 
+	it('Can clear completed a line in the middle of the board', () => {
+		const board = new Board();
+
+		expect(board.clearAllCompletedLines()).toBe(0);
+
+		board.bitboard.splice(ROWS / 4, 1, new Array(COLUMNS).fill(TetrominoType.Blocked));
+		expect(board.clearAllCompletedLines()).toBe(1);
+
+		board.bitboard.splice(
+			ROWS / 2,
+			2,
+			new Array(COLUMNS).fill(TetrominoType.Blocked),
+			new Array(COLUMNS).fill(TetrominoType.Blocked)
+		);
+		expect(board.clearAllCompletedLines()).toBe(2);
+	});
+
 	it('Can spawn a tetromino on an empty board', () => {
 		const board = new Board();
 		const tetromino = new TetrominoI();
