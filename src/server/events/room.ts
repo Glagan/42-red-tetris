@@ -220,6 +220,8 @@ export default function useRoomAPI(socket: TypedSocket) {
 			for (const part of parts) {
 				if (
 					part != '' &&
+					room.players.length < 2 &&
+					!room.isPlaying() &&
 					(room.name.indexOf(part) >= 0 ||
 						room.id === part ||
 						room.players.findIndex(
@@ -229,6 +231,9 @@ export default function useRoomAPI(socket: TypedSocket) {
 					results.push(room);
 					break;
 				}
+			}
+			if (results.length >= 50) {
+				break;
 			}
 		}
 

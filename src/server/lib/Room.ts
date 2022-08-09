@@ -122,7 +122,7 @@ export default class Room {
 			}, 1000);
 			/* c8 ignore end */
 			WebSocket.server.to(this.socketRoom).emit(
-				'room:gameCreated',
+				'game:initialState',
 				{
 					current: this.currentPiece(0),
 					next: this.nextPieces(0)
@@ -132,6 +132,7 @@ export default class Room {
 					next: this.nextPieces(1)
 				}
 			);
+			WebSocket.server.to(this.socketRoom).emit('room:gameCreated', this.id);
 		}
 	}
 

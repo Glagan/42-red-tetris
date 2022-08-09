@@ -50,13 +50,19 @@ export interface ServerToClientEvents {
 	// * Player
 	'player:id': (id: string) => void;
 	// * Room
-	'room:all': (rooms: Room[]) => void;
 	'room:created': (room: Room) => void;
 	'room:playerJoined': (player: Player, room: Room) => void;
 	'room:playerLeft': (player: Player, room: Room) => void;
 	'room:deleted': (roomId: string) => void;
 	'room:current': (roomId: string | null) => void;
-	'room:gameCreated': (
+	'room:gameCreated': (roomId: string) => void;
+	'room:playerReady': (player: Player, ready: boolean) => void;
+	'room:playerStatus': (player: Player, loggedIn: boolean) => void;
+	'room:kicked': () => void;
+	// * Matchmaking
+	'matchmaking:found': (room: Room) => void;
+	// * Game
+	'game:initialState': (
 		playerOne: {
 			current: GamePiece | undefined;
 			next: NextGamePiece[];
@@ -66,12 +72,6 @@ export interface ServerToClientEvents {
 			next: NextGamePiece[];
 		}
 	) => void;
-	'room:playerReady': (player: Player, ready: boolean) => void;
-	'room:playerStatus': (player: Player, loggedIn: boolean) => void;
-	'room:kicked': () => void;
-	// * Matchmaking
-	'matchmaking:found': (room: Room) => void;
-	// * Game
 	'game:startIn': (seconds: number) => void;
 	'game:start': () => void;
 	'game:tick': (tick: number) => void;
