@@ -107,6 +107,6 @@ button:disabled, button.off {
     filter: drop-shadow(5px 5px 5px #000);
 }
 
-.transparant {
+.transparent {
 	opacity: 0.2;
 }

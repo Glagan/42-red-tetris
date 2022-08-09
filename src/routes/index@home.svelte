@@ -16,9 +16,9 @@
 		username = $UsernameStore;
 	}
 
-	$: disabled_enter = username.length == 0;
+	$: disabled = username.length == 0 || loading;
 
-	function handle_enter() {
+	function onClick() {
 		if ($UsernameStore == username) return goto('/search');
 		loading = true;
 		if (username.length > 0) {
@@ -52,5 +52,5 @@
 <!-- ========================= HTML -->
 <CentralBox title="Username" {loading}>
 	<input type="text" class="text-input" placeholder="Your username" bind:value={username} />
-	<button class="mt-5" on:click={handle_enter} disabled={disabled_enter}>Enter</button>
+	<button class="mt-5" on:click={onClick} {disabled}>Enter</button>
 </CentralBox>
