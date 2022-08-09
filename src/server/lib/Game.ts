@@ -263,6 +263,7 @@ export default class Game {
 			this.emitPieceUpdate(boardIndex);
 			return true;
 		}
+		this.emitPieceUpdate(boardIndex);
 		this.gameOver(boardIndex);
 		return false;
 	}

@@ -114,6 +114,13 @@ describe('Test Board', () => {
 		expect(board.canSpawnTetromino(blockedTetromino)).toBeFalsy();
 	});
 
+	it("Can't spawn a tetromino out of the board", () => {
+		const board = new Board();
+		const tetromino = new TetrominoI();
+		tetromino.offset = [-10, -10];
+		expect(board.spawnTetromino(tetromino)).toBeFalsy();
+	});
+
 	it('Correctly add a tetromino to the bitboard', () => {
 		const board = new Board();
 		const tetromino = new TetrominoI();

@@ -256,6 +256,9 @@ export default class Board {
 		if (this.canSetTetrominoOnBitboard(tetromino)) {
 			return true;
 		}
+		if (this.tetrominoIsOut(tetromino)) {
+			return false;
+		}
 		while (!this.canSetTetrominoOnBitboard(tetromino)) {
 			tetromino.translate([-1, 0]);
 			if (this.tetrominoIsOut(tetromino)) {
