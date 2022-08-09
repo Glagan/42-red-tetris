@@ -38,12 +38,12 @@ export default function useRoomAPI(socket: TypedSocket) {
 			return;
 		}
 
-		const roomName = name.trim();
 		if (
 			socket.data.player &&
 			!socket.data.player.room &&
 			!RoomManager.playerIsInMatchmaking(socket.data.player.id)
 		) {
+			const roomName = name.trim();
 			const room = new Room(roomName);
 			socket.data.player.joinRoom(room);
 			socket.join(`room:${room.id}`);
@@ -169,6 +169,8 @@ export default function useRoomAPI(socket: TypedSocket) {
 					previousRoom.toClient()
 				);
 			}
+		} else if (callback) {
+			callback(false);
 		}
 	};
 	socket.on('room:leave', roomLeave);
@@ -282,9 +284,9 @@ export default function useRoomAPI(socket: TypedSocket) {
 		}
 
 		const room = socket.data.player.room;
-		if (!room || room.players.length < 1) {
+		if (!room || room.players.length < 2) {
 			if (callback) {
-				callback(false, { message: 'You need to be in a room to manage it' });
+				callback(false, { message: 'You need to be in a room with 2 players to manage it' });
 			}
 			return;
 		}
