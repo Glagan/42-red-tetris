@@ -14,7 +14,6 @@ import { getRandomInt } from '$utils/random';
 import WebSocket from './SocketIO';
 
 const TICK_RATE = 60;
-const GRAVITY_PER_SEC = 0.5;
 
 export default class Game {
 	// socket.io room to emit events to
@@ -28,7 +27,9 @@ export default class Game {
 	paused: boolean;
 	loop: Loop.Loop;
 	tick: number;
-	tickDownRate: number;
+	level: number;
+	totalCompletedLines: number;
+	tickDownRate!: number;
 	nextTickDown: number;
 	onCompletion?: (winner: number) => void;
 
@@ -56,9 +57,15 @@ export default class Game {
 		}
 		this.paused = true;
 		this.tick = 0;
-		this.tickDownRate = Math.floor(1000 / GRAVITY_PER_SEC / TICK_RATE);
+		this.level = 1;
+		this.totalCompletedLines = 0;
+		this.updateTickDownRate();
 		this.nextTickDown = this.tickDownRate;
 		this.loop = new Loop(this.onTick.bind(this), TICK_RATE);
+	}
+
+	updateTickDownRate() {
+		this.tickDownRate = Math.max(1, Math.floor(1000 / TICK_RATE / (this.level / 2)));
 	}
 
 	generateTetromino(type: TetrominoType): Tetromino {
@@ -185,6 +192,7 @@ export default class Game {
 	 */
 	handleAfterTetrominoSet(index: number, completedLines: number) {
 		if (completedLines > 0) {
+			this.totalCompletedLines += completedLines;
 			this.score[index] += completedLines * 1000;
 		} else {
 			this.score[index] += getRandomInt(10, 99);
@@ -206,6 +214,8 @@ export default class Game {
 				this.emitPieceUpdate(otherIndex);
 			}
 		}
+		this.level = Math.max(1, Math.floor(this.totalCompletedLines / 10));
+		this.updateTickDownRate();
 		// console.log(this.boards[index].repr());
 		return false;
 	}
