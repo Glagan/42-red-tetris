@@ -61,6 +61,18 @@ export class RoomManager {
 		}
 		return false;
 	}
+
+	search(query: string) {
+		const results: Room[] = [];
+		for (const room of this.rooms) {
+			if (room.matchAny(query)) {
+				results.push(room);
+				if (results.length >= 50) {
+					break;
+				}
+			}
+		}
+	}
 }
 const manager = new RoomManager();
 export default manager as RoomManager;

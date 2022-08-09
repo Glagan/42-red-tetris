@@ -56,6 +56,7 @@ export interface ServerToClientEvents {
 	'room:deleted': (roomId: string) => void;
 	'room:current': (roomId: string | null) => void;
 	'room:gameCreated': (roomId: string) => void;
+	'room:gameCompleted': (roomId: string) => void;
 	'room:playerReady': (player: Player, ready: boolean) => void;
 	'room:playerStatus': (player: Player, loggedIn: boolean) => void;
 	'room:kicked': () => void;

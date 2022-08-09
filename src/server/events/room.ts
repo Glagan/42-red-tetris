@@ -193,7 +193,7 @@ export default function useRoomAPI(socket: TypedSocket) {
 
 		if (query == '') {
 			if (callback) {
-				callback(RoomManager.all());
+				callback(RoomManager.all().slice(-50));
 			}
 			return;
 		}
@@ -214,26 +214,13 @@ export default function useRoomAPI(socket: TypedSocket) {
 			return;
 		}
 
-		const parts = query.trim().split(' ');
 		const results: Room[] = [];
 		for (const room of RoomManager.rooms) {
-			for (const part of parts) {
-				if (
-					part != '' &&
-					room.players.length < 2 &&
-					!room.isPlaying() &&
-					(room.name.indexOf(part) >= 0 ||
-						room.id === part ||
-						room.players.findIndex(
-							(player) => player.id === part || player.name.indexOf(part) >= 0
-						) >= 0)
-				) {
-					results.push(room);
+			if (room.matchAny(query)) {
+				results.push(room);
+				if (results.length >= 50) {
 					break;
 				}
-			}
-			if (results.length >= 50) {
-				break;
 			}
 		}
 

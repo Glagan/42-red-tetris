@@ -3,6 +3,7 @@ import type Player from '$server/lib/Player';
 import type { Room as ClientRoom } from '$client/lib/Room';
 import Game from './Game';
 import WebSocket from './SocketIO';
+import { roomMatchAny } from '$shared/Match';
 
 export default class Room {
 	id: string;
@@ -106,6 +107,7 @@ export default class Room {
 			this.game = new Game(`room:${this.id}`, this.players.length);
 			this.game.onCompletion = (winner) => {
 				this.winner = winner;
+				WebSocket.server.emit('room:gameCompleted', this.id);
 			};
 			this.ready = [];
 			// Start game after 5s
@@ -177,6 +179,13 @@ export default class Room {
 	 */
 	isPlaying() {
 		return this.game !== undefined && this.winner < 0;
+	}
+
+	matchAny(query: string) {
+		if (this.isPlaying()) {
+			return false;
+		}
+		return roomMatchAny(this, query);
 	}
 
 	toClient(): ClientRoom {

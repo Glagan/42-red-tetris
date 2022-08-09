@@ -436,6 +436,41 @@ describe('Test Game', () => {
 		socket.disconnect();
 	});
 
+	it('Get a truncated list of rooms', async () => {
+		const token = nanoid();
+		const socket = await connectTestWebSocket(token, username);
+
+		// Manually create rooms
+		const rooms: string[] = [];
+		for (let index = 0; index < 100; index++) {
+			const room = new Room(`Room#${index + 1}`);
+			RoomManager.addRoom(room);
+			rooms.push(room.id);
+		}
+
+		await new Promise((resolve) => {
+			socket.emit('room:search', '', (rooms, error) => {
+				expect(rooms.length).toEqual(50);
+				expect(error).toBeFalsy();
+				resolve(true);
+			});
+		});
+
+		await new Promise((resolve) => {
+			socket.emit('room:search', 'Room', (rooms, error) => {
+				expect(rooms.length).toEqual(50);
+				expect(error).toBeFalsy();
+				resolve(true);
+			});
+		});
+
+		// Cleanup
+		for (const roomId of rooms) {
+			RoomManager.removeRoom(roomId);
+		}
+		socket.disconnect();
+	});
+
 	it('Can kick a player from a room', async () => {
 		const tokenOne = nanoid();
 		const socketOne = await connectTestWebSocket(tokenOne, username);
