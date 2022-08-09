@@ -118,6 +118,7 @@ export default class Game {
 		WebSocket.server.to(this.room).emit('game:board', {
 			player: index,
 			score: this.score[index],
+			level: this.level,
 			board: this.boards[index].bitboard
 		});
 	}
@@ -202,6 +203,8 @@ export default class Game {
 		if (completedLines >= 0 && !this.spawnNextTetromino(index)) {
 			return true;
 		}
+		this.level = Math.max(1, Math.ceil(this.totalCompletedLines / 10));
+		this.updateTickDownRate();
 		// Add blocked lines to the other player
 		if (this.playerCount > 1 && completedLines >= 2) {
 			for (let otherIndex = 0; otherIndex < this.playerCount; otherIndex++) {
@@ -216,8 +219,6 @@ export default class Game {
 				this.emitPieceUpdate(otherIndex);
 			}
 		}
-		this.level = Math.max(1, Math.ceil(this.totalCompletedLines / 10));
-		this.updateTickDownRate();
 		// console.log(this.boards[index].repr());
 		return false;
 	}
