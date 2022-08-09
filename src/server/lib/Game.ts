@@ -161,6 +161,15 @@ export default class Game {
 		return ok;
 	}
 
+	moveDown(index: number) {
+		const completedLines = this.boards[index].tickDown();
+		if (completedLines >= 0) {
+			this.handleAfterTetrominoSet(index, completedLines);
+			return true;
+		}
+		return false;
+	}
+
 	rotate(index: number, direction: RotationDirection) {
 		const ok = this.boards[index].rotateWithWallKicks(direction);
 		if (ok) {

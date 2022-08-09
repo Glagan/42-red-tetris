@@ -44,6 +44,27 @@ export default function useGameAPI(socket: TypedSocket) {
 
 	// *
 
+	const gameMoveDown: ClientToServerEvents['game:move:down'] = (callback) => {
+		if (!socket.data.player) {
+			if (callback) callback(false);
+			return;
+		}
+
+		const room = socket.data.player.room;
+		if (room && room.game && !room.game.paused) {
+			const index = room.playersIndex[socket.data.player.id];
+			const ok = room.game.moveDown(index);
+			if (callback) {
+				callback(ok);
+			}
+		} else if (callback) {
+			callback(false);
+		}
+	};
+	socket.on('game:move:down', gameMoveDown);
+
+	// *
+
 	const gameRotateClockwise: ClientToServerEvents['game:rotate:clockwise'] = (callback) => {
 		if (!socket.data.player) {
 			if (callback) callback(false);
