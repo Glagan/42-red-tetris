@@ -11,20 +11,19 @@ export default function useMatchmakingAPI(socket: TypedSocket) {
 			!socket.data.player.room &&
 			!RoomManager.playerIsInMatchmaking(socket.data.player.id)
 		) {
+			if (callback) {
+				callback(true);
+			}
 			const opponent = RoomManager.findOpponent(socket.data.player.id);
 			if (opponent && opponent.socket) {
 				const room = new Room(`Matchmaking#${getRandomInt(1000, 9999)}`);
-				opponent.joinRoom(room);
-				opponent.socket.join(`room:${room.id}`);
 				RoomManager.removePlayerFromMatchmaking(opponent.id);
+				opponent.joinRoom(room);
 				socket.data.player.joinRoom(room);
-				socket.join(`room:${room.id}`);
-				WebSocket.server.emit('room:created', room.toClient());
+				RoomManager.addRoom(room);
+				WebSocket.server.to(`room:${room.id}`).emit('matchmaking:found', room.toClient());
 			} else {
 				RoomManager.addPlayerToMatchmaking(socket.data.player);
-				if (callback) {
-					callback(true);
-				}
 			}
 		} else if (callback) {
 			callback(false, { message: 'You already are in a room or in queue' });
@@ -35,13 +34,15 @@ export default function useMatchmakingAPI(socket: TypedSocket) {
 	// *
 
 	const matchmakingLeave: ClientToServerEvents['matchmaking:leave'] = (callback) => {
-		if (socket.data.player) {
-			RoomManager.removePlayerFromMatchmaking(socket.data.player.id);
-			if (callback) {
-				callback(true);
-			}
-		} else if (callback) {
-			callback(false, { message: 'You need to be logged in to leave Matchmaking' });
+		/* c8 ignore next 5 */
+		if (!socket.data.player) {
+			if (callback) callback(false);
+			return;
+		}
+
+		RoomManager.removePlayerFromMatchmaking(socket.data.player.id);
+		if (callback) {
+			callback(true);
 		}
 	};
 	socket.on('matchmaking:leave', matchmakingLeave);

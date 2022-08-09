@@ -22,7 +22,7 @@
 		<div class="absolute top-0 left-0 z-40 w-full h-full" />
 		<SquareSpinner />
 	{/if}
-	<div class:transparant={_loading} disabled>
+	<div class:transparent={_loading} disabled>
 		{#if title.length > 0}
 			<h2 class="absolute cant-select-text left-4 -top-4">
 				{title}{#if loading_title}<ThreePoints bind:waiting_time />{/if}

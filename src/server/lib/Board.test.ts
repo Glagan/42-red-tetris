@@ -1,3 +1,4 @@
+import { cleanupWebSocketTestServer, setupWebSocketTestServer } from '$utils/test';
 import Board, { COLUMNS, MoveDirection, RotationDirection, ROWS } from './Board';
 import { TetrominoType } from '$shared/Tetromino';
 import TetrominoI from './Tetrominoes/TetrominoI';
@@ -10,6 +11,14 @@ import TetrominoZ from './Tetrominoes/TetrominoZ';
 
 describe('Test Board', () => {
 	const board = new Board();
+
+	beforeAll(async () => {
+		setupWebSocketTestServer();
+	});
+
+	afterAll(() => {
+		cleanupWebSocketTestServer();
+	});
 
 	it('Has a valid default state', () => {
 		expect(board.movingTetromino).toBeUndefined();
@@ -63,6 +72,23 @@ describe('Test Board', () => {
 		expect(board.clearAllCompletedLines()).toBe(2);
 	});
 
+	it('Can clear completed a line in the middle of the board', () => {
+		const board = new Board();
+
+		expect(board.clearAllCompletedLines()).toBe(0);
+
+		board.bitboard.splice(ROWS / 4, 1, new Array(COLUMNS).fill(TetrominoType.Blocked));
+		expect(board.clearAllCompletedLines()).toBe(1);
+
+		board.bitboard.splice(
+			ROWS / 2,
+			2,
+			new Array(COLUMNS).fill(TetrominoType.Blocked),
+			new Array(COLUMNS).fill(TetrominoType.Blocked)
+		);
+		expect(board.clearAllCompletedLines()).toBe(2);
+	});
+
 	it('Can spawn a tetromino on an empty board', () => {
 		const board = new Board();
 		const tetromino = new TetrominoI();
@@ -86,6 +112,13 @@ describe('Test Board', () => {
 		Board.translateTetrominoToCenter(blockedTetromino);
 		blockedTetromino.offset[1] -= 1;
 		expect(board.canSpawnTetromino(blockedTetromino)).toBeFalsy();
+	});
+
+	it("Can't spawn a tetromino out of the board", () => {
+		const board = new Board();
+		const tetromino = new TetrominoI();
+		tetromino.offset = [-10, -10];
+		expect(board.spawnTetromino(tetromino)).toBeFalsy();
 	});
 
 	it('Correctly add a tetromino to the bitboard', () => {
@@ -373,7 +406,7 @@ describe('Test Board', () => {
 		expect(board.rotateWithWallKicks(RotationDirection.CounterClockwise)).toBeFalsy();
 	});
 
-	it('Can rotate a tetromino with wallkicks', () => {
+	it('Can rotate a tetromino with wallkicks clockwise', () => {
 		const board = new Board();
 
 		const initialTetromino = new TetrominoI();
@@ -388,6 +421,23 @@ describe('Test Board', () => {
 		tetromino = new TetrominoI();
 		board.movingTetromino = tetromino;
 		expect(board.rotateWithWallKicks(RotationDirection.CounterClockwise)).toBeTruthy();
+	});
+
+	it('Can rotate a tetromino with wallkicks counterclockwise', () => {
+		const board = new Board();
+
+		const initialTetromino = new TetrominoI();
+		board.movingTetromino = initialTetromino;
+		expect(board.rotateWithWallKicks(RotationDirection.CounterClockwise)).toBeTruthy();
+		board.setTetrominoOnBitboard(initialTetromino);
+
+		// This will rotate the tetromino and apply the first wallkick it find
+		let tetromino = new TetrominoI();
+		board.movingTetromino = tetromino;
+		expect(board.rotateWithWallKicks(RotationDirection.CounterClockwise)).toBeTruthy();
+		tetromino = new TetrominoI();
+		board.movingTetromino = tetromino;
+		expect(board.rotateWithWallKicks(RotationDirection.Clockwise)).toBeTruthy();
 	});
 
 	it('Can fix a tetromino position on spawn', () => {

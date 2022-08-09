@@ -1,8 +1,9 @@
 import http from 'http';
 import WebSocket from '$server/lib/SocketIO';
 import { Server } from 'socket.io';
-import { io } from 'socket.io-client';
+import { io, Socket } from 'socket.io-client';
 import SetupSocketServer from '$server/setup';
+import type { ClientToServerEvents, ServerToClientEvents } from 'src/socket';
 
 /* c8 ignore start */
 let httpServer: http.Server;
@@ -17,12 +18,15 @@ export function setupWebSocketTestServer() {
 }
 
 export async function connectTestWebSocket(token: string, username: string) {
-	const socket = io(`http://localhost:${testPort}`, {
-		auth: {
-			token,
-			username
+	const socket: Socket<ServerToClientEvents, ClientToServerEvents> = io(
+		`http://localhost:${testPort}`,
+		{
+			auth: {
+				token,
+				username
+			}
 		}
-	});
+	);
 	// socket.on('connect', () => {
 	// 	console.log('connected', socket.id);
 	// });

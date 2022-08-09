@@ -68,8 +68,6 @@ export default class Board {
 				this.removeLine(index);
 				index += 1;
 				count += 1;
-			} else {
-				break;
 			}
 		}
 		return count;
@@ -105,7 +103,7 @@ export default class Board {
 
 	/**
 	 * Move the moving tetromino one position down on the board and clear completed lines
-	 * @returns -1 if the tetromino was *not* consumed, or the amount of completed lines
+	 * @returns -2 on error, -1 if the tetromino was *not* consumed, or the amount of completed lines
 	 */
 	tickDown() {
 		if (this.movingTetromino) {
@@ -123,8 +121,9 @@ export default class Board {
 			this.movingTetromino.offset[0] += 1;
 			// Clear lock if the tetromino moved from a lock position
 			this.movingTetromino.locked = false;
+			return -1;
 		}
-		return -1;
+		return -2;
 	}
 
 	/**
@@ -256,6 +255,9 @@ export default class Board {
 	fixTetrominoPosition(tetromino: Tetromino) {
 		if (this.canSetTetrominoOnBitboard(tetromino)) {
 			return true;
+		}
+		if (this.tetrominoIsOut(tetromino)) {
+			return false;
 		}
 		while (!this.canSetTetrominoOnBitboard(tetromino)) {
 			tetromino.translate([-1, 0]);

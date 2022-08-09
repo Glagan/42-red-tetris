@@ -6,7 +6,7 @@ import UsernameStore from '../stores/username';
 import SocketStore from '../stores/socket';
 import IdStore from '../stores/id';
 import NotificationStore from '../stores/notification';
-import username_generator from '../../utils/username.generator';
+import usernameGenerator from '../../utils/username.generator';
 import type Player from '../lib/Player';
 import type Room from '../lib/Room';
 import CurrentRoomStore from '../stores/currentRoom';
@@ -31,7 +31,7 @@ if (browser) {
 	}
 	let username = localStorage.getItem('username');
 	if (username == null) {
-		username = username_generator();
+		username = usernameGenerator();
 		localStorage.setItem('username', username);
 		UsernameStore.set(username);
 	}

@@ -22,7 +22,7 @@ describe('Test Game', () => {
 	});
 
 	it('Has a valid default state', () => {
-		expect(game.winner).toBe(0);
+		expect(game.winner).toBe(-1);
 		expect(game.boards.length).toBe(2);
 		expect(game.boards[0]).toBeInstanceOf(Board);
 		expect(game.boards[1]).toBeInstanceOf(Board);
@@ -133,6 +133,30 @@ describe('Test Game', () => {
 		expect(game.dash(0)).toBeFalsy();
 	});
 
+	it('Can call move down action on a board', () => {
+		const game = new Game('room:test', 1);
+
+		expect(game.moveDown(0)).toBeTruthy();
+
+		game.boards[0].movingTetromino = undefined;
+		expect(game.moveDown(0)).toBeFalsy();
+	});
+
+	it('Move down correctly detect completed lines', () => {
+		const game = new Game('room:test', 1);
+
+		game.boards[0].generateBlockedLine(1);
+		const emptyColumn = game.boards[0].emptyLineBlockedColumn;
+		if (emptyColumn) {
+			game.boards[0].bitboard[ROWS - 1][emptyColumn] = TetrominoType.Blocked;
+		}
+		game.boards[0].movingTetromino = new TetrominoI();
+		game.boards[0].movingTetromino.offset[0] = ROWS - 3;
+		game.boards[0].movingTetromino.locked = true;
+		expect(game.moveDown(0)).toBeTruthy();
+		expect(game.totalCompletedLines).toBe(1);
+	});
+
 	it('Can finish a game', () => {
 		let game = new Game('room:test', 1);
 
@@ -198,6 +222,7 @@ describe('Test Game', () => {
 			game.boards[0].bitboard[index][0] = TetrominoType.None;
 		}
 		game.boards[0].movingTetromino = new TetrominoI();
+		game.boards[0].movingTetromino.rotateClockwise();
 		game.boards[0].movingTetromino.locked = true;
 		game.nextTickDown = 0;
 		expect(game.onTick()).toBeTruthy();
@@ -267,5 +292,35 @@ describe('Test Game', () => {
 		game.nextTickDown = 0;
 		expect(game.onTick()).toBeFalsy();
 		expect(game.score[0]).toBeGreaterThan(0);
+	});
+
+	it('Increase level when completing lines', () => {
+		const game = new Game('room:test', 1);
+		expect(game.level).toBe(1);
+		expect(game.totalCompletedLines).toBe(0);
+		const originalTickDownRate = game.tickDownRate;
+
+		expect(game.handleAfterTetrominoSet(0, 15)).toBeFalsy();
+		expect(game.level).toBe(2);
+		expect(game.totalCompletedLines).toBe(15);
+		expect(game.tickDownRate !== originalTickDownRate).toBeTruthy();
+	});
+
+	it('Can concede a game', () => {
+		let game = new Game('room:test', 1);
+
+		expect(game.winner).toBe(-1);
+		game.concede(0);
+		expect(game.winner).toBe(0);
+
+		game = new Game('room:test', 2);
+		expect(game.winner).toBe(-1);
+		game.concede(0);
+		expect(game.winner).toBe(1);
+
+		game = new Game('room:test', 2);
+		expect(game.winner).toBe(-1);
+		game.concede(1);
+		expect(game.winner).toBe(0);
 	});
 });

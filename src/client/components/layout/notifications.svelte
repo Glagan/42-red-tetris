@@ -7,23 +7,15 @@
 	import type _Notification from '../../lib/Notification';
 	import Socket from '../../socket/socket';
 
-	let notifications: Array<_Notification> = [
-		{ message: 'ouidddd', error: true, id: nanoid() },
-		{ message: 'osdfasdfasdfasdd', error: false, id: nanoid() },
-		{ message: 'ouidddfsdfdd', error: true, id: nanoid() }
-	];
-
 	if (browser) {
 		Socket.on('connect', () => {
-			notifications.push({ message: 'connected', error: false, id: nanoid() });
+			NotificationStore.push({ message: 'connected', error: false, id: nanoid() });
 		});
 	}
-
-	function handle_notification() {}
 </script>
 
 <!-- ========================= HTML -->
-<div class="absolute bottom-0 right-0 text-right" on:message={handle_notification}>
+<div class="absolute bottom-0 right-0 text-right">
 	{#each $NotificationStore as notification}
 		<Notification message={notification.message} error={notification.error} />
 	{/each}

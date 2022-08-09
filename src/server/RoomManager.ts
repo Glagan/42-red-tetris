@@ -1,5 +1,6 @@
 import type Player from '$server/lib/Player';
 import type Room from '$server/lib/Room';
+import WebSocket from '$server/lib/SocketIO';
 
 export class RoomManager {
 	rooms: Room[] = [];
@@ -18,6 +19,7 @@ export class RoomManager {
 		if (index < 0) {
 			this.rooms.push(newRoom);
 		}
+		WebSocket.server.emit('room:created', newRoom.toClient());
 	}
 
 	removeRoom(roomIdentifier: Room | string) {
@@ -35,6 +37,7 @@ export class RoomManager {
 				player.leaveCurrentRoom();
 			}
 			this.rooms.splice(index, 1);
+			WebSocket.server.emit('room:deleted', room.id);
 		}
 	}
 
@@ -57,6 +60,18 @@ export class RoomManager {
 			return true;
 		}
 		return false;
+	}
+
+	search(query: string) {
+		const results: Room[] = [];
+		for (const room of this.rooms) {
+			if (room.matchAny(query)) {
+				results.push(room);
+				if (results.length >= 50) {
+					break;
+				}
+			}
+		}
 	}
 }
 const manager = new RoomManager();

@@ -14,7 +14,6 @@ import { getRandomInt } from '$utils/random';
 import WebSocket from './SocketIO';
 
 const TICK_RATE = 60;
-const GRAVITY_PER_SEC = 0.5;
 
 export default class Game {
 	// socket.io room to emit events to
@@ -28,14 +27,16 @@ export default class Game {
 	paused: boolean;
 	loop: Loop.Loop;
 	tick: number;
-	tickDownRate: number;
+	level: number;
+	totalCompletedLines: number;
+	tickDownRate!: number;
 	nextTickDown: number;
 	onCompletion?: (winner: number) => void;
 
 	constructor(room: string, playerCount: number) {
 		this.room = room;
 		this.playerCount = playerCount;
-		this.winner = 0;
+		this.winner = -1;
 		this.score = [];
 		// Always keep 3 next tetrominoes
 		// -- +1 at the start for the initial tetromino
@@ -56,9 +57,15 @@ export default class Game {
 		}
 		this.paused = true;
 		this.tick = 0;
-		this.tickDownRate = Math.floor(1000 / GRAVITY_PER_SEC / TICK_RATE);
+		this.level = 1;
+		this.totalCompletedLines = 0;
+		this.updateTickDownRate();
 		this.nextTickDown = this.tickDownRate;
 		this.loop = new Loop(this.onTick.bind(this), TICK_RATE);
+	}
+
+	updateTickDownRate() {
+		this.tickDownRate = Math.max(1, Math.floor(1000 / TICK_RATE / (this.level / 2)));
 	}
 
 	generateTetromino(type: TetrominoType): Tetromino {
@@ -111,6 +118,7 @@ export default class Game {
 		WebSocket.server.to(this.room).emit('game:board', {
 			player: index,
 			score: this.score[index],
+			level: this.level,
 			board: this.boards[index].bitboard
 		});
 	}
@@ -161,6 +169,17 @@ export default class Game {
 		return ok;
 	}
 
+	moveDown(index: number) {
+		const completedLines = this.boards[index].tickDown();
+		if (completedLines >= 0) {
+			this.handleAfterTetrominoSet(index, completedLines);
+		}
+		if (completedLines >= -1) {
+			return true;
+		}
+		return false;
+	}
+
 	rotate(index: number, direction: RotationDirection) {
 		const ok = this.boards[index].rotateWithWallKicks(direction);
 		if (ok) {
@@ -176,6 +195,7 @@ export default class Game {
 	 */
 	handleAfterTetrominoSet(index: number, completedLines: number) {
 		if (completedLines > 0) {
+			this.totalCompletedLines += completedLines;
 			this.score[index] += completedLines * 1000;
 		} else {
 			this.score[index] += getRandomInt(10, 99);
@@ -183,6 +203,8 @@ export default class Game {
 		if (completedLines >= 0 && !this.spawnNextTetromino(index)) {
 			return true;
 		}
+		this.level = Math.max(1, Math.ceil(this.totalCompletedLines / 10));
+		this.updateTickDownRate();
 		// Add blocked lines to the other player
 		if (this.playerCount > 1 && completedLines >= 2) {
 			for (let otherIndex = 0; otherIndex < this.playerCount; otherIndex++) {
@@ -208,6 +230,10 @@ export default class Game {
 			return true;
 		}
 		return false;
+	}
+
+	concede(index: number) {
+		return this.gameOver(index);
 	}
 
 	gameOver(loserBoardIndex: number) {
@@ -238,6 +264,7 @@ export default class Game {
 			this.emitPieceUpdate(boardIndex);
 			return true;
 		}
+		this.emitPieceUpdate(boardIndex);
 		this.gameOver(boardIndex);
 		return false;
 	}

@@ -5,7 +5,7 @@ import { writable } from 'svelte/store';
 
 const initial: Room | null = null;
 
-function createUsernameStore() {
+function createCurrentRoomStore() {
 	const { subscribe, update, set } = writable(initial);
 
 	return {
@@ -20,4 +20,4 @@ function createUsernameStore() {
 	};
 }
 
-export default createUsernameStore();
+export default createCurrentRoomStore();

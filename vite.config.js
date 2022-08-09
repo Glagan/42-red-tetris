@@ -38,7 +38,9 @@ const config = {
 				'setup-global.ts',
 				'**/*.d.ts',
 				'**/*.test.ts',
-				'src/client/lib/*.ts'
+				'src/routes/__*', // Layout files *can't* be tested
+				'src/client/lib/*.ts', // Types only
+				'src/socket.ts' // Types only
 			],
 			extension: ['.js', '.cjs', '.ts', '.svelte'],
 			reporter: ['text', 'html'],

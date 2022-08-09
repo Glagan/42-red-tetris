@@ -39,11 +39,11 @@
 
 	$: opponent_is_absent = opponent_username == null;
 
-	const tips: Array<string> = [
+	const tips: string[] = [
 		'When you complete more than two lines, your opponent receives additional lines.'
 	];
 
-	function handle_abort() {
+	function abort() {
 		if (!game_will_start) {
 			loading = true;
 			Leave(() => {
@@ -52,7 +52,7 @@
 		}
 	}
 
-	function handle_ready() {
+	function toggleReady() {
 		if (!game_will_start) {
 			loading = true;
 			Ready((new_ready: boolean) => {
@@ -80,7 +80,7 @@
 			</p>
 			<button
 				class="mt-2 cant-click"
-				class:transparant={opponent_is_absent || game_will_start}
+				class:transparent={opponent_is_absent || game_will_start}
 				class:off={!$OpponentReady}>Ready</button
 			>
 		</div>
@@ -97,9 +97,9 @@
 			<button
 				class="mt-2"
 				class:cant-click={game_will_start}
-				class:transparant={game_will_start}
+				class:transparent={game_will_start}
 				class:off={game_will_start}
-				on:click={handle_abort}>Abort</button
+				on:click={abort}>Abort</button
 			>
 		</div>
 		<div>
@@ -109,9 +109,9 @@
 			<button
 				class="mt-2"
 				class:cant-click={game_will_start}
-				class:transparant={game_will_start}
+				class:transparent={game_will_start}
 				class:off={!ready}
-				on:click={handle_ready}>Ready</button
+				on:click={toggleReady}>Ready</button
 			>
 		</div>
 	</div>

@@ -1,6 +1,6 @@
 import type Cube from '../../lib/Cube';
 
-export function background_uniform(sprites: Array<string>, id_start: number): Array<Cube> {
+export function background_uniform(sprites: string[], id_start: number): Cube[] {
 	return [...new Array(200)].map(
 		(_, index) =>
 			<Cube>{
@@ -14,10 +14,10 @@ export function background_uniform(sprites: Array<string>, id_start: number): Ar
 }
 
 export function background_chess(
-	a_sprites: Array<string>,
-	b_sprites: Array<string>,
+	a_sprites: string[],
+	b_sprites: string[],
 	id_start: number
-): Array<Cube> {
+): Cube[] {
 	return [...new Array(200)].map((_, index) => {
 		const x = index % 10;
 		const y = Math.floor(index / 10);
@@ -32,7 +32,7 @@ export function background_chess(
 	});
 }
 
-export function background_holed_chess(sprites: Array<string>, id_start: number): Array<Cube> {
+export function background_holed_chess(sprites: string[], id_start: number): Cube[] {
 	return [...new Array(90)].map((_, index) => {
 		index *= 2;
 		const y = Math.floor(index / 10);

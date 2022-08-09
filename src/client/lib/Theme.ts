@@ -1,18 +1,18 @@
 import type Cube from './Cube';
 
-export default interface theme {
+export default interface Theme {
 	block_textures: {
-		pieces: Array<Array<string>>; // 7 blocks
-		others: Array<Array<string>>;
+		pieces: string[][]; // 7 blocks
+		others: string[][];
 	};
-	backgrounds: Array<{
+	backgrounds: {
 		left: {
 			picture: string | undefined;
-			_3d: { cube_size: number; cubes: Array<Array<Cube>> } | undefined;
+			_3d: { cube_size: number; cubes: Cube[][] } | undefined;
 		};
 		right: {
 			picture: string | undefined;
-			_3d: { cube_size: number; cubes: Array<Array<Cube>> } | undefined;
+			_3d: { cube_size: number; cubes: Cube[][] } | undefined;
 		};
-	}>;
+	}[];
 }

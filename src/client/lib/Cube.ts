@@ -1,7 +1,7 @@
-export default interface cube {
+export default interface Cube {
 	id: number;
 	x: number;
 	y: number;
 	z_index: number;
-	sprites: Array<string>;
+	sprites: string[];
 }

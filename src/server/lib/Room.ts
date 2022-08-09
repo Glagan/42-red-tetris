@@ -3,6 +3,7 @@ import type Player from '$server/lib/Player';
 import type { Room as ClientRoom } from '$client/lib/Room';
 import Game from './Game';
 import WebSocket from './SocketIO';
+import { roomMatchAny } from '$shared/Match';
 
 export default class Room {
 	id: string;
@@ -20,6 +21,10 @@ export default class Room {
 		this.ready = [];
 		this.winner = -1;
 		this.playersIndex = {};
+	}
+
+	get socketRoom() {
+		return `room:${this.id}`;
 	}
 
 	addPlayer(player: Player) {
@@ -50,9 +55,15 @@ export default class Room {
 		}
 		this.ready = [];
 
+		const firstPlayer = this.players[0];
 		const secondPlayer = this.players[1];
 		secondPlayer.leaveCurrentRoom();
+		if (secondPlayer.socket) {
+			secondPlayer.socket.emit('room:kicked');
+		}
 		this.players.splice(1, 1);
+
+		WebSocket.server.to(this.socketRoom).emit('room:playerReady', firstPlayer.toClient(), false);
 		return secondPlayer;
 	}
 
@@ -65,14 +76,16 @@ export default class Room {
 	}
 
 	togglePlayerAsReady(playerId: string) {
-		const index = this.players.findIndex((player) => player.id === playerId);
-		if (index >= 0) {
+		const player = this.players.find((player) => player.id === playerId);
+		if (player) {
 			const readyIndex = this.ready.indexOf(playerId);
 			if (readyIndex >= 0) {
 				this.ready.splice(readyIndex, 1);
+				WebSocket.server.to(this.socketRoom).emit('room:playerReady', player.toClient(), false);
 				return false;
 			} else {
 				this.ready.push(playerId);
+				WebSocket.server.to(this.socketRoom).emit('room:playerReady', player.toClient(), true);
 				return true;
 			}
 		}
@@ -94,6 +107,7 @@ export default class Room {
 			this.game = new Game(`room:${this.id}`, this.players.length);
 			this.game.onCompletion = (winner) => {
 				this.winner = winner;
+				WebSocket.server.emit('room:gameCompleted', this.id);
 			};
 			this.ready = [];
 			// Start game after 5s
@@ -102,7 +116,6 @@ export default class Room {
 			const interval = setInterval(() => {
 				if (this.game?.paused === false || count == 5) {
 					clearInterval(interval);
-					WebSocket.server.to(`room:${this.id}`).emit('game:start');
 					this.startGame();
 				} else {
 					WebSocket.server.to(`room:${this.id}`).emit('game:startIn', 5 - count);
@@ -110,6 +123,18 @@ export default class Room {
 				count += 1;
 			}, 1000);
 			/* c8 ignore end */
+			WebSocket.server.to(this.socketRoom).emit(
+				'game:initialState',
+				{
+					current: this.currentPiece(0),
+					next: this.nextPieces(0)
+				},
+				{
+					current: this.currentPiece(1),
+					next: this.nextPieces(1)
+				}
+			);
+			WebSocket.server.to(this.socketRoom).emit('room:gameCreated', this.id);
 		}
 	}
 
@@ -131,6 +156,7 @@ export default class Room {
 
 	startGame() {
 		if (this.game && this.game.paused) {
+			WebSocket.server.to(`room:${this.id}`).emit('game:start');
 			this.game.start();
 		}
 	}
@@ -153,6 +179,13 @@ export default class Room {
 	 */
 	isPlaying() {
 		return this.game !== undefined && this.winner < 0;
+	}
+
+	matchAny(query: string) {
+		if (this.isPlaying()) {
+			return false;
+		}
+		return roomMatchAny(this, query);
 	}
 
 	toClient(): ClientRoom {

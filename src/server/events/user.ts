@@ -26,12 +26,12 @@ export default function useUserAPI(socket: TypedSocket) {
 			return;
 		}
 
-		username = username.trim();
 		if (
 			socket.data.player &&
 			!socket.data.player.room &&
 			!RoomManager.playerIsInMatchmaking(socket.data.player.id)
 		) {
+			username = username.trim();
 			socket.data.player.name = username;
 			callback(true);
 		} else {

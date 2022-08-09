@@ -39,22 +39,31 @@ export interface ClientToServerEvents {
 	// * Game
 	'game:move:left': (callback?: (ok: boolean) => void) => void;
 	'game:move:right': (callback?: (ok: boolean) => void) => void;
+	'game:move:down': (callback?: (ok: boolean) => void) => void;
 	'game:rotate:clockwise': (callback?: (ok: boolean) => void) => void;
 	'game:rotate:counter-clockwise': (callback?: (ok: boolean) => void) => void;
 	'game:dash': (callback?: (ok: boolean) => void) => void;
+	'game:concede': (callback?: (ok: boolean) => void) => void;
 }
 
 export interface ServerToClientEvents {
 	// * Player
 	'player:id': (id: string) => void;
 	// * Room
-	'room:all': (rooms: Room[]) => void;
 	'room:created': (room: Room) => void;
 	'room:playerJoined': (player: Player, room: Room) => void;
 	'room:playerLeft': (player: Player, room: Room) => void;
 	'room:deleted': (roomId: string) => void;
 	'room:current': (roomId: string | null) => void;
-	'room:gameCreated': (
+	'room:gameCreated': (roomId: string) => void;
+	'room:gameCompleted': (roomId: string) => void;
+	'room:playerReady': (player: Player, ready: boolean) => void;
+	'room:playerStatus': (player: Player, loggedIn: boolean) => void;
+	'room:kicked': () => void;
+	// * Matchmaking
+	'matchmaking:found': (room: Room) => void;
+	// * Game
+	'game:initialState': (
 		playerOne: {
 			current: GamePiece | undefined;
 			next: NextGamePiece[];
@@ -64,12 +73,6 @@ export interface ServerToClientEvents {
 			next: NextGamePiece[];
 		}
 	) => void;
-	'room:playerReady': (player: Player, ready: boolean) => void;
-	'room:playerStatus': (player: Player, loggedIn: boolean) => void;
-	'room:kicked': () => void;
-	// * Matchmaking
-	'matchmaking:found': (room: Room) => void;
-	// * Game
 	'game:startIn': (seconds: number) => void;
 	'game:start': () => void;
 	'game:tick': (tick: number) => void;
@@ -79,7 +82,7 @@ export interface ServerToClientEvents {
 	'game:board': (board: GameBoard) => void;
 }
 
-interface SocketData {
+export interface SocketData {
 	player: import('$server/lib/Player').default;
 }
 
