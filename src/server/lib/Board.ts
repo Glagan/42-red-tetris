@@ -103,7 +103,7 @@ export default class Board {
 
 	/**
 	 * Move the moving tetromino one position down on the board and clear completed lines
-	 * @returns -1 if the tetromino was *not* consumed, or the amount of completed lines
+	 * @returns -2 on error, -1 if the tetromino was *not* consumed, or the amount of completed lines
 	 */
 	tickDown() {
 		if (this.movingTetromino) {
@@ -121,8 +121,9 @@ export default class Board {
 			this.movingTetromino.offset[0] += 1;
 			// Clear lock if the tetromino moved from a lock position
 			this.movingTetromino.locked = false;
+			return -1;
 		}
-		return -1;
+		return -2;
 	}
 
 	/**

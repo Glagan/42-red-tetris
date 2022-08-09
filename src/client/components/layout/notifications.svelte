@@ -7,7 +7,7 @@
 	import type _Notification from '../../lib/Notification';
 	import Socket from '../../socket/socket';
 
-	let notifications: Array<_Notification> = [
+	let notifications: _Notification[] = [
 		{ message: 'ouidddd', error: true, id: nanoid() },
 		{ message: 'osdfasdfasdfasdd', error: false, id: nanoid() },
 		{ message: 'ouidddfsdfdd', error: true, id: nanoid() }

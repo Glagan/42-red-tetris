@@ -2,7 +2,7 @@
 <script lang="ts">
 	import Config from '../../client/config';
 
-	export let sprites: Array<string> = ['/sprites/default/cross.png'];
+	export let sprites: string[] = ['/sprites/default/cross.png'];
 
 	$: sprite_side = sprites[0];
 	$: sprite_top = sprites.length >= 2 ? sprites[1] : sprite_side;

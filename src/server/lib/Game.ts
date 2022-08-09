@@ -172,6 +172,8 @@ export default class Game {
 		const completedLines = this.boards[index].tickDown();
 		if (completedLines >= 0) {
 			this.handleAfterTetrominoSet(index, completedLines);
+		}
+		if (completedLines >= -1) {
 			return true;
 		}
 		return false;
@@ -214,7 +216,7 @@ export default class Game {
 				this.emitPieceUpdate(otherIndex);
 			}
 		}
-		this.level = Math.max(1, Math.floor(this.totalCompletedLines / 10));
+		this.level = Math.max(1, Math.ceil(this.totalCompletedLines / 10));
 		this.updateTickDownRate();
 		// console.log(this.boards[index].repr());
 		return false;

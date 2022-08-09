@@ -37,7 +37,7 @@
 
 	$: opponent_is_absent = opponent_username == null;
 
-	const tips: Array<string> = [
+	const tips: string[] = [
 		'When you complete more than two lines, your opponent receives additional lines.'
 	];
 

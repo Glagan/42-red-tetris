@@ -2,7 +2,7 @@ import type { TetrominoType } from '$shared/Tetromino';
 import { writable } from 'svelte/store';
 import type GameBoard from '../lib/GameBoard';
 
-const initial: Array<TetrominoType[][]> = [[], []];
+const initial: TetrominoType[][][] = [[], []];
 
 function createBoardsStore() {
 	const { subscribe, update } = writable(initial);

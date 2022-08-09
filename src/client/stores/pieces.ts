@@ -3,7 +3,7 @@ import { TetrominoType } from '$shared/Tetromino';
 import { writable } from 'svelte/store';
 
 function createPiecesStore() {
-	const { subscribe, update } = writable<Array<GamePiece>>([
+	const { subscribe, update } = writable<GamePiece[]>([
 		<GamePiece>{
 			player: 0,
 			x: 0,

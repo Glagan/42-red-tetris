@@ -4,8 +4,8 @@
 	import Config from '../../client/config';
 	import type _Cube from '../../client/lib/Cube';
 
-	export let cubes: Array<_Cube>;
-	export let piece: Array<_Cube> | undefined = undefined;
+	export let cubes: _Cube[];
+	export let piece: _Cube[] | undefined = undefined;
 	export let horizontal_alignement = 0; // -1:left | 0:center | 1:right
 	export let background = false;
 	export let layer = 0;

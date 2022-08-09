@@ -3,8 +3,8 @@ import { derived } from 'svelte/store';
 import BoardsStore from './boards';
 import ThemeStore from './theme';
 
-export default derived([BoardsStore, ThemeStore], ($Stores): Array<Cube[]> => {
-	const boards: Array<Cube[]> = [[], []];
+export default derived([BoardsStore, ThemeStore], ($Stores): Cube[][] => {
+	const boards: Cube[][] = [[], []];
 
 	for (let i = 0; i < $Stores[0].length; i++) {
 		for (let y = 0; y < $Stores[0][i].length; y++) {
