@@ -3,6 +3,7 @@ import { MoveDirection, RotationDirection } from '$server/lib/Board';
 
 export default function useGameAPI(socket: TypedSocket) {
 	const gameMoveLeft: ClientToServerEvents['game:move:left'] = (callback) => {
+		/* c8 ignore next 5 */
 		if (!socket.data.player) {
 			if (callback) callback(false);
 			return;
@@ -24,6 +25,7 @@ export default function useGameAPI(socket: TypedSocket) {
 	// *
 
 	const gameMoveRight: ClientToServerEvents['game:move:right'] = (callback) => {
+		/* c8 ignore next 5 */
 		if (!socket.data.player) {
 			if (callback) callback(false);
 			return;
@@ -45,6 +47,7 @@ export default function useGameAPI(socket: TypedSocket) {
 	// *
 
 	const gameMoveDown: ClientToServerEvents['game:move:down'] = (callback) => {
+		/* c8 ignore next 5 */
 		if (!socket.data.player) {
 			if (callback) callback(false);
 			return;
@@ -66,6 +69,7 @@ export default function useGameAPI(socket: TypedSocket) {
 	// *
 
 	const gameRotateClockwise: ClientToServerEvents['game:rotate:clockwise'] = (callback) => {
+		/* c8 ignore next 5 */
 		if (!socket.data.player) {
 			if (callback) callback(false);
 			return;
@@ -89,6 +93,7 @@ export default function useGameAPI(socket: TypedSocket) {
 	const gameRotateCounterClockwise: ClientToServerEvents['game:rotate:counter-clockwise'] = (
 		callback
 	) => {
+		/* c8 ignore next 5 */
 		if (!socket.data.player) {
 			if (callback) callback(false);
 			return;
@@ -110,6 +115,7 @@ export default function useGameAPI(socket: TypedSocket) {
 	// *
 
 	const gameDash: ClientToServerEvents['game:dash'] = (callback) => {
+		/* c8 ignore next 5 */
 		if (!socket.data.player) {
 			if (callback) callback(false);
 			return;
@@ -131,6 +137,7 @@ export default function useGameAPI(socket: TypedSocket) {
 	// *
 
 	const gameConcede: ClientToServerEvents['game:concede'] = (callback) => {
+		/* c8 ignore next 5 */
 		if (!socket.data.player) {
 			if (callback) callback(false);
 			return;

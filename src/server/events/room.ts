@@ -99,6 +99,7 @@ export default function useRoomAPI(socket: TypedSocket) {
 	// *
 
 	const roomJoin: ClientToServerEvents['room:join'] = (roomId, callback) => {
+		/* c8 ignore next 7 */
 		if (!socket.data.player) {
 			if (callback) {
 				callback(null, { message: 'You need to be logged in to join a room' });
@@ -134,6 +135,7 @@ export default function useRoomAPI(socket: TypedSocket) {
 	// *
 
 	const roomLeave: ClientToServerEvents['room:leave'] = (callback) => {
+		/* c8 ignore next 7 */
 		if (!socket.data.player) {
 			if (callback) {
 				callback(false, { message: 'You need to be logged in to join a room' });
@@ -178,6 +180,7 @@ export default function useRoomAPI(socket: TypedSocket) {
 	// *
 
 	const roomReady: ClientToServerEvents['room:ready'] = (callback) => {
+		/* c8 ignore next 7 */
 		if (!socket.data.player) {
 			if (callback) {
 				callback(false, { message: 'You need to be logged in to join a room' });
@@ -276,6 +279,7 @@ export default function useRoomAPI(socket: TypedSocket) {
 	// *
 
 	const roomKick: ClientToServerEvents['room:kick'] = (callback) => {
+		/* c8 ignore next 7 */
 		if (!socket.data.player) {
 			if (callback) {
 				callback(false, { message: 'You need to be logged in to manage a room' });

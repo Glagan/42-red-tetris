@@ -37,13 +37,15 @@ export default function useMatchmakingAPI(socket: TypedSocket) {
 	// *
 
 	const matchmakingLeave: ClientToServerEvents['matchmaking:leave'] = (callback) => {
-		if (socket.data.player) {
-			RoomManager.removePlayerFromMatchmaking(socket.data.player.id);
-			if (callback) {
-				callback(true);
-			}
-		} else if (callback) {
-			callback(false, { message: 'You need to be logged in to leave Matchmaking' });
+		/* c8 ignore next 5 */
+		if (!socket.data.player) {
+			if (callback) callback(false);
+			return;
+		}
+
+		RoomManager.removePlayerFromMatchmaking(socket.data.player.id);
+		if (callback) {
+			callback(true);
 		}
 	};
 	socket.on('matchmaking:leave', matchmakingLeave);
