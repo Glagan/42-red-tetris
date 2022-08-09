@@ -102,7 +102,6 @@ export default class Room {
 			const interval = setInterval(() => {
 				if (this.game?.paused === false || count == 5) {
 					clearInterval(interval);
-					WebSocket.server.to(`room:${this.id}`).emit('game:start');
 					this.startGame();
 				} else {
 					WebSocket.server.to(`room:${this.id}`).emit('game:startIn', 5 - count);
@@ -131,6 +130,7 @@ export default class Room {
 
 	startGame() {
 		if (this.game && this.game.paused) {
+			WebSocket.server.to(`room:${this.id}`).emit('game:start');
 			this.game.start();
 		}
 	}

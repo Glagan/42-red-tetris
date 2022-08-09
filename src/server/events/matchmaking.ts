@@ -11,20 +11,22 @@ export default function useMatchmakingAPI(socket: TypedSocket) {
 			!socket.data.player.room &&
 			!RoomManager.playerIsInMatchmaking(socket.data.player.id)
 		) {
+			if (callback) {
+				callback(true);
+			}
 			const opponent = RoomManager.findOpponent(socket.data.player.id);
 			if (opponent && opponent.socket) {
 				const room = new Room(`Matchmaking#${getRandomInt(1000, 9999)}`);
-				opponent.joinRoom(room);
-				opponent.socket.join(`room:${room.id}`);
 				RoomManager.removePlayerFromMatchmaking(opponent.id);
+				opponent.joinRoom(room);
 				socket.data.player.joinRoom(room);
+				RoomManager.addRoom(room);
+				opponent.socket.join(`room:${room.id}`);
 				socket.join(`room:${room.id}`);
 				WebSocket.server.emit('room:created', room.toClient());
+				WebSocket.server.to(`room:${room.id}`).emit('matchmaking:found', room.toClient());
 			} else {
 				RoomManager.addPlayerToMatchmaking(socket.data.player);
-				if (callback) {
-					callback(true);
-				}
 			}
 		} else if (callback) {
 			callback(false, { message: 'You already are in a room or in queue' });
