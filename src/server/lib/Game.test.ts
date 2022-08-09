@@ -22,7 +22,7 @@ describe('Test Game', () => {
 	});
 
 	it('Has a valid default state', () => {
-		expect(game.winner).toBe(0);
+		expect(game.winner).toBe(-1);
 		expect(game.boards.length).toBe(2);
 		expect(game.boards[0]).toBeInstanceOf(Board);
 		expect(game.boards[1]).toBeInstanceOf(Board);
@@ -304,5 +304,23 @@ describe('Test Game', () => {
 		expect(game.level).toBe(2);
 		expect(game.totalCompletedLines).toBe(15);
 		expect(game.tickDownRate !== originalTickDownRate).toBeTruthy();
+	});
+
+	it('Can concede a game', () => {
+		let game = new Game('room:test', 1);
+
+		expect(game.winner).toBe(-1);
+		game.concede(0);
+		expect(game.winner).toBe(0);
+
+		game = new Game('room:test', 2);
+		expect(game.winner).toBe(-1);
+		game.concede(0);
+		expect(game.winner).toBe(1);
+
+		game = new Game('room:test', 2);
+		expect(game.winner).toBe(-1);
+		game.concede(1);
+		expect(game.winner).toBe(0);
 	});
 });

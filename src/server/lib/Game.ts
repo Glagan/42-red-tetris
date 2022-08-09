@@ -36,7 +36,7 @@ export default class Game {
 	constructor(room: string, playerCount: number) {
 		this.room = room;
 		this.playerCount = playerCount;
-		this.winner = 0;
+		this.winner = -1;
 		this.score = [];
 		// Always keep 3 next tetrominoes
 		// -- +1 at the start for the initial tetromino
@@ -229,6 +229,10 @@ export default class Game {
 			return true;
 		}
 		return false;
+	}
+
+	concede(index: number) {
+		return this.gameOver(index);
 	}
 
 	gameOver(loserBoardIndex: number) {

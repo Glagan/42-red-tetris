@@ -43,6 +43,7 @@ export interface ClientToServerEvents {
 	'game:rotate:clockwise': (callback?: (ok: boolean) => void) => void;
 	'game:rotate:counter-clockwise': (callback?: (ok: boolean) => void) => void;
 	'game:dash': (callback?: (ok: boolean) => void) => void;
+	'game:concede': (callback?: (ok: boolean) => void) => void;
 }
 
 export interface ServerToClientEvents {

@@ -127,4 +127,25 @@ export default function useGameAPI(socket: TypedSocket) {
 		}
 	};
 	socket.on('game:dash', gameDash);
+
+	// *
+
+	const gameConcede: ClientToServerEvents['game:concede'] = (callback) => {
+		if (!socket.data.player) {
+			if (callback) callback(false);
+			return;
+		}
+
+		const room = socket.data.player.room;
+		if (room && room.game && !room.game.paused) {
+			const index = room.playersIndex[socket.data.player.id];
+			room.game.concede(index);
+			if (callback) {
+				callback(true);
+			}
+		} else if (callback) {
+			callback(false);
+		}
+	};
+	socket.on('game:concede', gameConcede);
 }
