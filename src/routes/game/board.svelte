@@ -6,7 +6,7 @@
 
 	export let cubes: Array<_Cube>;
 	export let piece: Array<_Cube> | undefined = undefined;
-	export let horizontal_alignement = 0; // -1:left | 0:center | 1:right
+	export let horizontal_alignement: -1 | 0 | 1 = 0; // -1:left | 0:center | 1:right
 	export let background = false;
 	export let layer = 0;
 	export let background_picture: string | undefined = undefined;

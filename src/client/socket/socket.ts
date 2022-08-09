@@ -12,6 +12,7 @@ import type Room from '../lib/Room';
 import CurrentRoomStore from '../stores/currentRoom';
 import OpponentReadyStore from '../stores/opponentReady';
 import PiecesStore from '../stores/pieces';
+import WinnerStore from '../stores/winner';
 import GameStartStore from '../stores/gameStart';
 import BoardsStore from '../stores/boards';
 import { get } from 'svelte/store';
@@ -72,6 +73,14 @@ if (browser) {
 		}
 	});
 
+	socket.on('game:over', (winner: number) => {
+		GameStartStore.remove();
+		if (winner === 0 || winner === 1) {
+			NotificationStore.push({ id: nanoid(), message: 'game over', error: false });
+			WinnerStore.set(winner);
+		}
+	});
+
 	socket.on('room:playerReady', (player: Player, ready: boolean) => {
 		if (
 			player.id != get(IdStore) &&
@@ -83,9 +92,6 @@ if (browser) {
 	});
 
 	socket.on('game:piece', (piece: GamePiece) => {
-		console.log('-------------------------------------- on game:piece 0');
-		console.log('on update la piece:', piece.player);
-		console.log(piece.matrix);
 		PiecesStore.updatePiece(piece);
 	});
 

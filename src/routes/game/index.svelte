@@ -2,10 +2,13 @@
 <script lang="ts">
 	import Boards from './boards.svelte';
 	import PlayerInfo from './player_info.svelte';
+	import WinnerStore from '../../client/stores/winner';
+	import CurrentRoomStore from '../../client/stores/currentRoom';
 	import { browser } from '$app/env';
 	import Move from '../../client/socket/move.emit';
 	import Rotate from '../../client/socket/rotate.emit';
 	import Dash from '../../client/socket/dash.emit';
+	import GameOver from './game_over.svelte';
 
 	if (browser) {
 		document.onkeypress = function (event) {
@@ -32,10 +35,23 @@
 </script>
 
 <!-- ========================= HTML -->
-<div class="w-fit m-auto mt-5 mb-3">
-	<div class="flex flex-row justify-around">
-		<PlayerInfo />
-		<PlayerInfo />
+
+<GameOver />
+<div class="game h-full flex flex-col justify-center" class:transparant={$WinnerStore != -1}>
+	<div class="h-fit">
+		<div class="flex flex-row justify-around">
+			<PlayerInfo horizontal_alignement={-1} player={$CurrentRoomStore?.players[0]} />
+			<PlayerInfo horizontal_alignement={1} player={$CurrentRoomStore?.players[1]} />
+		</div>
+		<Boards />
 	</div>
-	<Boards />
 </div>
+
+<!-- ========================= CSS -->
+<style lang="postcss">
+	.game {
+		margin-top: calc(var(--header-height) / 1.4);
+		/* @apply absolute;
+		top: 50%; */
+	}
+</style>

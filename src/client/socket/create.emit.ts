@@ -1,6 +1,7 @@
 import { nanoid } from 'nanoid';
 import NotificationStore from '../../client/stores/notification';
 import CurrentRoomStore from '../../client/stores/currentRoom';
+import WinnerStore from '../../client/stores/winner';
 import type { BasicError } from 'src/socket';
 import type Room from '../lib/Room';
 import { goto } from '$app/navigation';
@@ -13,6 +14,7 @@ export default function create(create: string, callback: (() => void) | undefine
 		} else {
 			if (room != null) {
 				CurrentRoomStore.set(room);
+				WinnerStore.remove();
 				NotificationStore.push({ id: nanoid(), message: 'room created', error: false });
 				goto('/room');
 			} else {

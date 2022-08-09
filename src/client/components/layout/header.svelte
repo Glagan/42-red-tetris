@@ -1,5 +1,5 @@
 <!-- ========================= HTML -->
-<header class="absolute w-full text-center">
+<header class="absolute w-full text-center z-[10000000]">
 	<div class="relative p-6">
 		<h1 class="text-5xl cant-select-text">
 			<span class="text-red-300">T</span>

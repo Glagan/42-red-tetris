@@ -15,7 +15,6 @@
 
 	if (browser) {
 		Socket.on('connect', () => {
-			console.log('haaaa');
 			notifications.push({ message: 'connected', error: false, id: nanoid() });
 		});
 	}

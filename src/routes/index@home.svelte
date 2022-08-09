@@ -7,7 +7,9 @@
 	import CentralBox from '../client/components/containers/central_box.svelte';
 	import Socket from '../client/socket/socket';
 	import type { BasicError } from '../socket';
+	import WinnerStore from '$client/stores/winner';
 	import NotificationStore from '../client/stores/notification';
+	import OpponenReadytStore from '../client/stores/opponentReady';
 
 	let username = '';
 	let loading = false;
@@ -47,6 +49,9 @@
 			);
 		}
 	}
+
+	OpponenReadytStore.set(false);
+	WinnerStore.remove();
 </script>
 
 <!-- ========================= HTML -->

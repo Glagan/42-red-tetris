@@ -7,8 +7,10 @@
 	import OpponentReady from '$client/stores/opponentReady';
 	import ThreePoints from '$client/components/loading/three_points.svelte';
 	import GameStartStore from '$client/stores/gameStart';
+	import WinnerStore from '$client/stores/winner';
 	import Leave from '../../client/socket/leave.emit';
 	import Ready from '../../client/socket/ready.emit';
+	import OpponenReadytStore from '../../client/stores/opponentReady';
 
 	// prevent come back <-
 	if ($CurrentRoomStore == null || $CurrentRoomStore == undefined) {
@@ -59,6 +61,9 @@
 			});
 		}
 	}
+
+	OpponenReadytStore.set(false);
+	WinnerStore.remove();
 </script>
 
 <!-- ========================= HTML -->

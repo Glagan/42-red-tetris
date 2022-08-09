@@ -5,7 +5,6 @@
 	import SquareSpinner from '../loading/square_spinner.svelte';
 	import SocketStore from '../../stores/socket';
 	import ThreePoints from '../loading/three_points.svelte';
-	import Config from '../../config';
 
 	export let title = '';
 	export let show_username = false;
@@ -25,7 +24,7 @@
 	{/if}
 	<div class:transparant={_loading} disabled>
 		{#if title.length > 0}
-			<h2 class="absolute cant-select-text left-4 -top-4 text-2xl">
+			<h2 class="absolute cant-select-text left-4 -top-4">
 				{title}{#if loading_title}<ThreePoints bind:waiting_time />{/if}
 			</h2>
 		{/if}

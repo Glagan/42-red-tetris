@@ -29,12 +29,10 @@
 			}
 		})();
 	}
-
-	console.log($GeneratedPiecesStore);
 </script>
 
 <!-- ========================= HTML -->
-<div class="mt-6">
+<div class="mt-4">
 	<div class="board-wrap" style="margin: 0 {Config.game.block_size}px;">
 		<Board
 			piece={$GeneratedPiecesStore[0]}
