@@ -162,8 +162,8 @@ export default class Board {
 			this.bitboard.push(blockedLine);
 			// Remove the line at the top and try to keep the current tetromino position
 			this.bitboard.splice(0, 1);
-			if (this.movingTetromino) {
-				return this.fixTetrominoPosition(this.movingTetromino);
+			if (this.movingTetromino && !this.fixTetrominoPosition(this.movingTetromino)) {
+				return false;
 			}
 		}
 		return true;
