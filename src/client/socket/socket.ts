@@ -49,6 +49,13 @@ if (browser) {
 		GameStartStore.startIn(seconds);
 	});
 
+	socket.on('matchmaking:found', (room: Room) => {
+		CurrentRoomStore.set(room);
+		WinnerStore.remove();
+		NotificationStore.push({ id: nanoid(), message: 'room founded', error: false });
+		goto('/room');
+	});
+
 	socket.on('game:start', () => {
 		GameStartStore.start();
 		goto('/game');

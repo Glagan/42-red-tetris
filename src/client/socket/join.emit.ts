@@ -7,7 +7,7 @@ import type Room from '../lib/Room';
 import { goto } from '$app/navigation';
 import Socket from './socket';
 
-export default function join(id: string, callback: (() => void) | undefined = undefined) {
+export function join_room(id: string, callback: (() => void) | undefined = undefined) {
 	Socket.emit('room:join', id, (room: Room | null, error: BasicError | null | undefined) => {
 		if (error != null && error != undefined) {
 			NotificationStore.push({ id: nanoid(), message: error.message, error: true });
@@ -26,5 +26,28 @@ export default function join(id: string, callback: (() => void) | undefined = un
 			}
 		}
 		if (callback != undefined) callback();
+	});
+}
+
+export function join_matchmaking(callback: (() => void) | undefined = undefined) {
+	Socket.emit('matchmaking:join', (success: boolean, error: BasicError | null | undefined) => {
+		if (error != null && error != undefined) {
+			NotificationStore.push({ id: nanoid(), message: error.message, error: true });
+		} else if (success) {
+			NotificationStore.push({
+				id: nanoid(),
+				message: 'matchmaking start',
+				error: false
+			});
+			goto('/matchmaking');
+		} else {
+			NotificationStore.push({
+				id: nanoid(),
+				message: 'matchmaking not start',
+				error: false
+			});
+		}
+		if (callback != undefined) callback();
+		return;
 	});
 }

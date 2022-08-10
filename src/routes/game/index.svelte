@@ -5,7 +5,7 @@
 	import WinnerStore from '../../client/stores/winner';
 	import CurrentRoomStore from '../../client/stores/currentRoom';
 	import { browser } from '$app/env';
-	import Move from '../../client/socket/move.emit';
+	import * as Move from '../../client/socket/move.emit';
 	import Rotate from '../../client/socket/rotate.emit';
 	import Dash from '../../client/socket/dash.emit';
 	import GameOver from './game_over.svelte';
@@ -17,13 +17,16 @@
 			if (char != undefined) {
 				switch (char) {
 					case 97:
-						Move(false);
+						Move.left();
 						break;
 					case 100:
-						Move(true);
+						Move.right();
+						break;
+					case 32:
+						Dash();
 						break;
 					case 115:
-						Dash();
+						Move.down();
 						break;
 					case 119:
 						Rotate(true);

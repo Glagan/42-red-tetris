@@ -1,14 +1,7 @@
 <!-- ========================= SCRIPT -->
 <script lang="ts">
-	import { goto } from '$app/navigation';
 	import CentralBox from '../../client/components/containers/central_box.svelte';
-	import CurrentRoomStore from '../../client/stores/currentRoom';
-	import Leave from '../../client/socket/leave.emit';
-
-	// prevent come back <-
-	if ($CurrentRoomStore == null || $CurrentRoomStore == undefined) {
-		goto('/search');
-	}
+	import { leave_matchmaking as Leave } from '../../client/socket/leave.emit';
 
 	let loading = false;
 
@@ -27,7 +20,7 @@
 </script>
 
 <!-- ========================= HTML -->
-<CentralBox title="Matchmaking" {loading} loading_title bind:waiting_time show_room show_username>
+<CentralBox title="Matchmaking" {loading} loading_title bind:waiting_time>
 	<p class="mt-3">Waiting for another player</p>
 	<p class="text-neutral-400 mt-7">{tips[0]}</p>
 	<button class="mt-5" on:click={handle_abort}>Abort</button>
