@@ -9,7 +9,7 @@ import RoomManager from '$server/RoomManager';
 import { COLUMNS } from '$server/lib/Board';
 import PlayerManager from '$server/PlayerManager';
 
-describe('Test Game', () => {
+describe('Game events', () => {
 	const username = `Player#${getRandomInt(1000, 9999)}`;
 
 	beforeAll(async () => {

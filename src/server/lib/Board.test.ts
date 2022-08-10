@@ -9,7 +9,7 @@ import TetrominoS from './Tetrominoes/TetrominoS';
 import TetrominoT from './Tetrominoes/TetrominoT';
 import TetrominoZ from './Tetrominoes/TetrominoZ';
 
-describe('Test Board', () => {
+describe('Board', () => {
 	const board = new Board();
 
 	beforeAll(async () => {

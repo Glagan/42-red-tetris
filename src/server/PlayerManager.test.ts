@@ -10,7 +10,7 @@ import Room from './lib/Room';
 import PlayerManager from './PlayerManager';
 import RoomManager from './RoomManager';
 
-describe('PlayerManager', () => {
+describe('Player Manager', () => {
 	const socket = nanoid();
 	const token = nanoid();
 	const username = `Player#${getRandomInt(1000, 9999)}`;

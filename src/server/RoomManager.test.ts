@@ -4,7 +4,7 @@ import Player from './lib/Player';
 import Room from './lib/Room';
 import RoomManager from './RoomManager';
 
-describe('RoomManager', () => {
+describe('Room Manager', () => {
 	const room = new Room('My room');
 
 	beforeAll(async () => {

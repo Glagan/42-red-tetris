@@ -1,7 +1,7 @@
 import ValidationError from './ValidationError';
 import type { ValidationRejection } from '@altostra/type-validations';
 
-describe('Test Errors', () => {
+describe('Errors', () => {
 	it('ValidationError', () => {
 		const reasons: ValidationRejection = {
 			reason: 'Invalid',

@@ -1,7 +1,7 @@
 import Tetromino from './Tetromino';
 import TetrominoZ from './TetrominoZ';
 
-describe('Test Tetromino Z', () => {
+describe('Tetromino Z', () => {
 	it('Rotate Clockwise', () => {
 		const tetromino = new TetrominoZ();
 

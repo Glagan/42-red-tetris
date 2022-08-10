@@ -9,7 +9,7 @@ import PlayerManager from '$server/PlayerManager';
 import RoomManager from '$server/RoomManager';
 import Room from '$server/lib/Room';
 
-describe('Test Game', () => {
+describe('Room events', () => {
 	const username = `Player#${getRandomInt(1000, 9999)}`;
 	const usernameTwo = `Player#${getRandomInt(1000, 9999)}`;
 	const usernameThree = `Player#${getRandomInt(1000, 9999)}`;
@@ -545,6 +545,244 @@ describe('Test Game', () => {
 		expect(PlayerManager.get(tokenTwo).room).toBeUndefined();
 
 		// Cleanup
+		PlayerManager.get(tokenOne).leaveCurrentRoom();
+		PlayerManager.get(tokenTwo).leaveCurrentRoom();
+		socketOne.disconnect();
+		socketTwo.disconnect();
+	});
+
+	it('Player disconnect reset ready status', async () => {
+		const tokenOne = nanoid();
+		const socketOne = await connectTestWebSocket(tokenOne, username);
+		const tokenTwo = nanoid();
+		const socketTwo = await connectTestWebSocket(tokenTwo, usernameTwo);
+
+		let roomId = '';
+		await new Promise((resolve) => {
+			socketOne.emit('room:create', 'My room', (room, error) => {
+				if (room) {
+					roomId = room.id;
+				}
+				expect(room).toBeTruthy();
+				expect(error).toBeFalsy();
+				resolve(true);
+			});
+		});
+
+		await new Promise((resolve) => {
+			socketTwo.emit('room:join', roomId, (room, error) => {
+				expect(room).toBeTruthy();
+				expect(error).toBeFalsy();
+				resolve(true);
+			});
+		});
+
+		await new Promise((resolve) => {
+			socketTwo.emit('room:ready', (ready, error) => {
+				expect(ready).toBeTruthy();
+				expect(error).toBeFalsy();
+				resolve(true);
+			});
+		});
+
+		const roomOnServer = RoomManager.getRoom(roomId);
+		expect(roomOnServer).toBeTruthy();
+		if (roomOnServer) {
+			expect(roomOnServer.ready.length).toBe(1);
+		}
+
+		let resolver: (value: boolean) => void;
+		const promise = new Promise((resolve) => {
+			resolver = resolve;
+		});
+		socketOne.once('room:playerReady', (player, ready) => {
+			expect(player.id).toBe(roomOnServer?.players[1].id);
+			expect(ready).toBeFalsy();
+			resolver(true);
+		});
+
+		socketTwo.disconnect();
+		await promise;
+
+		if (roomOnServer) {
+			expect(roomOnServer.ready.length).toBe(0);
+		}
+
+		// Cleanup
+		PlayerManager.get(tokenOne).leaveCurrentRoom();
+		PlayerManager.get(tokenTwo).leaveCurrentRoom();
+		socketOne.disconnect();
+		socketTwo.disconnect();
+	});
+
+	it('Correctly receive room:current on reconnect', async () => {
+		const token = nanoid();
+		const socket = await connectTestWebSocket(token, username);
+
+		let roomId = '';
+		await new Promise((resolve) => {
+			socket.emit('room:create', 'My room', (room, error) => {
+				if (room) {
+					roomId = room.id;
+				}
+				expect(room).toBeTruthy();
+				expect(error).toBeFalsy();
+				resolve(true);
+			});
+		});
+
+		socket.disconnect();
+
+		// check room:current on the next reconnect
+		const resolvers: ((value: boolean) => void)[] = [];
+		const promises = [
+			new Promise((resolve) => {
+				resolvers.push(resolve);
+			}),
+			new Promise((resolve) => {
+				resolvers.push(resolve);
+			})
+		];
+		socket.once('room:current', (room) => {
+			expect(room).toBe(roomId);
+			resolvers[0](true);
+		});
+
+		socket.once('game:current', (state) => {
+			expect(state).toBeNull();
+			resolvers[1](true);
+		});
+
+		socket.connect();
+
+		await Promise.all(promises);
+
+		// Cleanup
+		PlayerManager.get(token).leaveCurrentRoom();
+		socket.disconnect();
+	});
+
+	it('Correctly receive game:current on reconnect 1', async () => {
+		const token = nanoid();
+		const socket = await connectTestWebSocket(token, username);
+
+		let roomId = '';
+		await new Promise((resolve) => {
+			socket.emit('room:create', 'My room', (room, error) => {
+				if (room) {
+					roomId = room.id;
+				}
+				expect(room).toBeTruthy();
+				expect(error).toBeFalsy();
+				resolve(true);
+			});
+		});
+
+		// Start a game manually
+		await new Promise((resolve) => {
+			socket.emit('room:ready', (ready, error) => {
+				expect(ready).toBeTruthy();
+				expect(error).toBeFalsy();
+				resolve(true);
+			});
+		});
+
+		const roomOnServer = RoomManager.getRoom(roomId);
+		expect(roomOnServer).toBeTruthy();
+		if (roomOnServer) {
+			roomOnServer.startGame();
+		}
+
+		socket.disconnect();
+
+		// Check game:current on the next reconnect
+		let resolver: (value: boolean) => void;
+		const promise = new Promise((resolve) => {
+			resolver = resolve;
+		});
+		socket.once('game:current', (state) => {
+			expect(state?.playerOne.id).toBe(roomOnServer?.players[0]?.id);
+			expect(state?.playerTwo).toBeUndefined();
+			resolver(true);
+		});
+
+		socket.connect();
+
+		await promise;
+
+		// Cleanup
+		roomOnServer?.game?.gameOver(0);
+		PlayerManager.get(token).leaveCurrentRoom();
+		socket.disconnect();
+	});
+
+	it('Correctly receive game:current on reconnect 2', async () => {
+		const tokenOne = nanoid();
+		const socketOne = await connectTestWebSocket(tokenOne, username);
+		const tokenTwo = nanoid();
+		const socketTwo = await connectTestWebSocket(tokenTwo, username);
+
+		let roomId = '';
+		await new Promise((resolve) => {
+			socketOne.emit('room:create', 'My room', (room, error) => {
+				if (room) {
+					roomId = room.id;
+				}
+				expect(room).toBeTruthy();
+				expect(error).toBeFalsy();
+				resolve(true);
+			});
+		});
+
+		await new Promise((resolve) => {
+			socketTwo.emit('room:join', roomId, (room, error) => {
+				expect(room).toBeTruthy();
+				expect(error).toBeFalsy();
+				resolve(true);
+			});
+		});
+
+		// Start a game manually
+		await new Promise((resolve) => {
+			socketOne.emit('room:ready', (ready, error) => {
+				expect(ready).toBeTruthy();
+				expect(error).toBeFalsy();
+				resolve(true);
+			});
+		});
+		await new Promise((resolve) => {
+			socketTwo.emit('room:ready', (ready, error) => {
+				expect(ready).toBeTruthy();
+				expect(error).toBeFalsy();
+				resolve(true);
+			});
+		});
+
+		const roomOnServer = RoomManager.getRoom(roomId);
+		expect(roomOnServer).toBeTruthy();
+		if (roomOnServer) {
+			roomOnServer.startGame();
+		}
+
+		socketOne.disconnect();
+
+		// Check game:current on the next reconnect
+		let resolver: (value: boolean) => void;
+		const promise = new Promise((resolve) => {
+			resolver = resolve;
+		});
+		socketOne.once('game:current', (state) => {
+			expect(state?.playerOne.id).toBe(roomOnServer?.players[0]?.id);
+			expect(state?.playerTwo?.id).toBe(roomOnServer?.players[1]?.id);
+			resolver(true);
+		});
+
+		socketOne.connect();
+
+		await promise;
+
+		// Cleanup
+		roomOnServer?.game?.gameOver(0);
 		PlayerManager.get(tokenOne).leaveCurrentRoom();
 		PlayerManager.get(tokenTwo).leaveCurrentRoom();
 		socketOne.disconnect();

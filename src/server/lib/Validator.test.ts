@@ -3,7 +3,7 @@ import { objectOf } from '@altostra/type-validations';
 import { validatePayload } from './Validator';
 import isValidName from './Validators/Name';
 
-describe('Test Validator', () => {
+describe('Validators', () => {
 	it('Can detect an invalid payload', () => {
 		const name = '';
 

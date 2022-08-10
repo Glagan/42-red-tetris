@@ -17,7 +17,7 @@ export function setupWebSocketTestServer() {
 	testPort = (httpServer.address() as { port: number }).port;
 }
 
-export async function connectTestWebSocket(token: string, username: string) {
+export async function connectTestWebSocket(token: string | undefined, username: string) {
 	const socket: Socket<ServerToClientEvents, ClientToServerEvents> = io(
 		`http://localhost:${testPort}`,
 		{
@@ -39,6 +39,25 @@ export async function connectTestWebSocket(token: string, username: string) {
 			resolve(true);
 		});
 	});
+	return socket;
+}
+export function pendingTestWebSocket(token: string | undefined, username: string) {
+	const socket: Socket<ServerToClientEvents, ClientToServerEvents> = io(
+		`http://localhost:${testPort}`,
+		{
+			auth: {
+				token,
+				username
+			}
+		}
+	);
+	// socket.on('connect', () => {
+	// 	console.log('connected', socket.id);
+	// });
+	// socket.on('connect_error', (error) => {
+	// 	console.log('connect_error', error, socket.id);
+	// });
+	// console.log(socket);
 	return socket;
 }
 

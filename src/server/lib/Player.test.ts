@@ -2,7 +2,7 @@ import { cleanupWebSocketTestServer, setupWebSocketTestServer } from '$utils/tes
 import Player from './Player';
 import Room from './Room';
 
-describe('Test Player', () => {
+describe('Player', () => {
 	beforeAll(async () => {
 		setupWebSocketTestServer();
 	});

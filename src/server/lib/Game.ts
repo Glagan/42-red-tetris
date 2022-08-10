@@ -117,13 +117,17 @@ export default class Game {
 		}
 	}
 
-	emitBoardUpdate(index: number) {
-		WebSocket.server.to(this.room).emit('game:board', {
+	boardState(index: number) {
+		return {
 			player: index,
 			score: this.score[index],
 			level: this.level,
 			board: this.boards[index].bitboard
-		});
+		};
+	}
+
+	emitBoardUpdate(index: number) {
+		WebSocket.server.to(this.room).emit('game:board', this.boardState(index));
 	}
 
 	emitPieceUpdate(index: number) {
@@ -143,12 +147,7 @@ export default class Game {
 		} = {
 			current: undefined,
 			next: this.nextPieces(index),
-			board: {
-				player: index,
-				score: this.score[index],
-				level: this.level,
-				board: this.boards[index].bitboard
-			}
+			board: this.boardState(index)
 		};
 		const tetromino = this.boards[index].movingTetromino;
 		if (tetromino) {

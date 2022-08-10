@@ -10,7 +10,7 @@ import TetrominoS from './Tetrominoes/TetrominoS';
 import TetrominoT from './Tetrominoes/TetrominoT';
 import TetrominoZ from './Tetrominoes/TetrominoZ';
 
-describe('Test Game', () => {
+describe('Game', () => {
 	const game = new Game('room:test', 2);
 
 	beforeAll(async () => {
@@ -275,6 +275,22 @@ describe('Test Game', () => {
 		expect(game.nextPieces(0).length).toBe(3);
 		expect(game.nextPieces(1)).toBeTruthy();
 		expect(game.nextPieces(1).length).toBe(3);
+	});
+
+	it('Can get the global state', () => {
+		const game = new Game('room:test', 2);
+
+		expect(game.globalState(0)).toEqual({
+			current: game.boards[0].movingTetromino?.toClient(0),
+			next: game.nextPieces(0),
+			board: game.boardState(0)
+		});
+
+		expect(game.globalState(1)).toEqual({
+			current: game.boards[1].movingTetromino?.toClient(1),
+			next: game.nextPieces(1),
+			board: game.boardState(1)
+		});
 	});
 
 	it('Increase score when completing lines', () => {

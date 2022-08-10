@@ -7,7 +7,7 @@ import {
 } from '$utils/test';
 import PlayerManager from '$server/PlayerManager';
 
-describe('Test Game', () => {
+describe('User events', () => {
 	const username = `Player#${getRandomInt(1000, 9999)}`;
 
 	beforeAll(async () => {

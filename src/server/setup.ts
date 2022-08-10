@@ -9,6 +9,7 @@ import { objectOf } from '@altostra/type-validations';
 import isValidID from '$server/lib/Validators/ID';
 import isValidName from '$server/lib/Validators/Name';
 import useMatchmakingAPI from '$server/events/matchmaking';
+import type GameState from '$client/lib/GameState';
 
 type AuthPayload = {
 	token: string;
@@ -79,18 +80,21 @@ export default function SetupSocketServer() {
 				const playersIndex = Object.entries(room.playersIndex);
 				// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 				const playerOneId = playersIndex.find((playersIndex) => playersIndex[1] == 0)![0];
-				// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-				const playerTwoId = playersIndex.find((playersIndex) => playersIndex[1] == 1)![0];
-				socket.emit('game:current', {
+				const state: GameState = {
 					playerOne: {
 						id: playerOneId,
 						...room.game.globalState(0)
-					},
-					playerTwo: {
+					}
+				};
+				if (room.game.playerCount >= 2) {
+					// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+					const playerTwoId = playersIndex.find((playersIndex) => playersIndex[1] == 1)![0];
+					state.playerTwo = {
 						id: playerTwoId,
 						...room.game.globalState(1)
-					}
-				});
+					};
+				}
+				socket.emit('game:current', state);
 			} else {
 				socket.emit('game:current', null);
 			}

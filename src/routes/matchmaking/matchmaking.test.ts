@@ -9,7 +9,8 @@ describe('Matchmaking page', () => {
 		currentRoom.set({
 			id: nanoid(),
 			name: 'My room',
-			players: []
+			players: [],
+			playing: false
 		});
 
 		const { container } = render(Index);

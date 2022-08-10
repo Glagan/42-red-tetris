@@ -4,7 +4,7 @@ import Game from './Game';
 import Player from './Player';
 import Room from './Room';
 
-describe('Test Room', () => {
+describe('Room', () => {
 	beforeAll(async () => {
 		setupWebSocketTestServer();
 	});
@@ -92,6 +92,63 @@ describe('Test Room', () => {
 
 		room.removePlayer(player.id);
 		expect(room.players.length).toBe(0);
+		expect(room.ready.length).toBe(0);
+	});
+
+	it('Reset ready status when a player leave the room', () => {
+		const room = new Room('Room');
+		const playerOne = new Player('Player');
+		const playerTwo = new Player('Player');
+
+		expect(room.players.length).toBe(0);
+
+		room.addPlayer(playerOne);
+		room.addPlayer(playerTwo);
+		room.togglePlayerAsReady(playerOne.id);
+		room.togglePlayerAsReady(playerTwo.id);
+		expect(room.players.length).toBe(2);
+		expect(room.ready.length).toBe(2);
+
+		room.removePlayer(playerTwo.id);
+		expect(room.players.length).toBe(1);
+		expect(room.ready.length).toBe(0);
+	});
+
+	it('Can unready a player', () => {
+		const room = new Room('Room');
+		const playerOne = new Player('Player');
+		const playerTwo = new Player('Player');
+
+		expect(room.players.length).toBe(0);
+
+		room.addPlayer(playerOne);
+		expect(room.players.length).toBe(1);
+		expect(room.ready.length).toBe(0);
+
+		room.togglePlayerAsReady(playerOne.id);
+		expect(room.players.length).toBe(1);
+		expect(room.ready.length).toBe(1);
+
+		room.unreadyPlayer(nanoid());
+		expect(room.players.length).toBe(1);
+		expect(room.ready.length).toBe(1);
+
+		room.unreadyPlayer(playerOne.id);
+		expect(room.players.length).toBe(1);
+		expect(room.ready.length).toBe(0);
+
+		room.addPlayer(playerTwo);
+		room.togglePlayerAsReady(playerTwo.id);
+		room.togglePlayerAsReady(playerOne.id);
+		expect(room.players.length).toBe(2);
+		expect(room.ready.length).toBe(2);
+
+		room.unreadyPlayer(playerTwo.id);
+		expect(room.players.length).toBe(2);
+		expect(room.ready.length).toBe(1);
+
+		room.unreadyPlayer(playerOne.id);
+		expect(room.players.length).toBe(2);
 		expect(room.ready.length).toBe(0);
 	});
 

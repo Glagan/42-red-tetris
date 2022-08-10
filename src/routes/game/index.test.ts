@@ -1,7 +1,7 @@
 import { render } from '@testing-library/svelte';
 import Index from './index.svelte';
 
-describe('Search page', () => {
+describe('Game page', () => {
 	it('Should display the game page', () => {
 		const { container } = render(Index);
 
