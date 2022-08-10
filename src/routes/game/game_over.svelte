@@ -4,7 +4,7 @@
 	import CurrentRoomStore from '../../client/stores/currentRoom';
 	import WinnerStore from '../../client/stores/winner';
 	import CentralBox from '../../client/components/containers/central_box.svelte';
-	import Leave from '../../client/socket/leave.emit';
+	import { leave_room as Leave } from '../../client/socket/leave.emit';
 	import { goto } from '$app/navigation';
 
 	let loading = false;
