@@ -41,11 +41,20 @@ export class RoomManager {
 		}
 	}
 
+	findMatchmakingRoom() {
+		for (const room of this.rooms) {
+			if (room.matchmaking && !room.isFull()) {
+				return room;
+			}
+		}
+		return undefined;
+	}
+
 	playerIsInMatchmaking(playerId: string) {
 		return this.matchmaking.findIndex((player) => player.id == playerId) >= 0;
 	}
 
-	findOpponent(playerId: string) {
+	findMatchmakingOpponent(playerId: string) {
 		return this.matchmaking.find((player) => player.id != playerId);
 	}
 

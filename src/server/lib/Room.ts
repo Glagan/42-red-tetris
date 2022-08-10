@@ -13,14 +13,16 @@ export default class Room {
 	game?: Game;
 	winner: number;
 	playersIndex: Record<string, number>;
+	matchmaking: boolean;
 
-	constructor(name: string) {
+	constructor(name: string, matchmaking = false) {
 		this.id = nanoid();
 		this.name = name;
 		this.players = [];
 		this.ready = [];
 		this.winner = -1;
 		this.playersIndex = {};
+		this.matchmaking = matchmaking;
 	}
 
 	get socketRoom() {

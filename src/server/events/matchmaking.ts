@@ -14,9 +14,15 @@ export default function useMatchmakingAPI(socket: TypedSocket) {
 			if (callback) {
 				callback(true);
 			}
-			const opponent = RoomManager.findOpponent(socket.data.player.id);
+			const matchmakingRoom = RoomManager.findMatchmakingRoom();
+			if (matchmakingRoom) {
+				socket.data.player.joinRoom(matchmakingRoom);
+				socket.emit('matchmaking:found', matchmakingRoom.toClient());
+				return;
+			}
+			const opponent = RoomManager.findMatchmakingOpponent(socket.data.player.id);
 			if (opponent && opponent.socket) {
-				const room = new Room(`Matchmaking#${getRandomInt(1000, 9999)}`);
+				const room = new Room(`Matchmaking#${getRandomInt(1000, 9999)}`, true);
 				RoomManager.removePlayerFromMatchmaking(opponent.id);
 				opponent.joinRoom(room);
 				socket.data.player.joinRoom(room);

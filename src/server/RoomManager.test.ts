@@ -107,8 +107,8 @@ describe('RoomManager', () => {
 		RoomManager.addPlayerToMatchmaking(playerOne);
 		RoomManager.addPlayerToMatchmaking(playerTwo);
 
-		expect(RoomManager.findOpponent(playerOne.id)).toBe(playerTwo);
-		expect(RoomManager.findOpponent(playerTwo.id)).toBe(playerOne);
-		expect(RoomManager.findOpponent(nanoid())).toBe(playerOne);
+		expect(RoomManager.findMatchmakingOpponent(playerOne.id)).toBe(playerTwo);
+		expect(RoomManager.findMatchmakingOpponent(playerTwo.id)).toBe(playerOne);
+		expect(RoomManager.findMatchmakingOpponent(nanoid())).toBe(playerOne);
 	});
 });
