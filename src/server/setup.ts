@@ -59,6 +59,7 @@ export default function SetupSocketServer() {
 		socket.on('disconnect', () => {
 			console.log(`[${socket.id}]  on:disconnect`);
 			if (socket.data.player?.room) {
+				socket.data.player.room.unreadyPlayer(socket.data.player.id);
 				socket
 					.to(`room:${socket.data.player.room.id}`)
 					.emit('room:playerStatus', socket.data.player.toClient(), false);
@@ -71,13 +72,33 @@ export default function SetupSocketServer() {
 
 		// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 		socket.emit('player:id', socket.data.player!.id);
-		socket.emit('room:all', RoomManager.all());
 		if (socket.data.player?.room) {
-			socket.join(`room:${socket.data.player.room.id}`);
-			socket
-				.to(`room:${socket.data.player.room.id}`)
-				.emit('room:playerStatus', socket.data.player.toClient(), true);
-			socket.emit('room:current', socket.data.player.room.id);
+			const room = socket.data.player.room;
+			socket.emit('room:current', room.id);
+			if (room.isPlaying() && room.game) {
+				const playersIndex = Object.entries(room.playersIndex);
+				// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+				const playerOneId = playersIndex.find((playersIndex) => playersIndex[1] == 0)![0];
+				// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+				const playerTwoId = playersIndex.find((playersIndex) => playersIndex[1] == 1)![0];
+				socket.emit('game:current', {
+					playerOne: {
+						id: playerOneId,
+						...room.game.globalState(0)
+					},
+					playerTwo: {
+						id: playerTwoId,
+						...room.game.globalState(1)
+					}
+				});
+			} else {
+				socket.emit('game:current', null);
+			}
+			socket.join(`room:${room.id}`);
+			socket.to(`room:${room.id}`).emit('room:playerStatus', socket.data.player.toClient(), true);
+		} else {
+			socket.emit('room:current', null);
+			socket.emit('game:current', null);
 		}
 
 		useUserAPI(socket);

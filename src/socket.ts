@@ -63,6 +63,22 @@ export interface ServerToClientEvents {
 	// * Matchmaking
 	'matchmaking:found': (room: Room) => void;
 	// * Game
+	'game:current': (
+		state: {
+			playerOne: {
+				id: string;
+				current: GamePiece | undefined;
+				next: NextGamePiece[];
+				board: GameBoard;
+			};
+			playerTwo: {
+				id: string;
+				current: GamePiece | undefined;
+				next: NextGamePiece[];
+				board: GameBoard;
+			};
+		} | null
+	) => void;
 	'game:initialState': (
 		playerOne: {
 			current: GamePiece | undefined;

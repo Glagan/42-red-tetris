@@ -12,6 +12,9 @@ import TetrominoT from './Tetrominoes/TetrominoT';
 import TetrominoZ from './Tetrominoes/TetrominoZ';
 import { getRandomInt } from '$utils/random';
 import WebSocket from './SocketIO';
+import type GamePiece from '$client/lib/GamePiece';
+import type { NextGamePiece } from '$client/lib/GamePiece';
+import type GameBoard from '$client/lib/GameBoard';
 
 const TICK_RATE = 60;
 
@@ -130,6 +133,28 @@ export default class Game {
 			WebSocket.server.to(this.room).emit('game:piece', tetromino.toClient(index));
 			WebSocket.server.to(this.room).emit('game:nextPieces', index, this.nextPieces(index));
 		}
+	}
+
+	globalState(index: number) {
+		const state: {
+			current: GamePiece | undefined;
+			next: NextGamePiece[];
+			board: GameBoard;
+		} = {
+			current: undefined,
+			next: this.nextPieces(index),
+			board: {
+				player: index,
+				score: this.score[index],
+				level: this.level,
+				board: this.boards[index].bitboard
+			}
+		};
+		const tetromino = this.boards[index].movingTetromino;
+		if (tetromino) {
+			state.current = tetromino.toClient(index);
+		}
+		return state;
 	}
 
 	start() {

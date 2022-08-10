@@ -92,6 +92,19 @@ export default class Room {
 		return false;
 	}
 
+	unreadyPlayer(playerId: string) {
+		const player = this.players.find((player) => player.id === playerId);
+		if (player) {
+			const readyIndex = this.ready.indexOf(playerId);
+			if (readyIndex >= 0) {
+				this.ready.splice(readyIndex, 1);
+				WebSocket.server.to(this.socketRoom).emit('room:playerReady', player.toClient(), false);
+				return true;
+			}
+		}
+		return false;
+	}
+
 	allPlayersReady() {
 		return this.players.length > 0 && this.players.length == this.ready.length;
 	}
