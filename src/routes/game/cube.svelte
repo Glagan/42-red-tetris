@@ -43,7 +43,9 @@
 	$: show_top = opacity != 1 || (position_y > 9 && !background);
 	$: show_bottom = opacity != 1 || (position_y < 9 && !background);
 
-	$: show = show_front || show_back || show_left || show_right || show_top || show_bottom;
+	$: in_board = position_x >= 0 && position_x < 10 && position_y >= 0 && position_y < 20;
+	$: show =
+		in_board && (show_front || show_back || show_left || show_right || show_top || show_bottom);
 </script>
 
 <!-- ========================= HTML -->
