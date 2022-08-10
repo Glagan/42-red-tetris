@@ -1,5 +1,6 @@
 <!-- ========================= SCRIPT -->
 <script lang="ts">
+	import { onMount } from 'svelte';
 	import CentralBox from '../../client/components/containers/central_box.svelte';
 	import CurrentRoomStore from '../../client/stores/currentRoom';
 	import RoomsStore from '../../client/stores/rooms';
@@ -10,15 +11,18 @@
 		join_matchmaking as JoinMatchmaking
 	} from '../../client/socket/join.emit';
 	import Create from '../../client/socket/create.emit';
+	import { browser } from '$app/env';
 
 	let create = '';
 	let search = '';
 	let loading = false;
 
-	$: disabled_create = create.length == 0;
-
-	function handle_search() {
-		Search(search);
+	let searchTimeout: ReturnType<typeof setTimeout>;
+	function debounceSearch() {
+		clearTimeout(searchTimeout);
+		searchTimeout = setTimeout(() => {
+			Search(search);
+		}, 200);
 	}
 
 	function handle_join_room(id: string) {
@@ -54,6 +58,12 @@
 	}
 
 	leave_current_room();
+
+	if (browser) {
+		onMount(() => {
+			Search(search);
+		});
+	}
 </script>
 
 <!-- ========================= HTML -->
@@ -63,7 +73,7 @@
 		class="text-input"
 		placeholder="Search a game"
 		bind:value={search}
-		on:input={handle_search}
+		on:input={debounceSearch}
 	/>
 	<div class="games mt-5 w-[80%] m-auto h-[120px] overflow-y-scroll overflow-x-hidden">
 		{#if $RoomsStore.length == 0}
@@ -81,5 +91,5 @@
 
 <CentralBox title="Create" {loading}>
 	<input type="text" class="text-input" placeholder="Name" bind:value={create} />
-	<button class="mt-5" disabled={disabled_create} on:click={handle_create}>Create</button>
+	<button class="mt-5" disabled={create.length < 1} on:click={handle_create}>Create</button>
 </CentralBox>
