@@ -68,7 +68,11 @@ export default class Game {
 	}
 
 	updateTickDownRate() {
-		this.tickDownRate = Math.max(1, Math.floor(1000 / TICK_RATE / (this.level / 2)));
+		if (this.level > 1) {
+			this.tickDownRate = Math.max(7, Math.round(33 * Math.pow(0.8, this.level - 1)));
+		} else {
+			this.tickDownRate = 33;
+		}
 	}
 
 	generateTetromino(type: TetrominoType): Tetromino {
@@ -194,11 +198,8 @@ export default class Game {
 	}
 
 	moveDown(index: number) {
-		const completedLines = this.boards[index].tickDown();
-		if (completedLines >= 0) {
-			this.handleAfterTetrominoSet(index, completedLines);
-		}
-		if (completedLines >= -1) {
+		if (this.boards[index].movingTetromino) {
+			this.tickDown(index);
 			return true;
 		}
 		return false;
@@ -294,6 +295,21 @@ export default class Game {
 	}
 
 	/**
+	 * Execute a tick down for all boards, move all tetrominoes down by one position and emit the update
+	 * @returns
+	 */
+	tickDown(boardIndex: number) {
+		const completedLines = this.boards[boardIndex].tickDown();
+		if (completedLines >= 0 && this.handleAfterTetrominoSet(boardIndex, completedLines)) {
+			return true;
+		} else {
+			this.emitBoardUpdate(boardIndex);
+			this.emitPieceUpdate(boardIndex);
+		}
+		return false;
+	}
+
+	/**
 	 * Run every ~16.6667ms
 	 */
 	onTick(/* deltaMs: number */) {
@@ -301,12 +317,8 @@ export default class Game {
 		// WebSocket.server.to(this.room).emit('game:tick', this.tick + 1);
 		if (this.tick >= this.nextTickDown) {
 			for (let index = 0; index < this.playerCount; index++) {
-				const completedLines = this.boards[index].tickDown();
-				if (completedLines >= 0 && this.handleAfterTetrominoSet(index, completedLines)) {
+				if (this.tickDown(index)) {
 					return true;
-				} else {
-					this.emitBoardUpdate(index);
-					this.emitPieceUpdate(index);
 				}
 			}
 			this.nextTickDown = this.tick + this.tickDownRate;

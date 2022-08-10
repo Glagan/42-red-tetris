@@ -162,6 +162,11 @@ describe('Board', () => {
 		expect(board.bitboard[ROWS - 1]).toEqual(expectedRow);
 	});
 
+	it('Cannot tick down if there is no tetromino', () => {
+		const board = new Board();
+		expect(board.tickDown()).toBe(-2);
+	});
+
 	it('Can correctly identify a tetromino touching the bottom of the board', () => {
 		let board = new Board();
 		const tetromino = new TetrominoI();

@@ -75,7 +75,7 @@ describe('Game events', () => {
 		});
 
 		await new Promise((resolve) => {
-			expectOffset[0] += 1;
+			expectOffset[1] += 1;
 			socket.emit('game:move:down', (ok) => {
 				expect(ok).toBeTruthy();
 				resolve(true);
