@@ -2,6 +2,7 @@ import { nanoid } from 'nanoid';
 import { io, Socket } from 'socket.io-client';
 import { browser } from '$app/env';
 import type { ServerToClientEvents, ClientToServerEvents } from '../../socket';
+import ScoresStore from '../stores/scores';
 import UsernameStore from '../stores/username';
 import SocketStore from '../stores/socket';
 import IdStore from '../stores/id';
@@ -66,6 +67,7 @@ if (browser) {
 
 	socket.on('game:board', (board: GameBoard) => {
 		BoardsStore.refreshBoard(board);
+		if (board.player === 0 || board.player === 1) ScoresStore.update(board.player, board.score);
 	});
 
 	socket.on('game:nextPieces', (player: number, pieces: NextGamePiece[]) => {

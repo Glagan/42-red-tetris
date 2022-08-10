@@ -1,6 +1,7 @@
 <!-- ========================= SCRIPT -->
 <script lang="ts">
 	import type Player from '../../client/lib/Player';
+	import ScoresStore from '../../client/stores/scores';
 	import IdStore from '../../client/stores/id';
 	import NextPieces from './next_pieces.svelte';
 
@@ -22,7 +23,7 @@
 	<p>
 		{player_name}{player != undefined && player.id === $IdStore ? ' (you)' : ''}
 	</p>
-	<p>Score: <span>34</span></p>
+	<p>Score: <span>{$ScoresStore[player_number]}</span></p>
 	<NextPieces player={player_number} />
 </div>
 
