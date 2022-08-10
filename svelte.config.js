@@ -17,10 +17,7 @@ const config = {
 		alias: {
 			$components: 'src/components',
 			$server: 'src/server',
-			'$server/lib': 'src/server/lib',
-			'$server/events': 'src/server/events',
 			$client: 'src/client',
-			'$client/lib': 'src/client/lib',
 			$stores: 'src/client/stores',
 			$utils: 'src/utils',
 			$shared: 'src/shared'
