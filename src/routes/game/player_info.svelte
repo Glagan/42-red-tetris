@@ -7,12 +7,14 @@
 	export let player: Player | undefined = undefined;
 	export let horizontal_alignement: -1 | 0 | 1 = 0; // -1:left | 0:center | 1:right
 
+	let player_number: 0 | 1;
+	$: player_number = horizontal_alignement == 1 ? 1 : 0;
 	$: player_name = player == undefined ? '?' : player.name;
 </script>
 
 <!-- ========================= HTML -->
 <div
-	class="bg-neutral-900 p-3"
+	class="bg-neutral-900 p-3 w-[260px]"
 	style={horizontal_alignement != 0
 		? `transform: rotateY(10deg) rotateX(${-horizontal_alignement * 30}deg);`
 		: ''}
@@ -21,7 +23,7 @@
 		{player_name}{player != undefined && player.id === $IdStore ? ' (you)' : ''}
 	</p>
 	<p>Score: <span>34</span></p>
-	<NextPieces player={horizontal_alignement == 1 ? 1 : 0} />
+	<NextPieces player={player_number} />
 </div>
 
 <!-- ========================= CSS -->

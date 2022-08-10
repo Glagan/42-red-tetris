@@ -48,6 +48,7 @@ if (browser) {
 	});
 
 	socket.on('game:startIn', (seconds: number) => {
+		BoardsStore.clean();
 		GameStartStore.startIn(seconds);
 	});
 

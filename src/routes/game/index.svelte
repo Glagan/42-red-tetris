@@ -1,14 +1,17 @@
 <!-- ========================= SCRIPT -->
 <script lang="ts">
 	import Boards from './boards.svelte';
-	import PlayerInfo from './player_info.svelte';
 	import WinnerStore from '../../client/stores/winner';
 	import CurrentRoomStore from '../../client/stores/currentRoom';
+	import BoardsStore from '../../client/stores/boards';
 	import { browser } from '$app/env';
 	import * as Move from '../../client/socket/move.emit';
 	import Rotate from '../../client/socket/rotate.emit';
 	import Dash from '../../client/socket/dash.emit';
 	import GameOver from './game_over.svelte';
+	import PlayerInfos from './player_infos.svelte';
+
+	$: solo = $BoardsStore[1].length === 0;
 
 	if (browser) {
 		document.onkeypress = function (event) {
@@ -39,21 +42,14 @@
 <!-- ========================= HTML -->
 
 <GameOver />
-<div class="game h-full flex flex-col justify-center" class:transparant={$WinnerStore != -1}>
-	<div class="h-fit">
-		<div class="flex flex-row justify-around">
-			<PlayerInfo horizontal_alignement={-1} player={$CurrentRoomStore?.players[0]} />
-			<PlayerInfo horizontal_alignement={1} player={$CurrentRoomStore?.players[1]} />
-		</div>
-		<Boards />
-	</div>
+<div class="game flex flex-col justify-center h-fit" class:transparant={$WinnerStore != -1}>
+	<PlayerInfos {solo} />
+	<Boards {solo} />
 </div>
 
 <!-- ========================= CSS -->
 <style lang="postcss">
 	.game {
 		margin-top: calc(var(--header-height) / 1.4);
-		/* @apply absolute;
-		top: 50%; */
 	}
 </style>
