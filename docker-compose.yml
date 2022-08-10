@@ -1,0 +1,23 @@
+version: '3.9'
+services:
+  production:
+    build:
+      context: .
+      target: production
+    ports:
+      - 5174:3000
+    profiles:
+      - production
+  development:
+    build:
+      context: .
+      target: development
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - /app/.yarn
+      - /app/.svelte-kit
+    ports:
+      - 5173:5173
+    profiles:
+      - development

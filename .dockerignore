@@ -1,0 +1,8 @@
+**/.git
+**/node_modules
+**/.svelte-kit
+**/build
+**/.yarn
+Dockerfile
+docker-compose.yml
+.gitignore
