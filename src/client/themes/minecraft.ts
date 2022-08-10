@@ -35,7 +35,7 @@ const pieces_block_textures = [
 	],
 	[
 		// 7
-		'/sprites/minecraft/tile017.webp'
+		'/sprites/minecraft/tile017.png'
 	]
 ];
 
@@ -47,6 +47,14 @@ const other_block_textures = [
 	[
 		// 1 Gold
 		'/sprites/minecraft/tile023.png'
+	],
+	[
+		// 0 Black write
+		'/sprites/minecraft/tile064.png'
+	],
+	[
+		// 0 Black wool
+		'/sprites/minecraft/tile113.png'
 	]
 ];
 
@@ -77,6 +85,24 @@ export default <Theme>{
 				_3d: {
 					cube_size: 16,
 					cubes: [Generator.background_uniform(other_block_textures[0], 1000)]
+				}
+			}
+		},
+		{
+			left: {
+				_3d: {
+					cube_size: 16,
+					cubes: [
+						Generator.background_chess(other_block_textures[2], other_block_textures[3], 1000)
+					]
+				}
+			},
+			right: {
+				_3d: {
+					cube_size: 16,
+					cubes: [
+						Generator.background_chess(other_block_textures[2], other_block_textures[3], 1000)
+					]
 				}
 			}
 		},

@@ -33,7 +33,7 @@
 					: ''} win !
 			</p>
 			<div class="button-container flex justify-between mt-6">
-				<button on:click={handle_new}>New</button>
+				<button on:click={handle_new}>Play again</button>
 				<button on:click={handle_quit}>Quit</button>
 			</div>
 		</CentralBox>

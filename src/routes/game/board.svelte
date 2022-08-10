@@ -3,6 +3,8 @@
 	import Cube from './cube.svelte';
 	import Config from '../../client/config';
 	import type _Cube from '../../client/lib/Cube';
+	import calculate_z_index from '../../utils/cube_z_index';
+	import Piece from './piece.svelte';
 
 	export let cubes: Array<_Cube>;
 	export let piece: Array<_Cube> | undefined = undefined;
@@ -14,13 +16,6 @@
 	export let background_without_front = false;
 
 	$: css_position = layer != 0 ? 'absolute' : 'relative';
-
-	function calculate_z_index(x: number, y: number) {
-		return (
-			-Math.abs(y - 9) * 20 + // y
-			x * horizontal_alignement // x
-		);
-	}
 </script>
 
 <!-- ========================= HTML -->
@@ -44,25 +39,12 @@
 			style="transform: translateZ(-{Config.game.block_size / 2}px);"
 		/>
 	{/if}
-	{#if piece != undefined}
-		{#each piece as cube}
-			<Cube
-				position_x={cube.x}
-				position_y={cube.y}
-				z_index={calculate_z_index(cube.x, cube.y)}
-				sprites={cube.sprites}
-				{layer}
-				{background}
-				{horizontal_alignement}
-			/>
-		{/each}
-	{/if}
-
+	<Piece {layer} {background} {horizontal_alignement} {piece} />
 	{#each cubes as cube (cube.id)}
 		<Cube
 			position_x={cube.x}
 			position_y={cube.y}
-			z_index={calculate_z_index(cube.x, cube.y)}
+			z_index={calculate_z_index(cube.x, cube.y, horizontal_alignement)}
 			sprites={cube.sprites}
 			no_front={background_without_front}
 			{layer}
