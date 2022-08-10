@@ -35,7 +35,7 @@ const pieces_block_textures = [
 	],
 	[
 		// 7
-		'/sprites/minecraft/tile017.webp'
+		'/sprites/minecraft/tile017.png'
 	]
 ];
 
