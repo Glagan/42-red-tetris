@@ -145,10 +145,8 @@ describe('Test Game', () => {
 	it('Move down correctly detect completed lines', () => {
 		const game = new Game('room:test', 1);
 
-		game.boards[0].generateBlockedLine(1);
-		const emptyColumn = game.boards[0].emptyLineBlockedColumn;
-		if (emptyColumn) {
-			game.boards[0].bitboard[ROWS - 1][emptyColumn] = TetrominoType.Blocked;
+		for (let index = 0; index < COLUMNS; index++) {
+			game.boards[0].bitboard[ROWS - 1][index] = TetrominoType.I;
 		}
 		game.boards[0].movingTetromino = new TetrominoI();
 		game.boards[0].movingTetromino.offset[0] = ROWS - 3;

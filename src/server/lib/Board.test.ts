@@ -1,5 +1,5 @@
 import { cleanupWebSocketTestServer, setupWebSocketTestServer } from '$utils/test';
-import Board, { COLUMNS, MoveDirection, RotationDirection, ROWS } from './Board';
+import Board, { COLUMNS, LINES_ARE_BLOCKED, MoveDirection, RotationDirection, ROWS } from './Board';
 import { TetrominoType } from '$shared/Tetromino';
 import TetrominoI from './Tetrominoes/TetrominoI';
 import TetrominoJ from './Tetrominoes/TetrominoJ';
@@ -63,12 +63,12 @@ describe('Test Board', () => {
 		expect(board.clearAllCompletedLines()).toBe(0);
 
 		board.bitboard.splice(0, 1);
-		board.bitboard.push(new Array(COLUMNS).fill(TetrominoType.Blocked));
+		board.bitboard.push(new Array(COLUMNS).fill(TetrominoType.I));
 		expect(board.clearAllCompletedLines()).toBe(1);
 
 		board.bitboard.splice(0, 2);
-		board.bitboard.push(new Array(COLUMNS).fill(TetrominoType.Blocked));
-		board.bitboard.push(new Array(COLUMNS).fill(TetrominoType.Blocked));
+		board.bitboard.push(new Array(COLUMNS).fill(TetrominoType.I));
+		board.bitboard.push(new Array(COLUMNS).fill(TetrominoType.I));
 		expect(board.clearAllCompletedLines()).toBe(2);
 	});
 
@@ -77,14 +77,14 @@ describe('Test Board', () => {
 
 		expect(board.clearAllCompletedLines()).toBe(0);
 
-		board.bitboard.splice(ROWS / 4, 1, new Array(COLUMNS).fill(TetrominoType.Blocked));
+		board.bitboard.splice(ROWS / 4, 1, new Array(COLUMNS).fill(TetrominoType.I));
 		expect(board.clearAllCompletedLines()).toBe(1);
 
 		board.bitboard.splice(
 			ROWS / 2,
 			2,
-			new Array(COLUMNS).fill(TetrominoType.Blocked),
-			new Array(COLUMNS).fill(TetrominoType.Blocked)
+			new Array(COLUMNS).fill(TetrominoType.I),
+			new Array(COLUMNS).fill(TetrominoType.I)
 		);
 		expect(board.clearAllCompletedLines()).toBe(2);
 	});
@@ -368,7 +368,7 @@ describe('Test Board', () => {
 				if (isSet) carry += 1;
 				return carry;
 			}, 0)
-		).toBe(COLUMNS - 1);
+		).toBe(LINES_ARE_BLOCKED ? COLUMNS : COLUMNS - 1);
 
 		board = new Board();
 		board.generateBlockedLine(2);
@@ -378,13 +378,13 @@ describe('Test Board', () => {
 				if (isSet) carry += 1;
 				return carry;
 			}, 0)
-		).toBe(COLUMNS - 1);
+		).toBe(LINES_ARE_BLOCKED ? COLUMNS : COLUMNS - 1);
 		expect(
 			board.bitboard[ROWS - 1].reduce((carry, isSet) => {
 				if (isSet) carry += 1;
 				return carry;
 			}, 0)
-		).toBe(COLUMNS - 1);
+		).toBe(LINES_ARE_BLOCKED ? COLUMNS : COLUMNS - 1);
 	});
 
 	it('Handle failure to rotate a tetromino', () => {

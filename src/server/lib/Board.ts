@@ -5,6 +5,7 @@ import { getRandomInt } from '$utils/random';
 
 export const ROWS = 20;
 export const COLUMNS = 10;
+export const LINES_ARE_BLOCKED = false;
 
 export enum RotationDirection {
 	Clockwise,
@@ -40,7 +41,10 @@ export default class Board {
 	 */
 	checkLine(index: number) {
 		if (index >= 0 && index < ROWS) {
-			return this.bitboard[index].every((column) => column != TetrominoType.None);
+			return this.bitboard[index].every(
+				(column) =>
+					column != TetrominoType.None && (!LINES_ARE_BLOCKED || column != TetrominoType.Blocked)
+			);
 		}
 		return false;
 	}
@@ -152,7 +156,9 @@ export default class Board {
 			}
 			// Append the new line at the bottom of the board
 			const blockedLine = new Array(COLUMNS).fill(TetrominoType.Blocked);
-			blockedLine[emptyColumn] = TetrominoType.None;
+			if (!LINES_ARE_BLOCKED) {
+				blockedLine[emptyColumn] = TetrominoType.None;
+			}
 			this.bitboard.push(blockedLine);
 			// Remove the line at the top and try to keep the current tetromino position
 			this.bitboard.splice(0, 1);
