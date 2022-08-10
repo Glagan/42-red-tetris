@@ -17,3 +17,8 @@ export type GameState = {
 	};
 };
 export default GameState;
+
+export type GameInitialState = {
+	current: GamePiece | undefined;
+	next: NextGamePiece[];
+};
