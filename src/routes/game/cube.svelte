@@ -16,10 +16,13 @@
 	export let horizontal_alignement: number | undefined = undefined;
 	export let opacity = 1;
 	export let no_front = false;
+	export let info_mode = false;
 
-	$: position_x_px = position_x * Config.game.block_size;
-	$: position_y_px = position_y * Config.game.block_size;
-	$: position_z_px = layer * Config.game.block_size;
+	$: position_x_px =
+		position_x * (info_mode ? Config.game_info.block_size : Config.game.block_size);
+	$: position_y_px =
+		position_y * (info_mode ? Config.game_info.block_size : Config.game.block_size);
+	$: position_z_px = layer * (info_mode ? Config.game_info.block_size : Config.game.block_size);
 
 	$: show_front = !no_front;
 
@@ -46,7 +49,8 @@
 <!-- ========================= HTML -->
 {#if show}
 	<div
-		class="cube "
+		class:info={info_mode}
+		class="cube"
 		style="transform: translate3d({position_x_px}px, {position_y_px}px , {position_z_px}px); z-index: {z_index}; will-change: {background
 			? 'transform'
 			: 'transform'}; contain: {background ? 'layout' : 'none'};"
@@ -83,10 +87,14 @@
 		transform-style: preserve-3d;
 	}
 
+	.info {
+		height: var(--cube-info-size);
+		width: var(--cube-info-size);
+	}
+
 	.cube > div {
 		position: absolute;
 		box-sizing: border-box;
-		line-height: var(--cube-size);
 		text-align: center;
 		height: 100%;
 		width: 100%;

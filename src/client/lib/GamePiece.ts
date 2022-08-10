@@ -7,6 +7,7 @@ export type GamePiece = {
 	type: TetrominoType;
 	matrix: (0 | 1)[][];
 };
+
 export default GamePiece;
 
 export type NextGamePiece = {

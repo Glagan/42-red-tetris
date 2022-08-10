@@ -15,10 +15,12 @@ import PiecesStore from '../stores/pieces';
 import WinnerStore from '../stores/winner';
 import GameStartStore from '../stores/gameStart';
 import BoardsStore from '../stores/boards';
+import NextPiecesStore from '../stores/nextPieces';
 import { get } from 'svelte/store';
 import { goto } from '$app/navigation';
 import type GameBoard from '../lib/GameBoard';
 import type GamePiece from '../lib/GamePiece';
+import type { NextGamePiece } from '../lib/GamePiece';
 
 let socket: Socket<ServerToClientEvents, ClientToServerEvents>;
 
@@ -63,6 +65,10 @@ if (browser) {
 
 	socket.on('game:board', (board: GameBoard) => {
 		BoardsStore.refreshBoard(board);
+	});
+
+	socket.on('game:nextPieces', (player: number, pieces: NextGamePiece[]) => {
+		NextPiecesStore.updateNextPieces(player, pieces);
 	});
 
 	socket.on('room:playerLeft', (player: Player, room: Room) => {

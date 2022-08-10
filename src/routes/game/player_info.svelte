@@ -2,6 +2,7 @@
 <script lang="ts">
 	import type Player from '../../client/lib/Player';
 	import IdStore from '../../client/stores/id';
+	import NextPieces from './next_pieces.svelte';
 
 	export let player: Player | undefined = undefined;
 	export let horizontal_alignement: -1 | 0 | 1 = 0; // -1:left | 0:center | 1:right
@@ -17,9 +18,10 @@
 		: ''}
 >
 	<p>
-		{player_name}{player != undefined && player.id === $IdStore ? '(you)' : ''}
+		{player_name}{player != undefined && player.id === $IdStore ? ' (you)' : ''}
 	</p>
 	<p>Score: <span>34</span></p>
+	<NextPieces player={horizontal_alignement == 1 ? 1 : 0} />
 </div>
 
 <!-- ========================= CSS -->

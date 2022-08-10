@@ -13,7 +13,6 @@
 	if (browser) {
 		document.onkeypress = function (event) {
 			const char = event?.keyCode;
-			console.log(char);
 			if (char != undefined) {
 				switch (char) {
 					case 97:
