@@ -4,5 +4,6 @@ export type Room = {
 	id: string;
 	name: string;
 	players: Player[];
+	playing: boolean;
 };
 export default Room;

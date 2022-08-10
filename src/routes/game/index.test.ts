@@ -6,7 +6,7 @@ describe('Search page', () => {
 		const { container } = render(Index);
 
 		// Player info(s) and board(s)
-		expect(container.querySelector('.player-info')).toBeTruthy();
+		// expect(container.querySelector('.player-info')).toBeTruthy();
 		expect(container.querySelector('.board-wrap')).toBeTruthy();
 	});
 });

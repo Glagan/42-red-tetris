@@ -42,10 +42,10 @@ export default class Room {
 		const index = this.players.findIndex((player) => player.id === playerId);
 		if (index >= 0) {
 			this.players.splice(index, 1);
-		}
-		const readyIndex = this.ready.indexOf(playerId);
-		if (readyIndex >= 0) {
-			this.ready.splice(readyIndex, 1);
+			this.ready = [];
+			for (const player of this.players) {
+				WebSocket.server.to(this.socketRoom).emit('room:playerReady', player.toClient(), false);
+			}
 		}
 	}
 
@@ -192,7 +192,8 @@ export default class Room {
 		return {
 			id: this.id,
 			name: this.name,
-			players: this.players.map((player) => player.toClient())
+			players: this.players.map((player) => player.toClient()),
+			playing: this.isPlaying()
 		};
 	}
 }

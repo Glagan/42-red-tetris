@@ -76,11 +76,7 @@ export default function useRoomAPI(socket: TypedSocket) {
 
 		const room = RoomManager.getRoom(roomId);
 		if (room && callback) {
-			return callback({
-				id: room.id,
-				name: room.name,
-				players: room.players.map((player) => player.toClient())
-			});
+			return callback(room.toClient());
 		}
 
 		if (callback) {
@@ -142,11 +138,13 @@ export default function useRoomAPI(socket: TypedSocket) {
 		}
 
 		const previousRoom = socket.data.player.leaveCurrentRoom();
-		if (previousRoom && callback) {
+		if (previousRoom) {
 			if (previousRoom.isEmpty()) {
 				RoomManager.removeRoom(previousRoom.id);
 			}
-			callback(previousRoom.isEmpty());
+			if (callback) {
+				callback(previousRoom.isEmpty());
+			}
 		} else if (callback) {
 			callback(false);
 		}
@@ -215,7 +213,7 @@ export default function useRoomAPI(socket: TypedSocket) {
 		}
 
 		const results: Room[] = [];
-		for (const room of RoomManager.rooms) {
+		for (const room of RoomManager.rooms.reverse()) {
 			if (room.matchAny(query)) {
 				results.push(room);
 				if (results.length >= 50) {
