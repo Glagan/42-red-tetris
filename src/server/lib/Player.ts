@@ -30,9 +30,9 @@ export default class Player {
 			if (this.socket) {
 				this.socket.leave(previousRoom.socketRoom);
 			}
-			WebSocket.server.emit('room:playerLeft', this.toClient(), previousRoom.toClient());
 			this.room.removePlayer(this.id);
 			this.room = undefined;
+			WebSocket.server.emit('room:playerLeft', this.toClient(), previousRoom.toClient());
 			return previousRoom;
 		}
 		return undefined;
