@@ -2,8 +2,10 @@ import { nanoid } from 'nanoid';
 import { io, Socket } from 'socket.io-client';
 import { browser } from '$app/env';
 import type { ServerToClientEvents, ClientToServerEvents } from '../../socket';
-import type { GameInitialState } from '$client/lib/GameState';
 import ScoresStore from '../stores/scores';
+import type { GameInitialState } from '$client/lib/GameState';
+import LevelStore from '../stores/level';
+import type GameState from '$client/lib/GameState';
 import UsernameStore from '../stores/username';
 import SocketStore from '../stores/socket';
 import IdStore from '../stores/id';
@@ -54,6 +56,28 @@ if (browser) {
 		GameStartStore.startIn(seconds);
 	});
 
+	socket.on('game:current', (state: GameState | null) => {
+		if (state != null) {
+			BoardsStore.clean();
+
+			// global
+			ScoresStore.update(0, state.playerOne.board.score);
+			// player one
+			BoardsStore.refreshBoard(state.playerOne.board);
+			if (state.playerOne.current != undefined) PiecesStore.updatePiece(state.playerOne.current);
+			LevelStore.set(state.playerOne.board.level);
+			NextPiecesStore.updateNextPieces(0, state.playerOne.next);
+			// player two
+			if (state.playerTwo != undefined) {
+				BoardsStore.refreshBoard(state.playerTwo.board);
+				if (state.playerTwo.current != undefined) PiecesStore.updatePiece(state.playerTwo.current);
+				ScoresStore.update(1, state.playerTwo.board.score);
+				NextPiecesStore.updateNextPieces(1, state.playerTwo.next);
+			}
+			goto('/game');
+		}
+	});
+
 	socket.on('matchmaking:found', (room: Room) => {
 		CurrentRoomStore.set(room);
 		WinnerStore.remove();
@@ -61,8 +85,21 @@ if (browser) {
 		goto('/room');
 	});
 
-	socket.on('game:initialState', () => {
+	socket.on('game:initialState', (playerOne: GameInitialState, playerTwo?: GameInitialState) => {
 		NotificationStore.push({ id: nanoid(), message: 'the game will start', error: false });
+
+		ScoresStore.clean();
+		BoardsStore.clean();
+
+		// player one
+		NextPiecesStore.updateNextPieces(0, playerOne.next);
+		if (playerOne.current != undefined) PiecesStore.updatePiece(playerOne.current);
+
+		// player two
+		if (playerTwo != undefined) {
+			NextPiecesStore.updateNextPieces(1, playerTwo.next);
+			if (playerTwo.current != undefined) PiecesStore.updatePiece(playerTwo.current);
+		}
 	});
 
 	socket.on('game:start', () => {
@@ -72,6 +109,7 @@ if (browser) {
 
 	socket.on('game:board', (board: GameBoard) => {
 		BoardsStore.refreshBoard(board);
+		LevelStore.set(board.level);
 		if (board.player === 0 || board.player === 1) ScoresStore.update(board.player, board.score);
 	});
 

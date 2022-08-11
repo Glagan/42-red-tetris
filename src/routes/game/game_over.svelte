@@ -27,10 +27,9 @@
 		<CentralBox {loading}>
 			<h2>Game over</h2>
 			<p class="mt-5">
-				{$CurrentRoomStore?.players[$WinnerStore]?.name}{$CurrentRoomStore?.players[$WinnerStore]
-					?.id === $IdStore
-					? ' (you)'
-					: ''} win !
+				@{$CurrentRoomStore?.players[$WinnerStore]?.name}
+				{#if $CurrentRoomStore?.players[$WinnerStore]?.id === $IdStore}
+					<span class="text-neutral-500"> (you)</span>{/if}
 			</p>
 			<div class="button-container flex justify-between mt-6">
 				<button on:click={handle_new}>Play again</button>
