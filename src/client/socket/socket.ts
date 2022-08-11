@@ -4,6 +4,7 @@ import { browser } from '$app/env';
 import type { ServerToClientEvents, ClientToServerEvents } from '../../socket';
 import ScoresStore from '../stores/scores';
 import LevelStore from '../stores/level';
+import type GameState from '$client/lib/GameState';
 import UsernameStore from '../stores/username';
 import SocketStore from '../stores/socket';
 import IdStore from '../stores/id';
@@ -52,6 +53,26 @@ if (browser) {
 	socket.on('game:startIn', (seconds: number) => {
 		BoardsStore.clean();
 		GameStartStore.startIn(seconds);
+	});
+
+	socket.on('game:current', (state: GameState | null) => {
+		if (state != null) {
+			BoardsStore.clean();
+
+			// global
+			ScoresStore.update(0, state.playerOne.board.score);
+			// player one
+			BoardsStore.refreshBoard(state.playerOne.board);
+			LevelStore.set(state.playerOne.board.level);
+			NextPiecesStore.updateNextPieces(0, state.playerOne.next);
+			// player two
+			if (state.playerTwo != undefined) {
+				BoardsStore.refreshBoard(state.playerTwo.board);
+				ScoresStore.update(1, state.playerTwo.board.score);
+				NextPiecesStore.updateNextPieces(1, state.playerTwo.next);
+			}
+			goto('/game');
+		}
 	});
 
 	socket.on('matchmaking:found', (room: Room) => {
