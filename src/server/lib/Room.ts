@@ -158,17 +158,15 @@ export default class Room {
 	}
 
 	currentPiece(playerIndex: number) {
-		const index = this.playersIndex[playerIndex];
-		if (index !== undefined && this.game) {
-			return this.game.currentPiece(index);
+		if (playerIndex < this.players.length && this.game) {
+			return this.game.currentPiece(playerIndex);
 		}
 		return undefined;
 	}
 
 	nextPieces(playerIndex: number) {
-		const index = this.playersIndex[playerIndex];
-		if (index !== undefined && this.game) {
-			return this.game.nextPieces(index);
+		if (playerIndex < this.players.length && this.game) {
+			return this.game.nextPieces(playerIndex);
 		}
 		return [];
 	}
