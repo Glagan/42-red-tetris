@@ -1,5 +1,4 @@
 import { writable } from 'svelte/store';
-import type _Notification from '../lib/Notification';
 import sleep from '../../utils/sleep';
 
 const initial = -1;

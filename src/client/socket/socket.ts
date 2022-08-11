@@ -2,6 +2,7 @@ import { nanoid } from 'nanoid';
 import { io, Socket } from 'socket.io-client';
 import { browser } from '$app/env';
 import type { ServerToClientEvents, ClientToServerEvents } from '../../socket';
+import type { GameInitialState } from '$client/lib/GameState';
 import ScoresStore from '../stores/scores';
 import UsernameStore from '../stores/username';
 import SocketStore from '../stores/socket';
@@ -60,6 +61,10 @@ if (browser) {
 		goto('/room');
 	});
 
+	socket.on('game:initialState', () => {
+		NotificationStore.push({ id: nanoid(), message: 'the game will start', error: false });
+	});
+
 	socket.on('game:start', () => {
 		GameStartStore.start();
 		goto('/game');
@@ -99,11 +104,17 @@ if (browser) {
 
 	socket.on('room:playerReady', (player: Player, ready: boolean) => {
 		if (
-			player.id != get(IdStore) &&
-			(get(CurrentRoomStore)?.players[0].id === player.id ||
-				get(CurrentRoomStore)?.players[1].id === player.id)
+			get(CurrentRoomStore)?.players[0].id === player.id ||
+			get(CurrentRoomStore)?.players[1].id === player.id
 		) {
-			OpponentReadyStore.set(ready);
+			if (player.id != get(IdStore)) {
+				OpponentReadyStore.set(ready);
+				NotificationStore.push({
+					id: nanoid(),
+					message: `opponent ${ready ? '' : 'not '}ready`,
+					error: false
+				});
+			}
 		}
 	});
 

@@ -52,7 +52,7 @@
 		}
 	}
 
-	function toggleReady() {
+	function handle_ready() {
 		if (!game_will_start) {
 			loading = true;
 			Ready((new_ready: boolean) => {
@@ -71,7 +71,7 @@
 	<p class="mt-3">{start_message}</p>
 	<p class="text-neutral-400 mt-7">{tips[0]}</p>
 	<div class="button-container flex justify-between mt-6">
-		<div>
+		<div class:opacity-0={opponent_is_absent && game_will_start} class="transition-all">
 			<p>
 				{#if !opponent_is_absent}
 					@{opponent_username}
@@ -79,7 +79,7 @@
 				<ThreePoints bind:waiting_time hidden={!opponent_is_absent} grey />
 			</p>
 			<button
-				class="mt-2 cant-click"
+				class="cant-click"
 				class:transparent={opponent_is_absent || game_will_start}
 				class:off={!$OpponentReady}>Ready</button
 			>
@@ -95,7 +95,6 @@
 				</p>
 			{/if}
 			<button
-				class="mt-2"
 				class:cant-click={game_will_start}
 				class:transparent={game_will_start}
 				class:off={game_will_start}
@@ -107,11 +106,10 @@
 				@{$UsernameStore}&nbsp;<span class="text-neutral-500">(you)</span>
 			</p>
 			<button
-				class="mt-2"
 				class:cant-click={game_will_start}
 				class:transparent={game_will_start}
 				class:off={!ready}
-				on:click={toggleReady}>Ready</button
+				on:click={handle_ready}>Ready</button
 			>
 		</div>
 	</div>
@@ -119,6 +117,10 @@
 
 <!-- ========================= CSS -->
 <style lang="postcss">
+	button {
+		@apply mt-4;
+	}
+
 	.button-container > div {
 		@apply overflow-hidden basis-0 flex-grow-[1];
 	}
