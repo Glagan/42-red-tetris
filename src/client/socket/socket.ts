@@ -85,7 +85,7 @@ if (browser) {
 	socket.on('room:playerJoined', (player: Player, room: Room) => {
 		if (room.id == get(CurrentRoomStore)?.id) {
 			NotificationStore.push({ id: nanoid(), message: 'player joined', error: false });
-			CurrentRoomStore.add_player(player);
+			CurrentRoomStore.set(room);
 		}
 	});
 
