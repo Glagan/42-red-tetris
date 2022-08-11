@@ -5,6 +5,7 @@
 	import Config from '../../client/config';
 
 	export let piece: Array<_Cube> | undefined = undefined;
+	export let opacity = 1;
 
 	const default_size = {
 		x: 4,
@@ -36,7 +37,7 @@
 		class="m-1"
 		style="width: {default_size.x * Config.game_info.block_size}px;
         height: {(default_size.y * Config.game_info.block_size) /
-			2}px; transform: translateX({translate_x}px);"
+			2}px; transform: translateX({translate_x}px); opacity: {opacity};"
 	>
 		<Piece background {piece} info_mode />
 	</div>

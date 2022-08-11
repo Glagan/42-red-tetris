@@ -2,8 +2,8 @@ import { nanoid } from 'nanoid';
 import { io, Socket } from 'socket.io-client';
 import { browser } from '$app/env';
 import type { ServerToClientEvents, ClientToServerEvents } from '../../socket';
-import type { GameInitialState } from '$client/lib/GameState';
 import ScoresStore from '../stores/scores';
+import LevelStore from '../stores/level';
 import UsernameStore from '../stores/username';
 import SocketStore from '../stores/socket';
 import IdStore from '../stores/id';
@@ -72,6 +72,7 @@ if (browser) {
 
 	socket.on('game:board', (board: GameBoard) => {
 		BoardsStore.refreshBoard(board);
+		LevelStore.set(board.level);
 		if (board.player === 0 || board.player === 1) ScoresStore.update(board.player, board.score);
 	});
 
