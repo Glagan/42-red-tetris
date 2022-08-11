@@ -2,7 +2,6 @@
 <script lang="ts">
 	import Boards from './boards.svelte';
 	import WinnerStore from '../../client/stores/winner';
-	import CurrentRoomStore from '../../client/stores/currentRoom';
 	import BoardsStore from '../../client/stores/boards';
 	import { browser } from '$app/env';
 	import * as Move from '../../client/socket/move.emit';
@@ -10,32 +9,50 @@
 	import Dash from '../../client/socket/dash.emit';
 	import GameOver from './game_over.svelte';
 	import PlayerInfos from './player_infos.svelte';
+	import { onDestroy } from 'svelte';
 
 	$: solo = $BoardsStore[1].length === 0;
 
 	if (browser) {
-		document.onkeypress = function (event) {
-			const char = event?.keyCode;
-			if (char != undefined) {
-				switch (char) {
-					case 97:
+		const onKeyDown = (event: KeyboardEvent) => {
+			const key = event.key;
+			console.log(event.key, event);
+			if (key != undefined) {
+				switch (key) {
+					case 'a':
+					case 'q':
+					case 'ArrowLeft':
 						Move.left();
 						break;
-					case 100:
+					case 'd':
+					case 'ArrowRight':
 						Move.right();
 						break;
-					case 32:
+					case ' ':
+					case 'Space':
 						Dash();
 						break;
-					case 115:
+					case 's':
+					case 'ArrowDown':
 						Move.down();
 						break;
-					case 119:
+					case 'w':
+					case 'z':
+					case 'ArrowUp':
 						Rotate(true);
+						break;
+					case 'e':
+						Rotate(false);
 						break;
 				}
 			}
 		};
+
+		document.addEventListener('keydown', onKeyDown);
+
+		onDestroy(() => {
+			document.removeEventListener('keydown', onKeyDown);
+		});
 	}
 </script>
 
