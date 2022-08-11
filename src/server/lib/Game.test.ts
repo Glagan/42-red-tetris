@@ -280,14 +280,22 @@ describe('Game', () => {
 	it('Can get the global state', () => {
 		const game = new Game('room:test', 2);
 
+		const playerOneTetromino = game.boards[0].movingTetromino;
 		expect(game.globalState(0)).toEqual({
-			current: game.boards[0].movingTetromino?.toClient(0),
+			current: {
+				...playerOneTetromino?.toClient(0),
+				spectre: game.boards[0].currentSpectre()
+			},
 			next: game.nextPieces(0),
 			board: game.boardState(0)
 		});
 
+		const playerTwoTetromino = game.boards[1].movingTetromino;
 		expect(game.globalState(1)).toEqual({
-			current: game.boards[1].movingTetromino?.toClient(1),
+			current: {
+				...playerTwoTetromino?.toClient(1),
+				spectre: game.boards[1].currentSpectre()
+			},
 			next: game.nextPieces(1),
 			board: game.boardState(1)
 		});

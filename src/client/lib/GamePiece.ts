@@ -6,6 +6,10 @@ export type GamePiece = {
 	y: number;
 	type: TetrominoType;
 	matrix: (0 | 1)[][];
+	spectre?: {
+		x: number;
+		y: number;
+	};
 };
 
 export default GamePiece;

@@ -1,3 +1,4 @@
+import type GamePiece from '$client/lib/GamePiece';
 import type { TetrominoType } from '$shared/Tetromino';
 
 export type Matrix = (0 | 1)[][];
@@ -278,7 +279,7 @@ export default abstract class Tetromino {
 		return (this.constructor as typeof Tetromino).wallKicks?.[this.direction];
 	}
 
-	toClient(player: number) {
+	toClient(player: number): GamePiece {
 		return {
 			player: player,
 			x: this.offset[1],

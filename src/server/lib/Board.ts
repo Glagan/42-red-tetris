@@ -274,20 +274,46 @@ export default class Board {
 		return true;
 	}
 
-	/**
-	 * Check if the current tetromino is touching another tetromino or the bottom of the board
-	 * @returns true if the curren tetromino is touching or false
-	 */
-	movingTetrominoIsTouching() {
+	currentSpectre() {
 		if (this.movingTetromino) {
-			for (const [x, y] of this.movingTetromino.bottom) {
-				const xOffset = this.movingTetromino.offset[0] + x;
-				const yOffset = this.movingTetromino.offset[1] + y;
-				// Also check deepOffset to handle enemy lines
-				if (xOffset + 1 >= ROWS || this.bitboard[xOffset + 1][yOffset]) {
-					return true;
+			/// @ts-expect-error Constructor is a Constructor
+			const spectre: Tetromino = new this.movingTetromino.constructor();
+			// Avoid reference copy
+			const length = this.movingTetromino.matrix.length;
+			for (let x = 0; x < length; x++) {
+				for (let y = 0; y < length; y++) {
+					spectre.matrix[x][y] = this.movingTetromino.matrix[x][y];
 				}
 			}
+			spectre.offset[0] = this.movingTetromino.offset[0];
+			spectre.offset[1] = this.movingTetromino.offset[1];
+			while (!this.tetrominoIsTouching(spectre)) {
+				spectre.translate([1, 0]);
+			}
+			return { x: spectre.offset[1], y: spectre.offset[0] };
+		}
+		return undefined;
+	}
+
+	/**
+	 * Check if a tetromino is touching another tetromino or the bottom of the board
+	 * @returns true if the curren tetromino is touching or false
+	 */
+	tetrominoIsTouching(tetromino: Tetromino) {
+		for (const [x, y] of tetromino.bottom) {
+			const xOffset = tetromino.offset[0] + x;
+			const yOffset = tetromino.offset[1] + y;
+			// Also check deepOffset to handle enemy lines
+			if (xOffset + 1 >= ROWS || this.bitboard[xOffset + 1][yOffset]) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	movingTetrominoIsTouching() {
+		if (this.movingTetromino) {
+			return this.tetrominoIsTouching(this.movingTetromino);
 		}
 		return false;
 	}

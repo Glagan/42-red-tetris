@@ -16,7 +16,6 @@
 	if (browser) {
 		const onKeyDown = (event: KeyboardEvent) => {
 			const key = event.key;
-			console.log(event.key, event);
 			if (key != undefined) {
 				switch (key) {
 					case 'a':

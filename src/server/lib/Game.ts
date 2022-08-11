@@ -140,7 +140,9 @@ export default class Game {
 		if (this.boards[index].movingTetromino) {
 			// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 			const tetromino = this.boards[index].movingTetromino!;
-			WebSocket.server.to(this.room).emit('game:piece', tetromino.toClient(index));
+			const gamePiece = tetromino.toClient(index);
+			gamePiece.spectre = this.boards[index].currentSpectre();
+			WebSocket.server.to(this.room).emit('game:piece', gamePiece);
 			WebSocket.server.to(this.room).emit('game:nextPieces', index, this.nextPieces(index));
 		}
 	}
@@ -157,7 +159,9 @@ export default class Game {
 		};
 		const tetromino = this.boards[index].movingTetromino;
 		if (tetromino) {
-			state.current = tetromino.toClient(index);
+			const gamePiece = tetromino.toClient(index);
+			gamePiece.spectre = this.boards[index].currentSpectre();
+			state.current = gamePiece;
 		}
 		return state;
 	}
@@ -173,7 +177,13 @@ export default class Game {
 	 * @returns A tetromino if the board has one or undefined
 	 */
 	currentPiece(index: number) {
-		return this.boards[index].movingTetromino?.toClient(index);
+		if (this.boards[index].movingTetromino) {
+			// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+			const gamePiece = this.boards[index].movingTetromino!.toClient(index);
+			gamePiece.spectre = this.boards[index].currentSpectre();
+			return gamePiece;
+		}
+		return undefined;
 	}
 
 	/**
