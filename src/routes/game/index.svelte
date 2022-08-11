@@ -2,7 +2,6 @@
 <script lang="ts">
 	import Boards from './boards.svelte';
 	import WinnerStore from '../../client/stores/winner';
-	import CurrentRoomStore from '../../client/stores/currentRoom';
 	import BoardsStore from '../../client/stores/boards';
 	import { browser } from '$app/env';
 	import * as Move from '../../client/socket/move.emit';
