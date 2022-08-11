@@ -1,5 +1,5 @@
 import type Player from '$server/lib/Player';
-import type Room from '$server/lib/Room';
+import Room from '$server/lib/Room';
 import WebSocket from '$server/lib/SocketIO';
 
 export class RoomManager {
@@ -12,6 +12,20 @@ export class RoomManager {
 
 	getRoom(roomIdentifier: Room | string) {
 		return this.rooms.find((room) => room === roomIdentifier || room.id === roomIdentifier);
+	}
+
+	createRoom(name: string, players: Player[]) {
+		const nameMatch = name.toLocaleLowerCase();
+		const existingRoom = this.rooms.find((room) => room.name.toLocaleLowerCase() == nameMatch);
+		if (existingRoom) {
+			return undefined;
+		}
+		const room = new Room(name, false);
+		for (const player of players) {
+			player.joinRoom(room);
+		}
+		this.addRoom(room);
+		return room;
 	}
 
 	addRoom(newRoom: Room) {

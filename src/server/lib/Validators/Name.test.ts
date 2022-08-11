@@ -17,7 +17,7 @@ describe('Name Validator', () => {
 	});
 
 	it('Handle too long input', () => {
-		const value = 'My Room is longer than 20 characters';
+		const value = 'My Room is longer than 25 characters';
 		expect(isValidName(value)).toBeFalsy();
 	});
 
@@ -27,7 +27,7 @@ describe('Name Validator', () => {
 	});
 
 	it('Handle trimmed valid input', () => {
-		const value = 'My Rooooooooooooooom     ';
+		const value = 'My Roooooooooooooooooooom     ';
 		expect(isValidName(value)).toBeTruthy();
 	});
 });

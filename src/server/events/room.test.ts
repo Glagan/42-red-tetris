@@ -28,7 +28,7 @@ describe('Room events', () => {
 
 		let roomId = '';
 		await new Promise((resolve) => {
-			socket.emit('room:create', 'My room', (room, error) => {
+			socket.emit('room:create', nanoid(), (room, error) => {
 				if (room) {
 					roomId = room.id;
 				}
@@ -42,7 +42,7 @@ describe('Room events', () => {
 		expect(roomOnServer).toBeTruthy();
 
 		await new Promise((resolve) => {
-			socket.emit('room:create', 'My second room', (room, error) => {
+			socket.emit('room:create', nanoid(), (room, error) => {
 				expect(room).toBeFalsy();
 				expect(error).toBeTruthy();
 				resolve(true);
@@ -73,6 +73,36 @@ describe('Room events', () => {
 		socket.disconnect();
 	});
 
+	it("Can't create a duplicate room", async () => {
+		const tokenOne = nanoid();
+		const socketOne = await connectTestWebSocket(tokenOne, username);
+		const tokenTwo = nanoid();
+		const socketTwo = await connectTestWebSocket(tokenTwo, usernameTwo);
+		const roomName = nanoid();
+
+		await new Promise((resolve) => {
+			socketOne.emit('room:create', roomName, (room, error) => {
+				expect(room).toBeTruthy();
+				expect(error).toBeFalsy();
+				resolve(true);
+			});
+		});
+
+		await new Promise((resolve) => {
+			socketTwo.emit('room:create', roomName, (room, error) => {
+				expect(room).toBeFalsy();
+				expect(error).toBeTruthy();
+				resolve(true);
+			});
+		});
+
+		// Cleanup
+		PlayerManager.get(tokenOne).leaveCurrentRoom();
+		PlayerManager.get(tokenTwo).leaveCurrentRoom();
+		socketOne.disconnect();
+		socketTwo.disconnect();
+	});
+
 	it('Can get a room', async () => {
 		const token = nanoid();
 		const socket = await connectTestWebSocket(token, username);
@@ -95,7 +125,7 @@ describe('Room events', () => {
 
 		let roomId = '';
 		await new Promise((resolve) => {
-			socket.emit('room:create', 'My room', (room, error) => {
+			socket.emit('room:create', nanoid(), (room, error) => {
 				if (room) {
 					roomId = room.id;
 				}
@@ -147,7 +177,7 @@ describe('Room events', () => {
 
 		let roomId = '';
 		await new Promise((resolve) => {
-			socketOne.emit('room:create', 'My room', (room, error) => {
+			socketOne.emit('room:create', nanoid(), (room, error) => {
 				if (room) {
 					roomId = room.id;
 				}
@@ -224,7 +254,7 @@ describe('Room events', () => {
 
 		let roomId = '';
 		await new Promise((resolve) => {
-			socketOne.emit('room:create', 'My room', (room, error) => {
+			socketOne.emit('room:create', nanoid(), (room, error) => {
 				if (room) {
 					roomId = room.id;
 				}
@@ -304,7 +334,7 @@ describe('Room events', () => {
 
 		let roomId = '';
 		await new Promise((resolve) => {
-			socketOne.emit('room:create', 'My room', (room, error) => {
+			socketOne.emit('room:create', nanoid(), (room, error) => {
 				if (room) {
 					roomId = room.id;
 				}
@@ -405,7 +435,7 @@ describe('Room events', () => {
 		});
 
 		// Manually create a room
-		const room = new Room('test');
+		const room = new Room('test search');
 		RoomManager.addRoom(room);
 
 		await new Promise((resolve) => {
@@ -433,6 +463,7 @@ describe('Room events', () => {
 		});
 
 		// Cleanup
+		RoomManager.removeRoom(room.id);
 		socket.disconnect();
 	});
 
@@ -487,7 +518,7 @@ describe('Room events', () => {
 
 		let roomId = '';
 		await new Promise((resolve) => {
-			socketOne.emit('room:create', 'My room', (room, error) => {
+			socketOne.emit('room:create', nanoid(), (room, error) => {
 				if (room) {
 					roomId = room.id;
 				}
@@ -559,7 +590,7 @@ describe('Room events', () => {
 
 		let roomId = '';
 		await new Promise((resolve) => {
-			socketOne.emit('room:create', 'My room', (room, error) => {
+			socketOne.emit('room:create', nanoid(), (room, error) => {
 				if (room) {
 					roomId = room.id;
 				}
@@ -621,7 +652,7 @@ describe('Room events', () => {
 
 		let roomId = '';
 		await new Promise((resolve) => {
-			socket.emit('room:create', 'My room', (room, error) => {
+			socket.emit('room:create', nanoid(), (room, error) => {
 				if (room) {
 					roomId = room.id;
 				}
@@ -668,7 +699,7 @@ describe('Room events', () => {
 
 		let roomId = '';
 		await new Promise((resolve) => {
-			socket.emit('room:create', 'My room', (room, error) => {
+			socket.emit('room:create', nanoid(), (room, error) => {
 				if (room) {
 					roomId = room.id;
 				}
@@ -724,7 +755,7 @@ describe('Room events', () => {
 
 		let roomId = '';
 		await new Promise((resolve) => {
-			socketOne.emit('room:create', 'My room', (room, error) => {
+			socketOne.emit('room:create', nanoid(), (room, error) => {
 				if (room) {
 					roomId = room.id;
 				}

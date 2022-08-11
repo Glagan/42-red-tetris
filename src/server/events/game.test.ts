@@ -27,7 +27,7 @@ describe('Game events', () => {
 		// Create the room and start the game
 		let roomId = '';
 		await new Promise((resolve) => {
-			socket.emit('room:create', 'My room', (room, error) => {
+			socket.emit('room:create', nanoid(), (room, error) => {
 				if (room) {
 					roomId = room.id;
 				}
@@ -95,7 +95,7 @@ describe('Game events', () => {
 		// Create the room and start the game
 		let roomId = '';
 		await new Promise((resolve) => {
-			socket.emit('room:create', 'My room', (room, error) => {
+			socket.emit('room:create', nanoid(), (room, error) => {
 				if (room) {
 					roomId = room.id;
 				}
@@ -154,7 +154,7 @@ describe('Game events', () => {
 		// Create the room and start the game
 		let roomId = '';
 		await new Promise((resolve) => {
-			socket.emit('room:create', 'My room', (room, error) => {
+			socket.emit('room:create', nanoid(), (room, error) => {
 				if (room) {
 					roomId = room.id;
 				}
@@ -208,7 +208,7 @@ describe('Game events', () => {
 		// Create the room and start the game
 		let roomId = '';
 		await new Promise((resolve) => {
-			socket.emit('room:create', 'My room', (room, error) => {
+			socket.emit('room:create', nanoid(), (room, error) => {
 				if (room) {
 					roomId = room.id;
 				}
@@ -263,7 +263,7 @@ describe('Game events', () => {
 		// Create the room and start the game
 		let roomId = '';
 		await new Promise((resolve) => {
-			socket.emit('room:create', 'My room', (room, error) => {
+			socket.emit('room:create', nanoid(), (room, error) => {
 				if (room) {
 					roomId = room.id;
 				}

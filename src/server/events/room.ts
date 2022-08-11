@@ -1,4 +1,3 @@
-import Room from '$server/lib/Room';
 import { validatePayload } from '$server/lib/Validator';
 import isValidName from '$server/lib/Validators/Name';
 import { objectOf } from '@altostra/type-validations';
@@ -6,6 +5,7 @@ import type { ClientToServerEvents, TypedSocket } from '../../socket';
 import isValidID from '$server/lib/Validators/ID';
 import RoomManager from '$server/RoomManager';
 import isValidQuery from '$server/lib/Validators/Query';
+import type Room from '$server/lib/Room';
 
 export type CreateRoomPayload = {
 	name: string;
@@ -42,12 +42,13 @@ export default function useRoomAPI(socket: TypedSocket) {
 			!socket.data.player.room &&
 			!RoomManager.playerIsInMatchmaking(socket.data.player.id)
 		) {
-			const roomName = name.trim();
-			const room = new Room(roomName);
-			socket.data.player.joinRoom(room);
-			RoomManager.addRoom(room);
+			const room = RoomManager.createRoom(name.trim(), [socket.data.player]);
 			if (callback) {
-				callback(room.toClient());
+				if (room) {
+					callback(room.toClient());
+				} else {
+					callback(null, { message: 'A room with this name already exists' });
+				}
 			}
 		} else if (callback) {
 			callback(null, { message: 'You already are in a room or in matchmaking' });

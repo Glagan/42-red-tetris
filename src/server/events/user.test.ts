@@ -91,7 +91,7 @@ describe('User events', () => {
 		// * Manual room
 
 		await new Promise((resolve) => {
-			socket.emit('room:create', 'My room', (room, error) => {
+			socket.emit('room:create', nanoid(), (room, error) => {
 				expect(room).toBeTruthy();
 				expect(error).toBeFalsy();
 				resolve(true);
