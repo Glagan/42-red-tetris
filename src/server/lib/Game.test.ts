@@ -1,5 +1,5 @@
 import { cleanupWebSocketTestServer, setupWebSocketTestServer } from '$utils/test';
-import Board, { COLUMNS, MoveDirection, RotationDirection, ROWS } from './Board';
+import Board, { COLUMNS, LINES_ARE_BLOCKED, MoveDirection, RotationDirection, ROWS } from './Board';
 import Game from './Game';
 import { TetrominoType } from '$shared/Tetromino';
 import TetrominoI from './Tetrominoes/TetrominoI';
@@ -318,6 +318,25 @@ describe('Game', () => {
 		expect(game.level).toBe(2);
 		expect(game.totalCompletedLines).toBe(15);
 		expect(game.tickDownRate !== originalTickDownRate).toBeTruthy();
+	});
+
+	it('Opponent get blocked line', () => {
+		const game = new Game('room:test', 2);
+
+		expect(game.handleAfterTetrominoSet(0, 15)).toBeFalsy();
+		let blockedLines = 0;
+		for (let index = ROWS - 1; index > ROWS - 15; index--) {
+			expect(
+				game.boards[1].bitboard[index].reduce((carry, column) => {
+					if (column == TetrominoType.Blocked) {
+						return carry + 1;
+					}
+					return carry;
+				}, 0)
+			).toBe(LINES_ARE_BLOCKED ? COLUMNS : COLUMNS - 1);
+			blockedLines += 1;
+		}
+		expect(blockedLines).toBe(14);
 	});
 
 	it('Can concede a game', () => {

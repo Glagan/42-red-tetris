@@ -128,7 +128,7 @@ export default class Room {
 			// Start game after 5s
 			let count = 0;
 			/* c8 ignore start */
-			const interval = setInterval(() => {
+			const onInterval = () => {
 				if (this.game?.paused === false || count == 5) {
 					clearInterval(interval);
 					this.startGame();
@@ -136,7 +136,9 @@ export default class Room {
 					WebSocket.server.to(`room:${this.id}`).emit('game:startIn', 5 - count);
 				}
 				count += 1;
-			}, 1000);
+			};
+			const interval = setInterval(onInterval, 1000);
+			onInterval();
 			/* c8 ignore end */
 			WebSocket.server.to(this.socketRoom).emit(
 				'game:initialState',
@@ -144,10 +146,12 @@ export default class Room {
 					current: this.currentPiece(0),
 					next: this.nextPieces(0)
 				},
-				{
-					current: this.currentPiece(1),
-					next: this.nextPieces(1)
-				}
+				this.players.length >= 2
+					? {
+							current: this.currentPiece(1),
+							next: this.nextPieces(1)
+					  }
+					: undefined
 			);
 			WebSocket.server.to(this.socketRoom).emit('room:gameCreated', this.id);
 		}

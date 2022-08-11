@@ -1,6 +1,7 @@
 import type GameBoard from '$client/lib/GameBoard';
 import type { NextGamePiece } from '$client/lib/GamePiece';
 import type GamePiece from '$client/lib/GamePiece';
+import type { GameInitialState } from '$client/lib/GameState';
 import type GameState from '$client/lib/GameState';
 import type Player from '$client/lib/Player';
 import type Room from '$client/lib/Room';
@@ -65,16 +66,7 @@ export interface ServerToClientEvents {
 	'matchmaking:found': (room: Room) => void;
 	// * Game
 	'game:current': (state: GameState | null) => void;
-	'game:initialState': (
-		playerOne: {
-			current: GamePiece | undefined;
-			next: NextGamePiece[];
-		},
-		playerTwo: {
-			current: GamePiece | undefined;
-			next: NextGamePiece[];
-		}
-	) => void;
+	'game:initialState': (playerOne: GameInitialState, playerTwo?: GameInitialState) => void;
 	'game:startIn': (seconds: number) => void;
 	'game:start': () => void;
 	'game:tick': (tick: number) => void;
