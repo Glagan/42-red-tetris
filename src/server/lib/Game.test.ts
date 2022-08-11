@@ -315,7 +315,7 @@ describe('Game', () => {
 		const originalTickDownRate = game.tickDownRate;
 
 		expect(game.handleAfterTetrominoSet(0, 15)).toBeFalsy();
-		expect(game.level).toBe(2);
+		expect(game.level).toBeGreaterThan(1);
 		expect(game.totalCompletedLines).toBe(15);
 		expect(game.tickDownRate !== originalTickDownRate).toBeTruthy();
 	});

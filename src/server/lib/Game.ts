@@ -17,6 +17,8 @@ import type { NextGamePiece } from '$client/lib/GamePiece';
 import type GameBoard from '$client/lib/GameBoard';
 
 const TICK_RATE = 60;
+const REDUCE_PER_LEVEL = 0.85;
+const LINES_PER_LEVEL = 6;
 
 export default class Game {
 	// socket.io room to emit events to
@@ -69,7 +71,7 @@ export default class Game {
 
 	updateTickDownRate() {
 		if (this.level > 1) {
-			this.tickDownRate = Math.max(7, Math.round(33 * Math.pow(0.8, this.level - 1)));
+			this.tickDownRate = Math.max(7, Math.round(33 * Math.pow(REDUCE_PER_LEVEL, this.level - 1)));
 		} else {
 			this.tickDownRate = 33;
 		}
@@ -228,7 +230,7 @@ export default class Game {
 		if (completedLines >= 0 && !this.spawnNextTetromino(index)) {
 			return true;
 		}
-		this.level = Math.max(1, Math.ceil(this.totalCompletedLines / 10));
+		this.level = Math.max(1, Math.ceil(this.totalCompletedLines / LINES_PER_LEVEL));
 		this.updateTickDownRate();
 		// Add blocked lines to the other player
 		if (this.playerCount > 1 && completedLines >= 2) {
