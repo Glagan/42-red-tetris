@@ -278,6 +278,8 @@ export default class Board {
 		if (this.movingTetromino) {
 			/// @ts-expect-error Constructor is a Constructor
 			const spectre: Tetromino = new this.movingTetromino.constructor();
+			spectre.type = this.movingTetromino.type;
+			spectre.direction = this.movingTetromino.direction;
 			// Avoid reference copy
 			const length = this.movingTetromino.matrix.length;
 			for (let x = 0; x < length; x++) {
@@ -301,10 +303,9 @@ export default class Board {
 	 */
 	tetrominoIsTouching(tetromino: Tetromino) {
 		for (const [x, y] of tetromino.bottom) {
-			const xOffset = tetromino.offset[0] + x;
+			const xOffset = tetromino.offset[0] + x + 1;
 			const yOffset = tetromino.offset[1] + y;
-			// Also check deepOffset to handle enemy lines
-			if (xOffset + 1 >= ROWS || this.bitboard[xOffset + 1][yOffset]) {
+			if (xOffset >= ROWS || this.bitboard[xOffset][yOffset]) {
 				return true;
 			}
 		}
