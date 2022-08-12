@@ -79,6 +79,11 @@ button:disabled, button.off {
 	cursor: not-allowed;
 }
 
+.underline-hover:hover {
+	/* @apply; */
+	text-decoration: underline;
+}
+
 .scale-hover {
 	@apply transition-all;
 }

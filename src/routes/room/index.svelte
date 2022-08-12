@@ -3,6 +3,7 @@
 	import { goto } from '$app/navigation';
 	import CentralBox from '../../client/components/containers/central_box.svelte';
 	import CurrentRoomStore from '$client/stores/currentRoom';
+	import IdStore from '$client/stores/id';
 	import UsernameStore from '$client/stores/username';
 	import OpponentReady from '$client/stores/opponentReady';
 	import ThreePoints from '$client/components/loading/three_points.svelte';
@@ -10,6 +11,7 @@
 	import WinnerStore from '$client/stores/winner';
 	import { leave_room as Leave } from '../../client/socket/leave.emit';
 	import Ready from '../../client/socket/ready.emit';
+	import Kick from '../../client/socket/kick.emit';
 	import OpponenReadytStore from '../../client/stores/opponentReady';
 	import * as Sounds from '../../client/effects/sounds';
 
@@ -17,6 +19,8 @@
 	if ($CurrentRoomStore == null || $CurrentRoomStore == undefined) {
 		goto('/search');
 	}
+
+	$: i_am_owner = $IdStore === $CurrentRoomStore?.players[0].id;
 
 	$: game_will_start = $GameStartStore != -1;
 
@@ -72,7 +76,7 @@
 	<p class="mt-3">{start_message}</p>
 	<p class="text-neutral-400 mt-7">{tips[0]}</p>
 	<div class="button-container flex justify-between mt-6">
-		<div class:opacity-0={opponent_is_absent && game_will_start} class="transition-all">
+		<div class:opacity-0={opponent_is_absent && game_will_start} class="relative transition-all">
 			<p>
 				{#if !opponent_is_absent}
 					@{opponent_username}
@@ -84,6 +88,17 @@
 				class:transparent={opponent_is_absent || game_will_start}
 				class:off={!$OpponentReady}>Ready</button
 			>
+			{#if !game_will_start && !opponent_is_absent && i_am_owner}
+				<p
+					on:click={() => {
+						Sounds.cancel();
+						Kick();
+					}}
+					class="underline-hover text-neutral-500 hover:text-white absolute bottom-1 -left-4 p-1 cursor-pointer"
+				>
+					Kick
+				</p>
+			{/if}
 		</div>
 		<div>
 			{#if game_will_start}
@@ -129,7 +144,7 @@
 	}
 
 	.button-container > div {
-		@apply overflow-hidden basis-0 flex-grow-[1];
+		@apply basis-0 flex-grow-[1];
 	}
 
 	.button-container > div > p {

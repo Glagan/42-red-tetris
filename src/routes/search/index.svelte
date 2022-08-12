@@ -99,7 +99,13 @@
 			<p class="text-neutral-500 pt-10">No rooms available</p>
 		{:else}
 			{#each $RoomsStore as room}
-				<p class="cant-select scale-hover" on:click={() => handle_join_room(room.id)}>
+				<p
+					class="cant-select scale-hover"
+					on:click={() => {
+						Sounds.ok();
+						handle_join_room(room.id);
+					}}
+				>
 					{room.name}&nbsp;<span class="text-neutral-500">@{room.players[0].name}</span>
 				</p>
 			{/each}

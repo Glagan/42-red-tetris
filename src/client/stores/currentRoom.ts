@@ -9,7 +9,10 @@ function createCurrentRoomStore() {
 
 	return {
 		subscribe,
-		set
+		set,
+		clean: () => {
+			set(null);
+		}
 	};
 }
 

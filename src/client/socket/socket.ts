@@ -25,6 +25,7 @@ import { goto } from '$app/navigation';
 import type GameBoard from '../lib/GameBoard';
 import type GamePiece from '../lib/GamePiece';
 import type { NextGamePiece } from '../lib/GamePiece';
+import * as Sounds from '../effects/sounds';
 
 let socket: Socket<ServerToClientEvents, ClientToServerEvents>;
 
@@ -76,6 +77,13 @@ if (browser) {
 			}
 			goto('/game');
 		}
+	});
+
+	socket.on('room:kicked', () => {
+		Sounds.cancel();
+		CurrentRoomStore.clean();
+		NotificationStore.push({ id: nanoid(), message: 'you have been kicked', error: true });
+		goto('/search');
 	});
 
 	socket.on('matchmaking:found', (room: Room) => {
