@@ -17,6 +17,7 @@
 	export let opacity = 1;
 	export let no_front = false;
 	export let info_mode = false;
+	export let spectre = false;
 
 	$: position_x_px =
 		position_x * (info_mode ? Config.game_info.block_size : Config.game.block_size);
@@ -58,22 +59,22 @@
 			: 'transform'}; contain: {background ? 'layout' : 'none'};"
 	>
 		{#if show_front}
-			<div class="front" style="background-image: url('{sprite_side}');" />
+			<div class:spectre class="front" style="background-image: url('{sprite_side}');" />
 		{/if}
 		{#if show_back}
-			<div class="back" style="background-image: url('{sprite_side}');" />
+			<div class:spectre class="back" style="background-image: url('{sprite_side}');" />
 		{/if}
 		{#if show_top}
-			<div class="top" style="background-image: url('{sprite_top}');" />
+			<div class:spectre class="top" style="background-image: url('{sprite_top}');" />
 		{/if}
 		{#if show_bottom}
-			<div class="bottom" style="background-image: url('{sprite_bottom}');" />
+			<div class:spectre class="bottom" style="background-image: url('{sprite_bottom}');" />
 		{/if}
 		{#if show_left}
-			<div class="left" style="background-image: url('{sprite_side}');" />
+			<div class:spectre class="left" style="background-image: url('{sprite_side}');" />
 		{/if}
 		{#if show_right}
-			<div class="right" style="background-image: url('{sprite_side}');" />
+			<div class:spectre class="right" style="background-image: url('{sprite_side}');" />
 		{/if}
 	</div>
 {/if}
@@ -87,6 +88,10 @@
 		width: var(--cube-size);
 		-webkit-transform-style: preserve-3d;
 		transform-style: preserve-3d;
+	}
+
+	.spectre {
+		@apply opacity-60;
 	}
 
 	.info {
