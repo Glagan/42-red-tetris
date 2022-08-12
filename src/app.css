@@ -48,6 +48,15 @@ button:not(.icon) {
 	@apply min-w-[50px];
 }
 
+button.icon{
+	@apply inline-block bg-transparent;
+	outline: none;
+}
+
+button.icon > img {
+	@apply w-6 invert opacity-40;
+}
+
 button:not([disabled]):not(.cant-click):not(.not-hover):hover {
 	@apply bg-blue-400;
 }

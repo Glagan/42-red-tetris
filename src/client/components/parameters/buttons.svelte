@@ -27,7 +27,7 @@
 </script>
 
 <!-- ========================= HTML -->
-<div class="absolute right-0 opacity-40 m-3 z-[20000000]">
+<div class="absolute right-0 m-3 z-[20000000]">
 	<button
 		style="opacity: {+sound_loaded};"
 		class="icon not-hover cant-select"
@@ -47,15 +47,3 @@
 		<img src="/icons/parameters.png" alt="parameters icon" />
 	</button>
 </div>
-
-<!-- ========================= CSS -->
-<style lang="postcss">
-	button {
-		@apply inline-block bg-transparent;
-		outline: none;
-	}
-
-	img {
-		@apply w-6 invert;
-	}
-</style>

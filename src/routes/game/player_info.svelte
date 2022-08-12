@@ -5,6 +5,8 @@
 	import IdStore from '../../client/stores/id';
 	import LevelStore from '../../client/stores/level';
 	import NextPieces from './next_pieces.svelte';
+	import Concede from '../../client/socket/concede.emit';
+	import * as Sounds from '../../client/effects/sounds';
 
 	export let player: Player | undefined = undefined;
 	export let horizontal_alignement: -1 | 0 | 1 = 0; // -1:left | 0:center | 1:right
@@ -23,6 +25,16 @@
 		? `transform: rotateY(10deg) rotateX(${-horizontal_alignement * 30}deg);`
 		: ''}
 >
+	<button
+		class="icon not-hover absolute top-0 right-0 -rotate-12 w-8 scale-hover"
+		on:click={() => {
+			Sounds.cancel();
+			Concede();
+		}}
+		tabindex="-1"
+	>
+		<img src="/icons/flag.png" alt="parameters icon" />
+	</button>
 	<p>
 		@{player_name}
 		{#if player?.id === $IdStore}
