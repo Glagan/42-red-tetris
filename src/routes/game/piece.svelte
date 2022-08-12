@@ -9,6 +9,7 @@
 	export let horizontal_alignement: -1 | 0 | 1 = 0; // -1:left | 0:center | 1:right
 	export let piece: Array<_Cube> | undefined = undefined;
 	export let info_mode = false;
+	export let spectre = false;
 </script>
 
 <!-- ========================= HTML -->
@@ -23,6 +24,7 @@
 			{background}
 			{horizontal_alignement}
 			{info_mode}
+			{spectre}
 		/>
 	{/each}
 {/if}

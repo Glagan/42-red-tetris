@@ -4,6 +4,7 @@
 	import GeneratedBoardsStore from '../../client/stores/generatedBoards';
 	import ThemeStore from '../../client/stores/theme';
 	import GeneratedPiecesStore from '../../client/stores/generatedPieces';
+	import GeneratedSpectresStore from '../../client/stores/generatedSpectres';
 	import Config from '../../client/config';
 	import _3Dto2D from '../../client/themes/generators/3Dto2D';
 	import { browser } from '$app/env';
@@ -23,7 +24,7 @@
 
 	if (browser && Config.game.background._2Dto3D) {
 		(async () => {
-			if (background_theme.left._3d != undefined && background_theme.right._3d != undefined) {
+			if (background_theme?.left?._3d != undefined && background_theme?.right?._3d != undefined) {
 				background_3Dto2D_left = await _3Dto2D(
 					background_theme.left._3d.cube_size,
 					background_theme.left._3d.cubes[0]
@@ -42,6 +43,7 @@
 	<div class="board-wrap" style="margin: 0 {Config.game.block_size}px;">
 		<Board
 			piece={$GeneratedPiecesStore[0]}
+			spectre={$GeneratedSpectresStore[0]}
 			cubes={$GeneratedBoardsStore[0]}
 			{horizontal_alignement}
 			layer={0}
@@ -62,6 +64,15 @@
 	</div>
 	{#if !solo}
 		<div class="board-wrap" style="margin: 0 {Config.game.block_size}px;">
+			<Board
+				piece={$GeneratedPiecesStore[1]}
+				spectre={$GeneratedSpectresStore[1]}
+				cubes={$GeneratedBoardsStore[1]}
+				horizontal_alignement={-1}
+				layer={0}
+				background_picture={background_theme.right.picture}
+				background_3Dto2D={background_3Dto2D_right}
+			/>
 			{#if background_theme.right._3d != undefined}
 				{#each background_theme.right._3d.cubes as board}
 					<Board
@@ -73,14 +84,6 @@
 					/>
 				{/each}
 			{/if}
-			<Board
-				piece={$GeneratedPiecesStore[1]}
-				cubes={$GeneratedBoardsStore[1]}
-				horizontal_alignement={-1}
-				layer={0}
-				background_picture={background_theme.left.picture}
-				background_3Dto2D={background_3Dto2D_right}
-			/>
 		</div>
 	{/if}
 </div>
