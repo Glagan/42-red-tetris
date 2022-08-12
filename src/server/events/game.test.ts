@@ -6,11 +6,13 @@ import {
 	setupWebSocketTestServer
 } from '$utils/test';
 import RoomManager from '$server/RoomManager';
-import { COLUMNS } from '$server/lib/Board';
+import { COLUMNS, ROWS } from '$server/lib/Board';
 import PlayerManager from '$server/PlayerManager';
+import { TetrominoType } from '$shared/Tetromino';
 
 describe('Game events', () => {
 	const username = `Player#${getRandomInt(1000, 9999)}`;
+	const usernameTwo = `Player#${getRandomInt(1000, 9999)}`;
 
 	beforeAll(async () => {
 		setupWebSocketTestServer();
@@ -301,7 +303,7 @@ describe('Game events', () => {
 		socket.disconnect();
 	});
 
-	it('Can\t call game actions while not in a game', async () => {
+	it("Can't call game actions while not in a game", async () => {
 		const token = nanoid();
 		const socket = await connectTestWebSocket(token, username);
 
@@ -356,5 +358,161 @@ describe('Game events', () => {
 
 		// Cleanup
 		socket.disconnect();
+	});
+
+	it('Receive the tetris flag when making one', async () => {
+		const token = nanoid();
+		const socket = await connectTestWebSocket(token, username);
+
+		// Create the room and start the game
+		let roomId = '';
+		await new Promise((resolve) => {
+			socket.emit('room:create', nanoid(), (room, error) => {
+				if (room) {
+					roomId = room.id;
+				}
+				expect(room).toBeTruthy();
+				expect(error).toBeFalsy();
+				resolve(true);
+			});
+		});
+
+		await new Promise((resolve) => {
+			socket.emit('room:ready', (ok, error) => {
+				expect(ok).toBe(true);
+				expect(error).toBeFalsy();
+				resolve(true);
+			});
+		});
+
+		// Start the game manually
+		const roomOnServer = RoomManager.getRoom(roomId);
+		expect(roomOnServer).toBeTruthy();
+		roomOnServer?.createGame();
+		roomOnServer?.startGame();
+
+		// Create a tetris
+		if (roomOnServer?.game?.boards[0]) {
+			for (let index = 0; index < COLUMNS; index++) {
+				roomOnServer.game.boards[0].bitboard[ROWS - 1][index] = TetrominoType.I;
+			}
+		}
+
+		// Wait for the next game:board event and expect a { tetris: true }
+		let resolver: (value: boolean) => void;
+		let promise = new Promise((resolve) => {
+			resolver = resolve;
+		});
+		socket.once('game:board', (board) => {
+			expect(board.tetris).toBeTruthy();
+			resolver(true);
+		});
+
+		await new Promise((resolve) => {
+			socket.emit('game:dash', (ok) => {
+				expect(ok).toBeTruthy();
+				resolve(true);
+			});
+		});
+
+		await promise;
+
+		// If there is no tetris expect it to be false
+		promise = new Promise((resolve) => {
+			resolver = resolve;
+		});
+		socket.once('game:board', (board) => {
+			expect(board.tetris).toBeFalsy();
+			resolver(true);
+		});
+
+		await new Promise((resolve) => {
+			socket.emit('game:dash', (ok) => {
+				expect(ok).toBeTruthy();
+				resolve(true);
+			});
+		});
+
+		await promise;
+
+		// Cleanup
+		roomOnServer?.game?.gameOver(0);
+		PlayerManager.get(token).leaveCurrentRoom();
+		socket.disconnect();
+	});
+
+	it('Receive the blockedLine flag when receiving one', async () => {
+		const tokenOne = nanoid();
+		const socketOne = await connectTestWebSocket(tokenOne, username);
+		const tokenTwo = nanoid();
+		const socketTwo = await connectTestWebSocket(tokenTwo, usernameTwo);
+
+		let roomId = '';
+		await new Promise((resolve) => {
+			socketOne.emit('room:create', nanoid(), (room, error) => {
+				if (room) {
+					roomId = room.id;
+				}
+				expect(room).toBeTruthy();
+				expect(error).toBeFalsy();
+				resolve(true);
+			});
+		});
+
+		await new Promise((resolve) => {
+			socketTwo.emit('room:join', roomId, (room, error) => {
+				expect(room).toBeTruthy();
+				expect(error).toBeFalsy();
+				resolve(true);
+			});
+		});
+
+		// Start the game manually
+		const roomOnServer = RoomManager.getRoom(roomId);
+		expect(roomOnServer).toBeTruthy();
+		if (roomOnServer) {
+			roomOnServer.ready = [...roomOnServer.players.map((player) => player.id)];
+			roomOnServer.createGame();
+			roomOnServer.startGame();
+		}
+
+		// Create a tetris
+		if (roomOnServer?.game?.boards[0]) {
+			for (let index = 0; index < COLUMNS; index++) {
+				roomOnServer.game.boards[0].bitboard[ROWS - 3][index] = TetrominoType.I;
+				roomOnServer.game.boards[0].bitboard[ROWS - 2][index] = TetrominoType.I;
+				roomOnServer.game.boards[0].bitboard[ROWS - 1][index] = TetrominoType.I;
+			}
+		}
+
+		// Wait for the next game:board event and expect a { blockedLine: true }
+		let resolver: (value: boolean) => void;
+		const promise = new Promise((resolve) => {
+			resolver = resolve;
+		});
+		socketTwo.on('game:board', (board) => {
+			if (board.player == 1) {
+				expect(board.blockedLine).toBeTruthy();
+				resolver(true);
+			} else if (board.player == 0) {
+				expect(board.blockedLine).toBeFalsy();
+			}
+		});
+
+		await new Promise((resolve) => {
+			socketOne.emit('game:dash', (ok) => {
+				expect(ok).toBeTruthy();
+				resolve(true);
+			});
+		});
+
+		await promise;
+
+		// Cleanup
+		roomOnServer?.game?.gameOver(0);
+		PlayerManager.get(tokenOne).leaveCurrentRoom();
+		PlayerManager.get(tokenTwo).leaveCurrentRoom();
+		socketOne.disconnect();
+		socketTwo.disconnect();
 	});
 });

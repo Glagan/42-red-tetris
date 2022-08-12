@@ -185,7 +185,7 @@ describe('Game', () => {
 			game.boards[0].bitboard.push(new Array(COLUMNS).fill(TetrominoType.Blocked));
 		}
 
-		expect(game.spawnNextTetromino(0)).toBeFalsy();
+		expect(game.spawnNextTetromino(0, 0)).toBeFalsy();
 		expect(game.winner).toBe(0);
 		expect(game.paused).toBeTruthy();
 		expect(game.loop._running).toBeFalsy();

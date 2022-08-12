@@ -20,6 +20,11 @@ const TICK_RATE = 60;
 const REDUCE_PER_LEVEL = 0.85;
 const LINES_PER_LEVEL = 6;
 
+type UpdateFlags = {
+	tetris?: boolean;
+	blockedLine?: boolean;
+};
+
 export default class Game {
 	// socket.io room to emit events to
 	room: string;
@@ -123,17 +128,20 @@ export default class Game {
 		}
 	}
 
-	boardState(index: number) {
+	boardState(index: number, flags?: UpdateFlags) {
 		return {
 			player: index,
 			score: this.score[index],
 			level: this.level,
-			board: this.boards[index].bitboard
+			board: this.boards[index].bitboard,
+			tetris: flags?.tetris ?? false,
+			blockedLine: flags?.blockedLine ?? false
 		};
 	}
 
-	emitBoardUpdate(index: number) {
-		WebSocket.server.to(this.room).emit('game:board', this.boardState(index));
+	emitBoardUpdate(index: number, flags?: UpdateFlags) {
+		WebSocket.server.to(this.room).emit('game:board', this.boardState(index, flags));
+		WebSocket.server.to(this.room).emit('game:nextPieces', index, this.nextPieces(index));
 	}
 
 	emitPieceUpdate(index: number) {
@@ -143,7 +151,6 @@ export default class Game {
 			const gamePiece = tetromino.toClient(index);
 			gamePiece.spectre = this.boards[index].currentSpectre();
 			WebSocket.server.to(this.room).emit('game:piece', gamePiece);
-			WebSocket.server.to(this.room).emit('game:nextPieces', index, this.nextPieces(index));
 		}
 	}
 
@@ -237,7 +244,7 @@ export default class Game {
 		} else {
 			this.score[index] += getRandomInt(10, 99);
 		}
-		if (completedLines >= 0 && !this.spawnNextTetromino(index)) {
+		if (completedLines >= 0 && !this.spawnNextTetromino(index, completedLines)) {
 			return true;
 		}
 		this.level = Math.max(1, Math.ceil(this.totalCompletedLines / LINES_PER_LEVEL));
@@ -252,7 +259,7 @@ export default class Game {
 					this.gameOver(otherIndex);
 					return true;
 				}
-				this.emitBoardUpdate(otherIndex);
+				this.emitBoardUpdate(otherIndex, { blockedLine: otherIndex != index });
 				this.emitPieceUpdate(otherIndex);
 			}
 		}
@@ -292,12 +299,12 @@ export default class Game {
 	 * @param boardIndex
 	 * @returns false if the game is over or true
 	 */
-	spawnNextTetromino(boardIndex: number) {
+	spawnNextTetromino(boardIndex: number, completedLines: number) {
 		this.addRandomTetrominoToBags();
 		// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 		const nextTetromino = this.tetrominoesBags[boardIndex].pop()!;
 		if (this.boards[boardIndex].spawnTetromino(nextTetromino)) {
-			this.emitBoardUpdate(boardIndex);
+			this.emitBoardUpdate(boardIndex, { tetris: completedLines > 0 });
 			this.emitPieceUpdate(boardIndex);
 			return true;
 		}
@@ -315,7 +322,7 @@ export default class Game {
 		if (completedLines >= 0 && this.handleAfterTetrominoSet(boardIndex, completedLines)) {
 			return true;
 		} else {
-			this.emitBoardUpdate(boardIndex);
+			this.emitBoardUpdate(boardIndex, { tetris: completedLines > 0 });
 			this.emitPieceUpdate(boardIndex);
 		}
 		return false;
