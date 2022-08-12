@@ -11,6 +11,7 @@
 	import { leave_room as Leave } from '../../client/socket/leave.emit';
 	import Ready from '../../client/socket/ready.emit';
 	import OpponenReadytStore from '../../client/stores/opponentReady';
+	import * as Sounds from '../../client/effects/sounds';
 
 	// prevent come back <-
 	if ($CurrentRoomStore == null || $CurrentRoomStore == undefined) {
@@ -43,7 +44,7 @@
 		'When you complete more than two lines, your opponent receives additional lines.'
 	];
 
-	function abort() {
+	function handle_leave() {
 		if (!game_will_start) {
 			loading = true;
 			Leave(() => {
@@ -98,7 +99,10 @@
 				class:cant-click={game_will_start}
 				class:transparent={game_will_start}
 				class:off={game_will_start}
-				on:click={abort}>Abort</button
+				on:click={() => {
+					Sounds.cancel();
+					handle_leave();
+				}}>Leave</button
 			>
 		</div>
 		<div>
@@ -109,7 +113,10 @@
 				class:cant-click={game_will_start}
 				class:transparent={game_will_start}
 				class:off={!ready}
-				on:click={handle_ready}>Ready</button
+				on:click={() => {
+					Sounds.select();
+					handle_ready();
+				}}>Ready</button
 			>
 		</div>
 	</div>

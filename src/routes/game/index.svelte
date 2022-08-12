@@ -16,7 +16,6 @@
 	if (browser) {
 		const onKeyDown = (event: KeyboardEvent) => {
 			const key = event.key;
-			console.log(event.key, event);
 			if (key != undefined) {
 				switch (key) {
 					case 'a':
@@ -30,6 +29,7 @@
 						break;
 					case ' ':
 					case 'Space':
+						event.preventDefault();
 						Dash();
 						break;
 					case 's':
@@ -59,7 +59,10 @@
 <!-- ========================= HTML -->
 
 <GameOver />
-<div class="game flex flex-col justify-center h-fit" class:transparant={$WinnerStore != -1}>
+<div
+	class="game relative flex flex-col justify-center h-fit"
+	class:transparant={$WinnerStore != -1}
+>
 	<PlayerInfos {solo} />
 	<Boards {solo} />
 </div>

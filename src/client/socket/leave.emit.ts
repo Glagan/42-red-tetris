@@ -1,6 +1,7 @@
 import { nanoid } from 'nanoid';
 import NotificationStore from '../../client/stores/notification';
 import CurrentRoomStore from '../../client/stores/currentRoom';
+import MatchmakingStore from '../../client/stores/matchmaking';
 import type { BasicError } from 'src/socket';
 import { goto } from '$app/navigation';
 import Socket from './socket';
@@ -34,6 +35,7 @@ export function leave_matchmaking(callback: (() => void) | undefined = undefined
 					message: 'matchmaking leaved',
 					error: false
 				});
+				MatchmakingStore.set(false);
 				goto('/search');
 			} else {
 				NotificationStore.push({

@@ -1,11 +1,12 @@
 import type Cube from './Cube';
 
 export default interface Theme {
+	name: string;
 	block_textures: {
 		pieces: string[][]; // 7 blocks
 		others: string[][];
 	};
-	backgrounds: {
+	background: {
 		left: {
 			picture: string | undefined;
 			_3d: { cube_size: number; cubes: Cube[][] } | undefined;
@@ -14,5 +15,5 @@ export default interface Theme {
 			picture: string | undefined;
 			_3d: { cube_size: number; cubes: Cube[][] } | undefined;
 		};
-	}[];
+	};
 }

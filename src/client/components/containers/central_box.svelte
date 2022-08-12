@@ -12,19 +12,20 @@
 	export let loading = false;
 	export let loading_title = false;
 	export let waiting_time = 0;
+	export let extra_large = false;
 
 	$: _loading = loading || ($SocketStore != 'connect' && $SocketStore != 'reconnect');
 </script>
 
 <!-- ========================= HTML -->
-<div class="central-box shadow">
+<div class="central-box shadow" class:extra-large={extra_large}>
 	{#if _loading}
 		<div class="absolute top-0 left-0 z-40 w-full h-full" />
 		<SquareSpinner />
 	{/if}
 	<div class:transparent={_loading} disabled>
 		{#if title.length > 0}
-			<h2 class="absolute cant-select-text left-4 -top-4">
+			<h2 class="absolute cant-select left-4 -top-4">
 				{title}{#if loading_title}<ThreePoints bind:waiting_time />{/if}
 			</h2>
 		{/if}
@@ -46,5 +47,9 @@
 	.central-box {
 		@apply relative bg-neutral-900 p-7 text-center m-5;
 		width: var(--central-box-width);
+	}
+
+	.extra-large {
+		width: calc(var(--central-box-width) + 64px) !important;
 	}
 </style>

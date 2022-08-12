@@ -44,7 +44,11 @@ button {
 	@apply bg-blue-300 p-2 text-black block m-auto transition-all;
 }
 
-button:not([disabled]):not(.cant-click):hover {
+button:not(.icon) {
+	@apply min-w-[50px];
+}
+
+button:not([disabled]):not(.cant-click):not(.not-hover):hover {
 	@apply bg-blue-400;
 }
 
@@ -52,7 +56,7 @@ button:disabled, button.off {
 	@apply bg-neutral-300;
 }
 
-.cant-select-text {
+.cant-select {
 	-webkit-touch-callout: none;
 	/* iOS Safari */
 	-webkit-user-select: none;
@@ -116,4 +120,8 @@ button:disabled, button.off {
 
 h2 {
 	@apply text-2xl;
+}
+
+h3 {
+	@apply text-xl;
 }
