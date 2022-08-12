@@ -3,12 +3,41 @@
 	import '../app.css';
 	import Header from '../client/components/layout/header.svelte';
 	import Notifications from '../client/components/layout/notifications.svelte';
+	import ParametersPopup from '../client/components/parameters/popup.svelte';
+	import { browser } from '$app/env';
+	import { onDestroy } from 'svelte';
+	import ParametersButtons from '../client/components/parameters/buttons.svelte';
+	import * as Sounds from '../client/effects/sounds';
+
+	let parameters = false;
+
+	$: parameters ? Sounds.select() : Sounds.cancel();
+
+	if (browser) {
+		const onKeyDown = (event: KeyboardEvent) => {
+			if (event.key === 'Escape') {
+				parameters = false;
+			}
+		};
+
+		document.addEventListener('keydown', onKeyDown);
+
+		onDestroy(() => {
+			document.removeEventListener('keydown', onKeyDown);
+		});
+	}
 </script>
 
 <!-- ========================= HTML -->
 <Header />
+<ParametersButtons bind:open={parameters} />
 <main>
-	<slot />
+	{#if parameters}
+		<ParametersPopup />
+	{/if}
+	<div class="flex flex-col justify-center  items-center" style="opacity: {parameters ? 0.2 : 1};">
+		<slot />
+	</div>
 </main>
 <Notifications />
 

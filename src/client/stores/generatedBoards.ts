@@ -1,4 +1,5 @@
 import type Cube from '../lib/Cube';
+import Themes from '../themes/themes';
 import { derived } from 'svelte/store';
 import BoardsStore from './boards';
 import ThemeStore from './theme';
@@ -16,7 +17,7 @@ export default derived([BoardsStore, ThemeStore], ($Stores): Cube[][] => {
 						x,
 						y,
 						z_index: 0,
-						sprites: $Stores[1].block_textures.pieces[cube_value]
+						sprites: Themes[$Stores[1]].block_textures.pieces[cube_value]
 					});
 			}
 		}

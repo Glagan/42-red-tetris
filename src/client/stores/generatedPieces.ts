@@ -3,6 +3,7 @@ import { derived } from 'svelte/store';
 import PiecesStore from './pieces';
 import IdGenerator from '../../utils/id.generator';
 import ThemeStore from './theme';
+import Themes from '../themes/themes';
 
 export default derived([PiecesStore, ThemeStore], ($Stores): Cube[][] => {
 	const pieces: Cube[][] = [[], []];
@@ -17,7 +18,7 @@ export default derived([PiecesStore, ThemeStore], ($Stores): Cube[][] => {
 						x: x + $Stores[0][player].x,
 						y: y + $Stores[0][player].y,
 						z_index: 0,
-						sprites: $Stores[1].block_textures.pieces[$Stores[0][player].type - 1]
+						sprites: Themes[$Stores[1]].block_textures.pieces[$Stores[0][player].type - 1]
 					});
 				}
 			}

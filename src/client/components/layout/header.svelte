@@ -1,7 +1,8 @@
 <!-- ========================= HTML -->
+
 <header class="absolute w-full text-center z-[10000000]">
-	<div class="relative p-6">
-		<h1 class="text-5xl cant-select-text">
+	<div class="relative p-6 w-fit m-auto">
+		<h1 class="text-5xl cant-select">
 			<span class="text-red-300">T</span>
 			<span class="text-inherit">E</span>
 			<span class="text-yellow-300">T</span>

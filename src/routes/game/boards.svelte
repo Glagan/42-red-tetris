@@ -7,10 +7,11 @@
 	import Config from '../../client/config';
 	import _3Dto2D from '../../client/themes/generators/3Dto2D';
 	import { browser } from '$app/env';
+	import Themes from '../../client/themes/themes';
 
 	export let solo: boolean;
 
-	let background_theme = $ThemeStore.backgrounds[2];
+	$: background_theme = Themes[$ThemeStore].background;
 	let background_3Dto2D_left: string | undefined = undefined;
 	let background_3Dto2D_right: string | undefined = undefined;
 
