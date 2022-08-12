@@ -147,7 +147,7 @@ export default function useRoomAPI(socket: TypedSocket) {
 				callback(previousRoom.isEmpty());
 			}
 		} else if (callback) {
-			callback(false);
+			callback(false, { message: "You aren't in a room" });
 		}
 	};
 	socket.on('room:leave', roomLeave);

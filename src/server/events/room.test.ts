@@ -170,7 +170,7 @@ describe('Room events', () => {
 		await new Promise((resolve) => {
 			socketOne.emit('room:leave', (ok, error) => {
 				expect(ok).toBeFalsy();
-				expect(error).toBeFalsy();
+				expect(error).toBeTruthy();
 				resolve(true);
 			});
 		});
