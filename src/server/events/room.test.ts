@@ -8,6 +8,7 @@ import {
 import PlayerManager from '$server/PlayerManager';
 import RoomManager from '$server/RoomManager';
 import Room from '$server/lib/Room';
+import type ClientRoom from '$client/lib/Room';
 
 describe('Room events', () => {
 	const username = `Player#${getRandomInt(1000, 9999)}`;
@@ -650,11 +651,11 @@ describe('Room events', () => {
 		const token = nanoid();
 		const socket = await connectTestWebSocket(token, username);
 
-		let roomId = '';
+		let expectedRoom: ClientRoom;
 		await new Promise((resolve) => {
 			socket.emit('room:create', nanoid(), (room, error) => {
 				if (room) {
-					roomId = room.id;
+					expectedRoom = room;
 				}
 				expect(room).toBeTruthy();
 				expect(error).toBeFalsy();
@@ -675,7 +676,7 @@ describe('Room events', () => {
 			})
 		];
 		socket.once('room:current', (room) => {
-			expect(room).toBe(roomId);
+			expect(room).toBe(expectedRoom);
 			resolvers[0](true);
 		});
 
@@ -697,11 +698,11 @@ describe('Room events', () => {
 		const token = nanoid();
 		const socket = await connectTestWebSocket(token, username);
 
-		let roomId = '';
+		let expectedRoom: ClientRoom;
 		await new Promise((resolve) => {
 			socket.emit('room:create', nanoid(), (room, error) => {
 				if (room) {
-					roomId = room.id;
+					expectedRoom = room;
 				}
 				expect(room).toBeTruthy();
 				expect(error).toBeFalsy();
@@ -718,7 +719,8 @@ describe('Room events', () => {
 			});
 		});
 
-		const roomOnServer = RoomManager.getRoom(roomId);
+		/// @ts-expect-error It exists
+		const roomOnServer = RoomManager.getRoom(expectedRoom.id);
 		expect(roomOnServer).toBeTruthy();
 		if (roomOnServer) {
 			roomOnServer.startGame();
@@ -753,11 +755,11 @@ describe('Room events', () => {
 		const tokenTwo = nanoid();
 		const socketTwo = await connectTestWebSocket(tokenTwo, username);
 
-		let roomId = '';
+		let expectedRoom: ClientRoom;
 		await new Promise((resolve) => {
 			socketOne.emit('room:create', nanoid(), (room, error) => {
 				if (room) {
-					roomId = room.id;
+					expectedRoom = room;
 				}
 				expect(room).toBeTruthy();
 				expect(error).toBeFalsy();
@@ -766,7 +768,7 @@ describe('Room events', () => {
 		});
 
 		await new Promise((resolve) => {
-			socketTwo.emit('room:join', roomId, (room, error) => {
+			socketTwo.emit('room:join', expectedRoom.id, (room, error) => {
 				expect(room).toBeTruthy();
 				expect(error).toBeFalsy();
 				resolve(true);
@@ -789,7 +791,8 @@ describe('Room events', () => {
 			});
 		});
 
-		const roomOnServer = RoomManager.getRoom(roomId);
+		/// @ts-expect-error It exists
+		const roomOnServer = RoomManager.getRoom(expectedRoom.id);
 		expect(roomOnServer).toBeTruthy();
 		if (roomOnServer) {
 			roomOnServer.startGame();

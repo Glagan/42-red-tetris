@@ -122,6 +122,56 @@ export default function useRoomAPI(socket: TypedSocket) {
 
 	// *
 
+	const roomJoinByName: ClientToServerEvents['room:joinByName'] = (roomName, callback) => {
+		/* c8 ignore next 7 */
+		if (!socket.data.player) {
+			if (callback) {
+				callback(null, { message: 'You need to be logged in to join a room' });
+			}
+			return;
+		}
+
+		if (
+			!validatePayload(
+				{ name: roomName },
+				objectOf<CreateRoomPayload>({
+					name: isValidName
+				})
+			)
+		) {
+			if (callback) {
+				callback(null, {
+					message: 'Invalid Room name, must be non-empty and at most 20 characters'
+				});
+			}
+			return;
+		}
+
+		if (socket.data.player.room || RoomManager.playerIsInMatchmaking(socket.data.player.id)) {
+			if (callback) {
+				callback(null, { message: 'You already are in a room or in Matchmaking' });
+			}
+			return;
+		}
+
+		const room = RoomManager.findRoom(roomName);
+		if (room && !room.isFull() && !room.isPlaying()) {
+			socket.data.player.joinRoom(room);
+			if (callback) {
+				callback(room.toClient());
+			}
+		} else if (callback) {
+			if (room) {
+				callback(null, { message: 'The room is full or already in a game' });
+			} else {
+				callback(null, { message: "The room doesn't exists" });
+			}
+		}
+	};
+	socket.on('room:joinByName', roomJoinByName);
+
+	// *
+
 	const roomLeave: ClientToServerEvents['room:leave'] = (callback) => {
 		/* c8 ignore next 7 */
 		if (!socket.data.player) {
