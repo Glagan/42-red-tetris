@@ -28,6 +28,7 @@ export interface ClientToServerEvents {
 	'room:get': (roomId: string, callback: ValueWithError<Room | null>) => void;
 	'room:create': (name: string, callback: ValueWithError<Room | null>) => void;
 	'room:join': (roomId: string, callback: ValueWithError<Room | null>) => void;
+	'room:joinByName': (roomName: string, callback: ValueWithError<Room | null>) => void;
 	'room:leave': (callback: SuccessWithError) => void;
 	'room:ready': (callback: SuccessWithError) => void;
 	'room:search': (

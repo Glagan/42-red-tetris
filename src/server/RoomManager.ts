@@ -10,6 +10,10 @@ export class RoomManager {
 		return this.rooms.map((room) => room.toClient());
 	}
 
+	findRoom(roomName: string) {
+		return this.rooms.find((room) => room.name === roomName);
+	}
+
 	getRoom(roomIdentifier: Room | string) {
 		return this.rooms.find((room) => room === roomIdentifier || room.id === roomIdentifier);
 	}
