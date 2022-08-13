@@ -4,12 +4,20 @@ import { nanoid } from 'nanoid';
 import Index from './index.svelte';
 
 describe('Room page', () => {
-	it.skip('Should display the room page', () => {
+	it('Should display the room page', () => {
 		// Set a current room to avoid redirections
+		const roomId = nanoid();
 		currentRoom.set({
-			id: nanoid(),
+			id: roomId,
 			name: 'My room',
-			players: [],
+			players: [
+				{
+					id: nanoid(),
+					name: 'Test',
+					status: true,
+					room: roomId
+				}
+			],
 			playing: false
 		});
 

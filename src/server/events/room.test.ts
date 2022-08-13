@@ -676,7 +676,7 @@ describe('Room events', () => {
 			})
 		];
 		socket.once('room:current', (room) => {
-			expect(room).toBe(expectedRoom);
+			expect(room).toStrictEqual(expectedRoom);
 			resolvers[0](true);
 		});
 
