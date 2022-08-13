@@ -25,7 +25,7 @@
 		position_y * (info_mode ? Config.game_info.block_size : Config.game.block_size);
 	$: position_z_px = layer * (info_mode ? Config.game_info.block_size : Config.game.block_size);
 
-	$: show_front = !no_front;
+	$: show_front = !no_front && !(background && Config.game.background._3Dto2D);
 
 	$: show_back = opacity != 1;
 

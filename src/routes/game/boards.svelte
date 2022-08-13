@@ -22,19 +22,21 @@
 	let horizontal_alignement: 0 | 1;
 	$: horizontal_alignement = solo ? 0 : 1;
 
-	if (browser && Config.game.background._2Dto3D) {
-		(async () => {
-			if (background_theme?.left?._3d != undefined && background_theme?.right?._3d != undefined) {
-				background_3Dto2D_left = await _3Dto2D(
-					background_theme.left._3d.cube_size,
-					background_theme.left._3d.cubes[0]
-				);
-				background_3Dto2D_right = await _3Dto2D(
-					background_theme.left._3d.cube_size,
-					background_theme.right._3d.cubes[0]
-				);
-			}
-		})();
+	async function generate_2D_backgrounds_from_3D() {
+		if (background_theme?.left?._3d != undefined && background_theme?.right?._3d != undefined) {
+			background_3Dto2D_left = await _3Dto2D(
+				background_theme.left._3d.cube_size,
+				background_theme.left._3d.cubes[0]
+			);
+			background_3Dto2D_right = await _3Dto2D(
+				background_theme.left._3d.cube_size,
+				background_theme.right._3d.cubes[0]
+			);
+		}
+	}
+
+	$: if (browser && Config.game.background._3Dto2D && background_theme) {
+		generate_2D_backgrounds_from_3D();
 	}
 </script>
 
