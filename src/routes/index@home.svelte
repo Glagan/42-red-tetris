@@ -31,10 +31,8 @@
 	let location: string | undefined = undefined;
 
 	if (browser) {
-		setTimeout(() => {
-			location = window.location.hash;
-			JoinUrl(location);
-		}, 1000);
+		location = window.location.hash;
+		if (location.length > 0 && location[0] === '#') JoinUrl(location);
 	}
 </script>
 
