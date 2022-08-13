@@ -97,7 +97,7 @@ button:disabled, button.off {
 	@apply transition-all;
 }
 
-.scale-hover:hover {
+.scale-hover:not(.cant-click):hover {
 	@apply scale-105 cursor-pointer;
 }
 
