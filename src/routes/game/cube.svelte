@@ -1,6 +1,7 @@
 <!-- ========================= SCRIPT -->
 <script lang="ts">
 	import Config from '../../client/config';
+	import DimensionsStore from '$stores/dimensions';
 
 	export let sprites: string[] = ['/sprites/default/cross.png'];
 
@@ -20,30 +21,36 @@
 	export let spectre = false;
 	export let only_front = false;
 
+	$: only_back = $DimensionsStore === 2;
+
 	$: position_x_px =
 		position_x * (info_mode ? Config.game_info.block_size : Config.game.block_size);
 	$: position_y_px =
 		position_y * (info_mode ? Config.game_info.block_size : Config.game.block_size);
 	$: position_z_px = layer * (info_mode ? Config.game_info.block_size : Config.game.block_size);
 
-	$: show_front = only_front || (!no_front && !(background && Config.game.background._3Dto2D));
+	$: show_front =
+		!only_back && (only_front || (!no_front && !(background && Config.game.background._3Dto2D)));
 
-	$: show_back = !only_front && opacity != 1;
+	$: show_back =
+		!(Config.game.background._3Dto2D && background) && (only_back || (!only_front && opacity != 1));
 
 	$: show_left =
-		(!only_front && opacity != 1) ||
-		(horizontal_alignement != undefined &&
-			horizontal_alignement <= 0 &&
-			!(background && position_x != 0));
+		!only_back &&
+		((!only_front && opacity != 1) ||
+			(horizontal_alignement != undefined &&
+				horizontal_alignement <= 0 &&
+				!(background && position_x != 0)));
 
 	$: show_right =
-		(!only_front && opacity != 1) ||
-		(horizontal_alignement != undefined &&
-			horizontal_alignement >= 0 &&
-			!(background && position_x != 9));
+		!only_back &&
+		((!only_front && opacity != 1) ||
+			(horizontal_alignement != undefined &&
+				horizontal_alignement >= 0 &&
+				!(background && position_x != 9)));
 
-	$: show_top = (!only_front && opacity != 1) || (position_y > 9 && !background);
-	$: show_bottom = (!only_front && opacity != 1) || (position_y < 9 && !background);
+	$: show_top = !only_back && ((!only_front && opacity != 1) || (position_y > 9 && !background));
+	$: show_bottom = !only_back && ((!only_front && opacity != 1) || (position_y < 9 && !background));
 
 	$: in_board = position_x >= 0 && position_x < 10 && position_y >= 0 && position_y < 20;
 	$: show =

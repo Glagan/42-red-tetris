@@ -3,6 +3,7 @@
 	import CentralBoxPopup from '../containers/central_box_popup.svelte';
 	import ThemeStore from '../../../client/stores/theme';
 	import SoundStore from '../../../client/stores/sound';
+	import DimensionsStore from '../../../client/stores/dimensions';
 	import Themes from '../../themes/themes';
 	import * as Sounds from '../../effects/sounds';
 
@@ -26,6 +27,14 @@
 <CentralBoxPopup title="Parameters" extra_large>
 	<div>
 		<h3>Theme</h3>
+		<button
+			class:off={$DimensionsStore != 3}
+			class="mt-3"
+			on:click={() => {
+				Sounds.select();
+				DimensionsStore.switch();
+			}}>3D</button
+		>
 		<ul class="mt-3">
 			{#each Themes as theme, index}
 				<li class="inline-block m-2">
