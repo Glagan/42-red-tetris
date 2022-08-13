@@ -75,7 +75,7 @@ export default function SetupSocketServer() {
 		socket.emit('player:id', socket.data.player!.id);
 		if (socket.data.player?.room) {
 			const room = socket.data.player.room;
-			socket.emit('room:current', room.id);
+			socket.emit('room:current', room.toClient());
 			if (room.isPlaying() && room.game) {
 				const playersIndex = Object.entries(room.playersIndex);
 				// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
