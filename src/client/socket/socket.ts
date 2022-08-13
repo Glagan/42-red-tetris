@@ -1,6 +1,7 @@
 import { nanoid } from 'nanoid';
 import { io, Socket } from 'socket.io-client';
 import { browser } from '$app/env';
+import type Room from '$client/lib/Room';
 import type { ServerToClientEvents, ClientToServerEvents } from '../../socket';
 import ScoresStore from '../stores/scores';
 import type { GameInitialState } from '$client/lib/GameState';
@@ -12,7 +13,6 @@ import IdStore from '../stores/id';
 import NotificationStore from '../stores/notification';
 import usernameGenerator from '../../utils/username.generator';
 import type Player from '../lib/Player';
-import type Room from '../lib/Room';
 import CurrentRoomStore from '../stores/currentRoom';
 import OpponentReadyStore from '../stores/opponentReady';
 import PiecesStore from '../stores/pieces';
@@ -28,6 +28,14 @@ import type { NextGamePiece } from '../lib/GamePiece';
 import * as Sounds from '../effects/sounds';
 
 let socket: Socket<ServerToClientEvents, ClientToServerEvents>;
+
+function cleanStores() {
+	BoardsStore.clean();
+	LevelStore.set(0);
+	ScoresStore.update(0, 0);
+	ScoresStore.update(1, 0);
+	WinnerStore.remove();
+}
 
 if (browser) {
 	SocketStore.set('');
@@ -57,16 +65,25 @@ if (browser) {
 		GameStartStore.startIn(seconds);
 	});
 
+	socket.on('room:current', (room: Room | null) => {
+		if (room != null) {
+			cleanStores();
+
+			CurrentRoomStore.set(room);
+			goto('/room');
+		}
+	});
+
 	socket.on('game:current', (state: GameState | null) => {
 		if (state != null) {
-			BoardsStore.clean();
+			cleanStores();
 
 			// global
-			ScoresStore.update(0, state.playerOne.board.score);
+			LevelStore.set(state.playerOne.board.level);
 			// player one
 			BoardsStore.refreshBoard(state.playerOne.board);
 			if (state.playerOne.current != undefined) PiecesStore.updatePiece(state.playerOne.current);
-			LevelStore.set(state.playerOne.board.level);
+			ScoresStore.update(0, state.playerOne.board.score);
 			NextPiecesStore.updateNextPieces(0, state.playerOne.next);
 			// player two
 			if (state.playerTwo != undefined) {
