@@ -7,12 +7,18 @@ import type Room from '../lib/Room';
 import { goto } from '$app/navigation';
 import Socket from './socket';
 
-export default function create(create: string, callback: (() => void) | undefined = undefined) {
+export default function create(
+	create: string,
+	callback: ((ok: boolean) => void) | undefined = undefined
+) {
+	let ok = false;
+
 	Socket.emit('room:create', create, (room: Room | null, error: BasicError | null | undefined) => {
 		if (error != null && error != undefined) {
 			NotificationStore.push({ id: nanoid(), message: error.message, error: true });
 		} else {
 			if (room != null) {
+				ok = true;
 				CurrentRoomStore.set(room);
 				WinnerStore.remove();
 				NotificationStore.push({ id: nanoid(), message: 'room created', error: false });
@@ -25,6 +31,6 @@ export default function create(create: string, callback: (() => void) | undefine
 				});
 			}
 		}
-		if (callback != undefined) callback();
+		if (callback != undefined) callback(ok);
 	});
 }
