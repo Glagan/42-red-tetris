@@ -39,6 +39,6 @@
         height: {(default_size.y * Config.game_info.block_size) /
 			2}px; transform: translateX({translate_x}px); opacity: {opacity};"
 	>
-		<Piece background {piece} info_mode />
+		<Piece only_front {piece} info_mode />
 	</div>
 {/if}

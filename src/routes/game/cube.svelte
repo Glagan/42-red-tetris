@@ -18,6 +18,7 @@
 	export let no_front = false;
 	export let info_mode = false;
 	export let spectre = false;
+	export let only_front = false;
 
 	$: position_x_px =
 		position_x * (info_mode ? Config.game_info.block_size : Config.game.block_size);
@@ -25,24 +26,24 @@
 		position_y * (info_mode ? Config.game_info.block_size : Config.game.block_size);
 	$: position_z_px = layer * (info_mode ? Config.game_info.block_size : Config.game.block_size);
 
-	$: show_front = !no_front && !(background && Config.game.background._3Dto2D);
+	$: show_front = only_front || (!no_front && !(background && Config.game.background._3Dto2D));
 
-	$: show_back = opacity != 1;
+	$: show_back = !only_front && opacity != 1;
 
 	$: show_left =
-		opacity != 1 ||
+		(!only_front && opacity != 1) ||
 		(horizontal_alignement != undefined &&
 			horizontal_alignement <= 0 &&
 			!(background && position_x != 0));
 
 	$: show_right =
-		opacity != 1 ||
+		(!only_front && opacity != 1) ||
 		(horizontal_alignement != undefined &&
 			horizontal_alignement >= 0 &&
 			!(background && position_x != 9));
 
-	$: show_top = opacity != 1 || (position_y > 9 && !background);
-	$: show_bottom = opacity != 1 || (position_y < 9 && !background);
+	$: show_top = (!only_front && opacity != 1) || (position_y > 9 && !background);
+	$: show_bottom = (!only_front && opacity != 1) || (position_y < 9 && !background);
 
 	$: in_board = position_x >= 0 && position_x < 10 && position_y >= 0 && position_y < 20;
 	$: show =
