@@ -33,7 +33,7 @@
 
 	function handle_join_room(id: string) {
 		loading = true;
-		JoinRoom(id, false, () => {
+		JoinRoom(id, false, false, () => {
 			loading = false;
 		});
 	}

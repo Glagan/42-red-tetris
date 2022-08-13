@@ -24,7 +24,7 @@ export function join_url(
 	} else {
 		Username(hash_split.username, (ok: boolean) => {
 			if (ok) {
-				join_room(hash_split.room, true, (ok: boolean) => {
+				join_room(hash_split.room, true, true, (ok: boolean) => {
 					if (!ok) {
 						Create(hash_split.room, callback);
 					} else {
@@ -41,33 +41,39 @@ export function join_url(
 }
 
 export function join_room(
-	id: string,
+	label: string,
+	by_name: boolean,
 	no_error: boolean,
 	callback: ((ok: boolean) => void) | undefined = undefined
 ) {
 	let ok = false;
 
-	Socket.emit('room:join', id, (room: Room | null, error: BasicError | null | undefined) => {
-		if (error != null && error != undefined) {
-			if (!no_error) NotificationStore.push({ id: nanoid(), message: error.message, error: true });
-		} else {
-			if (room != null) {
-				ok = true;
-				CurrentRoomStore.set(room);
-				WinnerStore.remove();
-				NotificationStore.push({ id: nanoid(), message: 'room joined', error: false });
-				goto('/room');
-			} else {
+	Socket.emit(
+		by_name ? 'room:joinByName' : 'room:join',
+		label,
+		(room: Room | null, error: BasicError | null | undefined) => {
+			if (error != null && error != undefined) {
 				if (!no_error)
-					NotificationStore.push({
-						id: nanoid(),
-						message: 'room not joined',
-						error: true
-					});
+					NotificationStore.push({ id: nanoid(), message: error.message, error: true });
+			} else {
+				if (room != null) {
+					ok = true;
+					CurrentRoomStore.set(room);
+					WinnerStore.remove();
+					NotificationStore.push({ id: nanoid(), message: 'room joined', error: false });
+					goto('/room');
+				} else {
+					if (!no_error)
+						NotificationStore.push({
+							id: nanoid(),
+							message: 'room not joined',
+							error: true
+						});
+				}
 			}
+			if (callback != undefined) callback(ok);
 		}
-		if (callback != undefined) callback(ok);
-	});
+	);
 }
 
 export function join_matchmaking(callback: ((ok: boolean) => void) | undefined = undefined) {
