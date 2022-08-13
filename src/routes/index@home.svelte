@@ -7,6 +7,7 @@
 	import OpponenReadytStore from '../client/stores/opponentReady';
 	import * as Sounds from '../client/effects/sounds';
 	import Username from '../client/socket/username.emit';
+	import { join_url as JoinUrl } from '../client/socket/join.emit';
 
 	let username = '';
 	let loading = false;
@@ -26,10 +27,20 @@
 
 	OpponenReadytStore.set(false);
 	WinnerStore.remove();
+
+	let location: string | undefined = undefined;
+
+	if (browser) {
+		setTimeout(() => {
+			location = window.location.hash;
+			JoinUrl(location);
+		}, 1000);
+	}
 </script>
 
 <!-- ========================= HTML -->
 <CentralBox title="Username" {loading}>
+	<h2>{location}</h2>
 	<input
 		type="text"
 		class="text-input"

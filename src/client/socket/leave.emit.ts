@@ -6,11 +6,14 @@ import type { BasicError } from 'src/socket';
 import { goto } from '$app/navigation';
 import Socket from './socket';
 
-export function leave_room(callback: (() => void) | undefined = undefined) {
+export function leave_room(callback: ((ok: boolean) => void) | undefined = undefined) {
+	let ok = false;
+
 	Socket.emit('room:leave', (deleted: boolean | null, error: BasicError | null | undefined) => {
 		if (error != null && error != undefined) {
 			NotificationStore.push({ id: nanoid(), message: error.message, error: true });
 		} else {
+			ok = true;
 			CurrentRoomStore.set(null);
 			NotificationStore.push({
 				id: nanoid(),
@@ -19,17 +22,20 @@ export function leave_room(callback: (() => void) | undefined = undefined) {
 			});
 			goto('/search');
 		}
-		if (callback != undefined) callback();
+		if (callback != undefined) callback(ok);
 	});
 }
 
-export function leave_matchmaking(callback: (() => void) | undefined = undefined) {
+export function leave_matchmaking(callback: ((ok: boolean) => void) | undefined = undefined) {
+	let ok = false;
+
 	Socket.emit(
 		'matchmaking:leave',
 		(success: boolean | null, error: BasicError | null | undefined) => {
 			if (error != null && error != undefined) {
 				NotificationStore.push({ id: nanoid(), message: error.message, error: true });
 			} else if (success) {
+				ok = true;
 				NotificationStore.push({
 					id: nanoid(),
 					message: 'matchmaking leaved',
@@ -44,8 +50,7 @@ export function leave_matchmaking(callback: (() => void) | undefined = undefined
 					error: false
 				});
 			}
-			if (callback != undefined) callback();
-			return;
+			if (callback != undefined) callback(ok);
 		}
 	);
 }

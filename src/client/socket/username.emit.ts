@@ -7,13 +7,18 @@ import type { BasicError } from 'src/socket';
 import * as Sounds from '../effects/sounds';
 import { get } from 'svelte/store';
 
-export default function username(username: string, callback: (() => void) | undefined = undefined) {
+export default function username(
+	username: string,
+	callback: ((ok: boolean) => void) | undefined = undefined
+) {
+	let ok = false;
+
 	if (get(UsernameStore) === username) {
 		Sounds.ok();
-		return goto('/search');
-	}
-
-	if (username.length > 0) {
+		ok = true;
+		goto('/search');
+		if (callback != undefined) callback(ok);
+	} else if (username.length > 0) {
 		Socket.emit(
 			'set:username',
 			username,
@@ -26,6 +31,7 @@ export default function username(username: string, callback: (() => void) | unde
 						localStorage.setItem('username', username);
 						UsernameStore.set(username);
 						NotificationStore.push({ id: nanoid(), message: 'username updated', error: false });
+						ok = true;
 						goto('/search');
 					} else {
 						NotificationStore.push({
@@ -35,7 +41,7 @@ export default function username(username: string, callback: (() => void) | unde
 						});
 					}
 				}
-				if (callback != undefined) callback();
+				if (callback != undefined) callback(ok);
 			}
 		);
 	}
