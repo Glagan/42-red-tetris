@@ -5,6 +5,7 @@
 	import CurrentRoomStore from '../../client/stores/currentRoom';
 	import MatchmakingStore from '../../client/stores/matchmaking';
 	import RoomsStore from '../../client/stores/rooms';
+	import SearchStore from '../../client/stores/search';
 	import {
 		leave_room as LeaveRoom,
 		leave_matchmaking as LeaveMatchmaking
@@ -19,7 +20,6 @@
 	import * as Sounds from '../../client/effects/sounds';
 
 	let create = '';
-	let search = '';
 	let loading = false;
 
 	let searchTimeout: ReturnType<typeof setTimeout>;
@@ -27,7 +27,7 @@
 	function debounceSearch() {
 		clearTimeout(searchTimeout);
 		searchTimeout = setTimeout(() => {
-			Search(search);
+			Search($SearchStore);
 		}, 200);
 	}
 
@@ -54,6 +54,11 @@
 		});
 	}
 
+	function handle_search(event: any) {
+		SearchStore.set(event.target.value);
+		debounceSearch();
+	}
+
 	function leave_current_room() {
 		if ($CurrentRoomStore != null) {
 			loading = true;
@@ -77,9 +82,10 @@
 
 	if (browser) {
 		onMount(() => {
-			Search(search);
+			Search($SearchStore);
 		});
 	}
+	$: console.log($RoomsStore);
 </script>
 
 <!-- ========================= HTML -->
@@ -88,26 +94,28 @@
 		type="text"
 		class="text-input"
 		placeholder="Search a game"
-		bind:value={search}
-		on:input={() => {
+		value={$SearchStore}
+		on:input={(event) => {
 			Sounds.text();
-			debounceSearch();
+			handle_search(event);
 		}}
 	/>
 	<div class="games mt-5 w-[80%] m-auto h-[120px] overflow-y-scroll overflow-x-hidden">
 		{#if $RoomsStore.length == 0}
 			<p class="text-neutral-500 pt-10">No rooms available</p>
 		{:else}
-			{#each $RoomsStore as room}
-				<p
-					class="cant-select scale-hover"
-					on:click={() => {
-						Sounds.ok();
-						handle_join_room(room.id);
-					}}
-				>
-					{room.name}&nbsp;<span class="text-neutral-500">@{room.players[0].name}</span>
-				</p>
+			{#each $RoomsStore as room (room.id)}
+				{#if room != undefined && room.players.length < 2}
+					<p
+						class="cant-select scale-hover"
+						on:click={() => {
+							Sounds.ok();
+							handle_join_room(room.id);
+						}}
+					>
+						{room?.name}&nbsp;<span class="text-neutral-500">@{room?.players[0]?.name}</span>
+					</p>
+				{/if}
 			{/each}
 		{/if}
 	</div>

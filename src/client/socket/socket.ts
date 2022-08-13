@@ -14,6 +14,8 @@ import NotificationStore from '../stores/notification';
 import usernameGenerator from '../../utils/username.generator';
 import type Player from '../lib/Player';
 import CurrentRoomStore from '../stores/currentRoom';
+import SearchStore from '../stores/search';
+import RoomsStore from '../stores/rooms';
 import OpponentReadyStore from '../stores/opponentReady';
 import PiecesStore from '../stores/pieces';
 import WinnerStore from '../stores/winner';
@@ -26,6 +28,7 @@ import type GameBoard from '../lib/GameBoard';
 import type GamePiece from '../lib/GamePiece';
 import type { NextGamePiece } from '../lib/GamePiece';
 import * as Sounds from '../effects/sounds';
+import { roomMatchAny as RoomMatchAny } from '../../shared/Match';
 
 let socket: Socket<ServerToClientEvents, ClientToServerEvents>;
 
@@ -125,6 +128,23 @@ if (browser) {
 			NextPiecesStore.updateNextPieces(1, playerTwo.next);
 			if (playerTwo.current != undefined) PiecesStore.updatePiece(playerTwo.current);
 		}
+	});
+
+	socket.on('room:playerJoined', (player: Player, room: Room) => {
+		RoomsStore.updateRoom(room);
+	});
+
+	socket.on('room:playerLeft', (player: Player, room: Room) => {
+		RoomsStore.updateRoom(room);
+	});
+
+	socket.on('room:deleted', (roomId: string) => {
+		RoomsStore.removeRoom(roomId);
+	});
+
+	socket.on('room:created', (room: Room) => {
+		if (get(SearchStore).length === 0 || RoomMatchAny(room, get(SearchStore)))
+			RoomsStore.addRoom(room);
 	});
 
 	socket.on('game:start', () => {
