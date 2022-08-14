@@ -121,7 +121,7 @@
 			{#if !game_will_start && !opponent_is_absent && i_am_owner}
 				<p
 					on:click={() => {
-						Sounds.cancel();
+						if (!game_will_start) Sounds.cancel();
 						Kick();
 					}}
 					class="underline-hover text-neutral-500 hover:text-white absolute bottom-1 -left-4 p-1 cursor-pointer"
@@ -145,7 +145,7 @@
 				class:transparent={game_will_start}
 				class:off={game_will_start}
 				on:click={() => {
-					Sounds.cancel();
+					if (!game_will_start) Sounds.cancel();
 					handle_leave();
 				}}>Leave</button
 			>
@@ -160,7 +160,7 @@
 				class:transparent={game_will_start}
 				class:off={!ready}
 				on:click={() => {
-					Sounds.select();
+					if (!game_will_start) Sounds.select();
 					handle_ready();
 				}}>Ready</button
 			>
