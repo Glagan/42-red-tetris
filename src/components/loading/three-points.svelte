@@ -2,17 +2,17 @@
 <script lang="ts">
 	import { onDestroy } from 'svelte';
 
-	let waiting_points = '.';
-	export let waiting_time = 0;
+	let text = '.';
+	export let waitingTime = 0;
 	export let hidden = false;
 	export let grey = false;
 
 	const interval = setInterval(() => {
-		waiting_time++;
-		if (waiting_points.length === 3) {
-			waiting_points = '';
+		waitingTime++;
+		if (text.length === 3) {
+			text = '';
 		} else {
-			waiting_points += '.';
+			text += '.';
 		}
 	}, 1000);
 
@@ -23,10 +23,10 @@
 
 <!-- ========================= HTML -->
 <span style={hidden ? 'display: none;' : ''} class:grey>
-	{#if waiting_points == ''}
+	{#if text == ''}
 		&nbsp;
 	{:else}
-		{waiting_points}
+		{text}
 	{/if}
 </span>
 

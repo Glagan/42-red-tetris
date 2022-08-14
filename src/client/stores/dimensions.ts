@@ -7,10 +7,10 @@ function createDimensionStore() {
 
 	return {
 		subscribe,
-		set_2D: () => {
+		set2D: () => {
 			set(2);
 		},
-		set_3D: () => {
+		set3D: () => {
 			set(3);
 		},
 		switch: () => {

@@ -32,7 +32,7 @@
 		}, 200);
 	}
 
-	function handle_join_room(id: string) {
+	function joinRoom(id: string) {
 		loading = true;
 		JoinRoom(id, false, false, () => {
 			loading = false;
@@ -58,19 +58,19 @@
 		}
 	}
 
-	function handle_join_matchmaking() {
+	function joinMatchmaking() {
 		loading = true;
 		JoinMatchmaking(() => {
 			loading = false;
 		});
 	}
 
-	function handle_search(event: any) {
-		search.set(event.target.value);
+	function executeSearch(query: string) {
+		search.set(query);
 		debounceSearch();
 	}
 
-	function leave_current_room() {
+	function leaveCurrentRoom() {
 		if ($currentRoom != null) {
 			loading = true;
 			LeaveRoom(() => {
@@ -79,7 +79,7 @@
 		}
 	}
 
-	function leave_current_matchmaking() {
+	function leaveMatchmaking() {
 		if ($matchmaking) {
 			loading = true;
 			LeaveMatchmaking(() => {
@@ -88,8 +88,8 @@
 		}
 	}
 
-	leave_current_room();
-	leave_current_matchmaking();
+	leaveCurrentRoom();
+	leaveMatchmaking();
 
 	if (browser) {
 		onMount(() => {
@@ -99,7 +99,7 @@
 </script>
 
 <!-- ========================= HTML -->
-<CentralBox title="Join" {loading} show_username>
+<CentralBox title="Join" {loading} showUsername>
 	<input
 		type="text"
 		class="text-input"
@@ -110,7 +110,7 @@
 		max="50"
 		on:input={(event) => {
 			Sounds.text();
-			handle_search(event);
+			executeSearch(event.currentTarget.value);
 		}}
 	/>
 	<div class="games mt-5 w-[80%] m-auto h-[120px] overflow-y-scroll overflow-x-hidden">
@@ -123,7 +123,7 @@
 						class="cant-select scale-hover"
 						on:click={() => {
 							Sounds.ok();
-							handle_join_room(room.id);
+							joinRoom(room.id);
 						}}
 					>
 						{room?.name}&nbsp;<span class="text-neutral-500">@{room?.players[0]?.name}</span>
@@ -136,7 +136,7 @@
 		class="mt-5"
 		on:click={() => {
 			Sounds.ok();
-			handle_join_matchmaking();
+			joinMatchmaking();
 		}}
 	>
 		Quick Match

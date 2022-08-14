@@ -1,23 +1,23 @@
-export default function parseUrlHash(url_hash: string): { room: string; username: string } | null {
+export default function parseUrlHash(hash: string): { room: string; username: string } | null {
 	// check #
-	if (url_hash.length === 0 || url_hash[0] != '#') return null;
+	if (hash.length === 0 || hash[0] != '#') return null;
 
 	// split the hash
-	const hash_split = url_hash.slice(1).split('[');
+	const hashSplit = hash.slice(1).split('[');
 
-	// check hash_split length
-	if (hash_split.length != 2) return null;
+	// check hashSplit length
+	if (hashSplit.length != 2) return null;
 
 	// check room length
-	const room_length = hash_split[0].length;
-	if (room_length === 0) return null;
+	const roomLength = hashSplit[0].length;
+	if (roomLength === 0) return null;
 
 	// check username length
-	const username_length = hash_split[1].length;
-	if (username_length === 0 || hash_split[1].charAt(username_length - 1) != ']') return null;
+	const usernameLength = hashSplit[1].length;
+	if (usernameLength === 0 || hashSplit[1].charAt(usernameLength - 1) != ']') return null;
 
 	return {
-		room: hash_split[0],
-		username: hash_split[1].slice(0, -1)
+		room: hashSplit[0],
+		username: hashSplit[1].slice(0, -1)
 	};
 }

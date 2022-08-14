@@ -21,28 +21,28 @@
 		goto('/search');
 	}
 
-	$: i_am_owner = $id === $currentRoom?.players[0].id;
+	$: owner = $id === $currentRoom?.players[0].id;
 
-	$: game_will_start = $gameStart != -1;
+	$: gameWillStart = $gameStart != -1;
 
-	$: start_message =
+	$: startMessage =
 		$currentRoom != null && $currentRoom.players.length > 1
 			? 'The game starts when both players are ready'
 			: 'Waiting for another player';
 
-	$: opponent_username = ((): string | null => {
+	$: opponentUsername = ((): string | null => {
 		if ($currentRoom != null && $currentRoom.players.length > 1) {
 			return $currentRoom.players[$currentRoom.players[0].name == $username ? 1 : 0].name;
 		}
 		return null;
 	})();
 
-	let waiting_time = 0;
+	let waitingTime = 0;
 	let ready = false;
 
 	let loading = false;
 
-	$: opponent_is_absent = opponent_username == null;
+	$: singlePlayer = opponentUsername == null;
 
 	function readableTime(duration: number) {
 		if (duration >= 60) {
@@ -72,8 +72,8 @@
 		}
 	}, 5000);
 
-	function handle_leave() {
-		if (!game_will_start) {
+	function leaveRoom() {
+		if (!gameWillStart) {
 			loading = true;
 			Leave(() => {
 				loading = false;
@@ -81,11 +81,11 @@
 		}
 	}
 
-	function handle_ready() {
-		if (!game_will_start) {
+	function readyUp() {
+		if (!gameWillStart) {
 			loading = true;
-			Ready((new_ready: boolean) => {
-				ready = new_ready;
+			Ready((value: boolean) => {
+				ready = value;
 				loading = false;
 			});
 		}
@@ -100,23 +100,23 @@
 </script>
 
 <!-- ========================= HTML -->
-<CentralBox title="Room" {loading} show_room>
-	<p class="mt-3">{start_message}</p>
+<CentralBox title="Room" {loading} showRoom>
+	<p class="mt-3">{startMessage}</p>
 	<p class="text-neutral-400 mt-7">{tips[currentTip]}</p>
 	<div class="button-container flex justify-between mt-6">
-		<div class:opacity-0={opponent_is_absent && game_will_start} class="relative transition-all">
+		<div class:opacity-0={singlePlayer && gameWillStart} class="relative transition-all">
 			<p>
-				{#if !opponent_is_absent}
-					<span class="inline-block max-w-[100%] align-top truncate">@{opponent_username}</span>
+				{#if !singlePlayer}
+					<span class="inline-block max-w-[100%] align-top truncate">{opponentUsername}</span>
 				{/if}
-				<ThreePoints bind:waiting_time hidden={!opponent_is_absent} grey />
+				<ThreePoints bind:waitingTime hidden={!singlePlayer} grey />
 			</p>
 			<button
 				class="cant-click"
-				class:transparent={opponent_is_absent || game_will_start}
+				class:transparent={singlePlayer || gameWillStart}
 				class:off={!$opponentReady}>Ready</button
 			>
-			{#if !game_will_start && !opponent_is_absent && i_am_owner}
+			{#if !gameWillStart && !singlePlayer && owner}
 				<p
 					on:click={() => {
 						Sounds.cancel();
@@ -129,38 +129,38 @@
 			{/if}
 		</div>
 		<div>
-			{#if game_will_start}
+			{#if gameWillStart}
 				<p class="text-center">
 					start in {$gameStart} seconds
 				</p>
 			{:else}
 				<p class="text-neutral-800 text-center">
-					{readableTime(waiting_time)}
+					{readableTime(waitingTime)}
 				</p>
 			{/if}
 			<button
-				class:cant-click={game_will_start}
-				class:transparent={game_will_start}
-				class:off={game_will_start}
+				class:cant-click={gameWillStart}
+				class:transparent={gameWillStart}
+				class:off={gameWillStart}
 				on:click={() => {
 					Sounds.cancel();
-					handle_leave();
+					leaveRoom();
 				}}>Leave</button
 			>
 		</div>
 		<div>
 			<p>
-				<span class="inline-block max-w-[65%] align-top truncate">@{$username}</span>&nbsp;<span
+				<span class="inline-block max-w-[65%] align-top truncate">{$username}</span>&nbsp;<span
 					class="text-neutral-500 align-top">(you)</span
 				>
 			</p>
 			<button
-				class:cant-click={game_will_start}
-				class:transparent={game_will_start}
+				class:cant-click={gameWillStart}
+				class:transparent={gameWillStart}
 				class:off={!ready}
 				on:click={() => {
 					Sounds.select();
-					handle_ready();
+					readyUp();
 				}}>Ready</button
 			>
 		</div>

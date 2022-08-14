@@ -7,9 +7,9 @@ function createNextPiecesStore() {
 	return {
 		subscribe,
 		updateNextPieces: (player: number, pieces: NextGamePiece[]) =>
-			update((next_pieces) => {
-				next_pieces[player] = pieces;
-				return next_pieces;
+			update((nextPieces) => {
+				nextPieces[player] = pieces;
+				return nextPieces;
 			})
 	};
 }

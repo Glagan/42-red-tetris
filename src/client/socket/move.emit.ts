@@ -3,13 +3,13 @@ import * as Sounds from '$client/effects/sounds';
 
 export function left() {
 	socket.emit('game:move:left', (ok) => {
-		if (ok) Sounds.left_right();
+		if (ok) Sounds.leftAndRight();
 	});
 }
 
 export function right() {
 	socket.emit('game:move:right', (ok) => {
-		if (ok) Sounds.left_right();
+		if (ok) Sounds.leftAndRight();
 	});
 }
 

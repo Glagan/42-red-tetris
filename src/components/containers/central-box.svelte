@@ -6,35 +6,35 @@
 	import ThreePoints from '$components/loading/three-points.svelte';
 
 	export let title = '';
-	export let show_username = false;
-	export let show_room = false;
+	export let showUsername = false;
+	export let showRoom = false;
 	export let loading = false;
-	export let loading_title = false;
-	export let waiting_time = 0;
-	export let extra_large = false;
+	export let loadingTitle = false;
+	export let waitingTime = 0;
+	export let extraLarge = false;
 
-	$: _loading = loading || ($SocketStore != 'connect' && $SocketStore != 'reconnect');
+	$: isLoading = loading || ($SocketStore != 'connect' && $SocketStore != 'reconnect');
 </script>
 
 <!-- ========================= HTML -->
-<div class="central-box shadow" class:extra-large={extra_large}>
+<div class="central-box shadow" class:extra-large={extraLarge}>
 	<div
-		style="pointer-events: none; opacity: {_loading ? 1 : 0};"
+		style="pointer-events: none; opacity: {isLoading ? 1 : 0};"
 		class="absolute top-0 left-0 z-40 w-full h-full transition-all duration-300"
 	/>
-	<div class:transparent={_loading} disabled>
+	<div class:transparent={isLoading} disabled>
 		{#if title.length > 0}
 			<h2 class="absolute left-4 -top-4">
-				{title}{#if loading_title}<ThreePoints bind:waiting_time />{/if}
+				{title}{#if loadingTitle}<ThreePoints bind:waitingTime />{/if}
 			</h2>
 		{/if}
-		{#if show_username && show_room}
+		{#if showUsername && showRoom}
 			<p class="absolute right-4 -top-[11px]">
 				{$CurrentRoomStore?.name}&nbsp;<span class="text-neutral-500">@{$UsernameStore}</span>
 			</p>
-		{:else if show_username}
+		{:else if showUsername}
 			<p class="absolute text-neutral-500 right-4 -top-[11px]">@{$UsernameStore}</p>
-		{:else if show_room}
+		{:else if showRoom}
 			<p class="absolute text-neutral-500 right-4 -top-[11px]">Room: {$CurrentRoomStore?.name}</p>
 		{/if}
 		<slot />

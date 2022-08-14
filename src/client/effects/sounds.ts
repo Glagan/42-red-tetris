@@ -10,25 +10,25 @@ const sounds = {
 		cancel: 'sounds/cancel.wav',
 		ok: 'sounds/ok.wav',
 		text: 'sounds/text.wav',
-		finded: 'sounds/finded.wav',
+		found: 'sounds/found.wav',
 		join: 'sounds/join.wav',
 		leave: 'sounds/leave.wav',
 		select: 'sounds/select.wav'
 	},
 	game: {
 		tetris: 'sounds/tetris.wav',
-		touch_floor: 'sounds/touch_floor.wav',
-		left_right: 'sounds/left_right.wav',
+		touchFloor: 'sounds/touch_floor.wav',
+		leftAndRight: 'sounds/left_right.wav',
 		down: 'sounds/down.wav',
 		dash: 'sounds/dash.wav',
 		rotate: 'sounds/rotate.wav',
 		gameover: 'sounds/gameover.wav',
-		remove_line: 'sounds/remove_line.wav',
-		add_penalty: 'sounds/add_penalty.wav'
+		removeLine: 'sounds/remove_line.wav',
+		addPenalty: 'sounds/add_penalty.wav'
 	}
 };
 
-function play_sound(url: string) {
+function play(url: string) {
 	if (browser && get(sound).status) {
 		const audio = new Audio(url);
 		audio.volume = get(sound).volume;
@@ -39,61 +39,61 @@ function play_sound(url: string) {
 // ---------------------- Navigation
 
 export function cancel() {
-	play_sound(sounds.navigation.cancel);
+	play(sounds.navigation.cancel);
 }
 
 export function ok() {
-	play_sound(sounds.navigation.ok);
+	play(sounds.navigation.ok);
 }
 
 export function text() {
-	play_sound(sounds.navigation.text);
+	play(sounds.navigation.text);
 }
 
 export function select() {
-	play_sound(sounds.navigation.select);
+	play(sounds.navigation.select);
 }
 
 export function error() {
-	add_penalty();
+	addPenalty();
 }
 
 // ---------------------- Game
 
 export function tetris() {
-	play_sound(sounds.game.tetris);
+	play(sounds.game.tetris);
 }
 
-export function touch_floor() {
-	play_sound(sounds.game.touch_floor);
+export function touchFloor() {
+	play(sounds.game.touchFloor);
 }
 
-export function left_right() {
-	play_sound(sounds.game.left_right);
+export function leftAndRight() {
+	play(sounds.game.leftAndRight);
 }
 
 export function down() {
-	play_sound(sounds.game.down);
+	play(sounds.game.down);
 }
 
 export function dash() {
-	play_sound(sounds.game.dash);
+	play(sounds.game.dash);
 }
 
 export function rotate() {
-	play_sound(sounds.game.rotate);
+	play(sounds.game.rotate);
 }
 
-export function gameover() {
-	play_sound(sounds.game.gameover);
+export function gameOver() {
+	play(sounds.game.gameover);
 }
 
-export function add_penalty() {
-	play_sound(sounds.game.add_penalty);
+export function addPenalty() {
+	play(sounds.game.addPenalty);
 }
 
-export function remove_line() {
-	play_sound(sounds.game.remove_line);
+export function removeLine() {
+	play(sounds.game.removeLine);
 }
 
 /* c8 ignore end */

@@ -1,90 +1,83 @@
 <!-- ========================= SCRIPT -->
 <script lang="ts">
 	import Config from '$client/config';
-	import DimensionsStore from '$stores/dimensions';
-	import ShadowStore from '$stores/shadow';
+	import dimensions from '$stores/dimensions';
+	import shadow from '$stores/shadow';
 
 	export let sprites: string[] = ['/sprites/default/cross.png'];
 
-	$: sprite_side = sprites[0];
-	$: sprite_top = sprites.length >= 2 ? sprites[1] : sprite_side;
-	$: sprite_bottom = sprites.length >= 3 ? sprites[2] : sprite_top;
+	$: spriteSide = sprites[0];
+	$: spriteTop = sprites.length >= 2 ? sprites[1] : spriteSide;
+	$: spriteBottom = sprites.length >= 3 ? sprites[2] : spriteTop;
 
-	export let position_x: number;
-	export let position_y: number;
-	export let z_index = 0;
+	export let x: number;
+	export let y: number;
+	export let zIndex = 0;
 	export let layer = 0;
 	export let background = false;
-	export let horizontal_alignement: number | undefined = undefined;
+	export let horizontalAlignement: number | undefined = undefined;
 	export let opacity = 1;
-	export let no_front = false;
-	export let info_mode = false;
+	export let noFront = false;
+	export let infoMode = false;
 	export let spectre = false;
-	export let only_front = false;
+	export let onlyFront = false;
 
-	$: only_back = $DimensionsStore === 2;
+	$: onlyBack = $dimensions === 2;
 
-	$: position_x_px =
-		position_x * (info_mode ? Config.game_info.block_size : Config.game.block_size);
-	$: position_y_px =
-		position_y * (info_mode ? Config.game_info.block_size : Config.game.block_size);
-	$: position_z_px = layer * (info_mode ? Config.game_info.block_size : Config.game.block_size);
+	$: xInPx = x * (infoMode ? Config.gameInfo.blockSize : Config.game.blockSize);
+	$: yInPx = y * (infoMode ? Config.gameInfo.blockSize : Config.game.blockSize);
+	$: zInPx = layer * (infoMode ? Config.gameInfo.blockSize : Config.game.blockSize);
 
-	$: show_front =
-		!only_back && (only_front || (!no_front && !(background && Config.game.background._3Dto2D)));
+	$: showFront =
+		!onlyBack && (onlyFront || (!noFront && !(background && Config.game.background._3Dto2D)));
 
-	$: show_back =
-		!(Config.game.background._3Dto2D && background) && (only_back || (!only_front && opacity != 1));
+	$: showBack =
+		!(Config.game.background._3Dto2D && background) && (onlyBack || (!onlyFront && opacity != 1));
 
-	$: show_left =
-		!only_back &&
-		((!only_front && opacity != 1) ||
-			(horizontal_alignement != undefined &&
-				horizontal_alignement <= 0 &&
-				!(background && position_x != 0)));
+	$: showLeft =
+		!onlyBack &&
+		((!onlyFront && opacity != 1) ||
+			(horizontalAlignement != undefined && horizontalAlignement <= 0 && !(background && x != 0)));
 
-	$: show_right =
-		!only_back &&
-		((!only_front && opacity != 1) ||
-			(horizontal_alignement != undefined &&
-				horizontal_alignement >= 0 &&
-				!(background && position_x != 9)));
+	$: showRight =
+		!onlyBack &&
+		((!onlyFront && opacity != 1) ||
+			(horizontalAlignement != undefined && horizontalAlignement >= 0 && !(background && x != 9)));
 
-	$: show_top = !only_back && ((!only_front && opacity != 1) || (position_y > 9 && !background));
-	$: show_bottom = !only_back && ((!only_front && opacity != 1) || (position_y < 9 && !background));
+	$: showTop = !onlyBack && ((!onlyFront && opacity != 1) || (y > 9 && !background));
+	$: showBottom = !onlyBack && ((!onlyFront && opacity != 1) || (y < 9 && !background));
 
-	$: in_board = position_x >= 0 && position_x < 10 && position_y >= 0 && position_y < 20;
-	$: show =
-		in_board && (show_front || show_back || show_left || show_right || show_top || show_bottom);
+	$: inBoard = x >= 0 && x < 10 && y >= 0 && y < 20;
+	$: show = inBoard && (showFront || showBack || showLeft || showRight || showTop || showBottom);
 </script>
 
 <!-- ========================= HTML -->
 {#if show}
 	<div
-		class:info={info_mode}
-		class:pseudo-shadow={$ShadowStore}
+		class:info={infoMode}
+		class:pseudo-shadow={$shadow}
 		class="cube select-none"
-		style="transform: translate3d({position_x_px}px, {position_y_px}px , {position_z_px}px); z-index: {z_index}; will-change: {background
+		style="transform: translate3d({xInPx}px, {yInPx}px , {zInPx}px); z-index: {zIndex}; will-change: {background
 			? 'transform'
 			: 'transform'}; contain: {background ? 'layout' : 'none'};"
 	>
-		{#if show_front}
-			<div class:spectre class="front" style="background-image: url('{sprite_side}');" />
+		{#if showFront}
+			<div class:spectre class="front" style="background-image: url('{spriteSide}');" />
 		{/if}
-		{#if show_back}
-			<div class:spectre class="back" style="background-image: url('{sprite_side}');" />
+		{#if showBack}
+			<div class:spectre class="back" style="background-image: url('{spriteSide}');" />
 		{/if}
-		{#if show_top}
-			<div class:spectre class="top" style="background-image: url('{sprite_top}');" />
+		{#if showTop}
+			<div class:spectre class="top" style="background-image: url('{spriteTop}');" />
 		{/if}
-		{#if show_bottom}
-			<div class:spectre class="bottom" style="background-image: url('{sprite_bottom}');" />
+		{#if showBottom}
+			<div class:spectre class="bottom" style="background-image: url('{spriteBottom}');" />
 		{/if}
-		{#if show_left}
-			<div class:spectre class="left" style="background-image: url('{sprite_side}');" />
+		{#if showLeft}
+			<div class:spectre class="left" style="background-image: url('{spriteSide}');" />
 		{/if}
-		{#if show_right}
-			<div class:spectre class="right" style="background-image: url('{sprite_side}');" />
+		{#if showRight}
+			<div class:spectre class="right" style="background-image: url('{spriteSide}');" />
 		{/if}
 	</div>
 {/if}

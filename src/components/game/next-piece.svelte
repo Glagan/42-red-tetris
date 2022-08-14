@@ -1,18 +1,18 @@
 <!-- ========================= SCRIPT -->
 <script lang="ts">
 	import Piece from './piece.svelte';
-	import type _Cube from '$client/lib/Cube';
+	import type Cube from '$client/lib/Cube';
 	import Config from '$client/config';
 
-	export let piece: _Cube[] | undefined = undefined;
+	export let piece: Cube[] | undefined = undefined;
 	export let opacity = 1;
 
-	const default_size = {
+	const defaultSize = {
 		x: 4,
 		y: 2
 	};
 
-	function find_max_xy_cube(xy: 'x' | 'y', piece: _Cube[]): number {
+	function findMaxXYCube(xy: 'x' | 'y', piece: Cube[]): number {
 		let max = 0;
 
 		if (piece != undefined)
@@ -21,24 +21,23 @@
 		return max + 1;
 	}
 
-	function need_to_translate(xy: 'x' | 'y', piece: _Cube[]): number {
-		const max = find_max_xy_cube(xy, piece);
+	function needTranslate(xy: 'x' | 'y', piece: Cube[]): number {
+		const max = findMaxXYCube(xy, piece);
 
-		return (default_size[xy] - max) / 2;
+		return (defaultSize[xy] - max) / 2;
 	}
 
-	$: translate_x =
-		piece != undefined ? need_to_translate('x', piece) * Config.game_info.block_size : 0;
+	$: translateX = piece != undefined ? needTranslate('x', piece) * Config.gameInfo.blockSize : 0;
 </script>
 
 <!-- ========================= HTML -->
 {#if piece != undefined}
 	<div
 		class="m-1"
-		style="width: {default_size.x * Config.game_info.block_size}px;
-        height: {(default_size.y * Config.game_info.block_size) /
-			2}px; transform: translateX({translate_x}px); opacity: {opacity};"
+		style="width: {defaultSize.x * Config.gameInfo.blockSize}px;
+        height: {(defaultSize.y * Config.gameInfo.blockSize) /
+			2}px; transform: translateX({translateX}px); opacity: {opacity};"
 	>
-		<Piece {piece} info_mode />
+		<Piece {piece} infoMode />
 	</div>
 {/if}

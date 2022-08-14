@@ -3,20 +3,19 @@
 	import { nanoid } from 'nanoid';
 	import { browser } from '$app/env';
 	import Notification from './notification.svelte';
-	import NotificationStore from '$client/stores/notification';
-	import type _Notification from '$client/lib/Notification';
-	import Socket from '$client/socket/socket';
+	import notifications from '$client/stores/notification';
+	import socket from '$client/socket/socket';
 
 	if (browser) {
-		Socket.on('connect', () => {
-			NotificationStore.push({ message: 'connected', error: false, id: nanoid() });
+		socket.on('connect', () => {
+			notifications.push({ message: 'connected', error: false, id: nanoid() });
 		});
 	}
 </script>
 
 <!-- ========================= HTML -->
 <div class="absolute bottom-0 right-0 text-right">
-	{#each $NotificationStore as notification}
+	{#each $notifications as notification}
 		<Notification message={notification.message} error={notification.error} />
 	{/each}
 </div>

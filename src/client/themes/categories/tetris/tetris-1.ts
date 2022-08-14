@@ -45,21 +45,21 @@ const other_block_textures = [
 
 export default <Theme>{
 	name: 'Tetris 1',
-	block_textures: {
+	blockTextures: {
 		pieces: pieces_block_textures,
 		others: other_block_textures
 	},
 	background: {
 		left: {
 			_3d: {
-				cube_size: 16,
-				cubes: [Generator.background_uniform(other_block_textures[0], 1000)]
+				cubeSize: 16,
+				cubes: [Generator.backgroundUniform(other_block_textures[0], 1000)]
 			}
 		},
 		right: {
 			_3d: {
-				cube_size: 16,
-				cubes: [Generator.background_uniform(other_block_textures[0], 1000)]
+				cubeSize: 16,
+				cubes: [Generator.backgroundUniform(other_block_textures[0], 1000)]
 			}
 		}
 	}

@@ -15,10 +15,10 @@ function createGameStartStore() {
 		subscribe,
 		startIn: async (duration: number) => {
 			set(duration);
-			const local_updates = ++updates;
+			const localUpdates = ++updates;
 			for (;;) {
 				await sleep(1000);
-				if (local_updates === updates && duration > 0) {
+				if (localUpdates === updates && duration > 0) {
 					set(--duration);
 				} else {
 					break;

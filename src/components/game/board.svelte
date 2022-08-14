@@ -1,57 +1,57 @@
 <!-- ========================= SCRIPT -->
 <script lang="ts">
-	import Cube from './cube.svelte';
+	import CubeComponent from './cube.svelte';
 	import Config from '$client/config';
-	import type _Cube from '$client/lib/Cube';
-	import calculate_z_index from '$utils/cube-z-index';
+	import type Cube from '$client/lib/Cube';
+	import calculateZIndex from '$utils/cube-z-index';
 	import Piece from './piece.svelte';
 
-	export let cubes: _Cube[];
-	export let piece: _Cube[] | undefined = undefined;
-	export let spectre: _Cube[] | undefined = undefined;
-	export let horizontal_alignement: -1 | 0 | 1 = 0; // -1:left | 0:center | 1:right
+	export let cubes: Cube[];
+	export let piece: Cube[] | undefined = undefined;
+	export let spectre: Cube[] | undefined = undefined;
+	export let horizontalAlignement: -1 | 0 | 1 = 0; // -1:left | 0:center | 1:right
 	export let background = false;
 	export let layer = 0;
-	export let background_picture: string | undefined = undefined;
-	export let background_3Dto2D: string | undefined = undefined;
-	export let background_without_front = false;
+	export let backgroundPicture: string | undefined = undefined;
+	export let background3Dto2D: string | undefined = undefined;
+	export let backgroundWithoutFront = false;
 
-	$: css_position = layer != 0 ? 'absolute' : 'relative';
+	$: cssPosition = layer != 0 ? 'absolute' : 'relative';
 </script>
 
 <!-- ========================= HTML -->
 <div
 	class="cube-wrap select-none"
-	style="perspective-origin: calc({50 + 50 * horizontal_alignement}% + {horizontal_alignement *
-		80}px) center; position: {css_position}; z-index: {layer + 100};"
+	style="perspective-origin: calc({50 + 50 * horizontalAlignement}% + {horizontalAlignement *
+		80}px) center; position: {cssPosition}; z-index: {layer + 100};"
 >
-	{#if background_picture != undefined}
+	{#if backgroundPicture != undefined}
 		<div
 			class="board-background"
-			style="background-image: url({background_picture}); transform: translateZ(-{Config.game
-				.block_size / 2}px);"
+			style="background-image: url({backgroundPicture}); transform: translateZ(-{Config.game
+				.blockSize / 2}px);"
 			alt=""
 		/>
-	{:else if background_3Dto2D != undefined}
+	{:else if background3Dto2D != undefined}
 		<img
-			src={background_3Dto2D}
+			src={background3Dto2D}
 			alt="board background"
 			class="board-background"
-			style="transform: translateZ(-{Config.game.block_size / 2}px);"
+			style="transform: translateZ(-{Config.game.blockSize / 2}px);"
 		/>
 	{/if}
-	<Piece {layer} {background} {horizontal_alignement} {piece} />
-	<Piece {layer} {background} {horizontal_alignement} piece={spectre} spectre />
+	<Piece {layer} {background} {horizontalAlignement} {piece} />
+	<Piece {layer} {background} {horizontalAlignement} piece={spectre} spectre />
 	{#each cubes as cube (cube.id)}
-		<Cube
-			position_x={cube.x}
-			position_y={cube.y}
-			z_index={calculate_z_index(cube.x, cube.y, horizontal_alignement)}
+		<CubeComponent
+			x={cube.x}
+			y={cube.y}
+			zIndex={calculateZIndex(cube.x, cube.y, horizontalAlignement)}
 			sprites={cube.sprites}
-			no_front={background_without_front}
+			noFront={backgroundWithoutFront}
 			{layer}
 			{background}
-			{horizontal_alignement}
+			{horizontalAlignement}
 		/>
 	{/each}
 </div>

@@ -52,21 +52,21 @@ const other_block_textures = [
 
 export default <Theme>{
 	name: 'minecraft 5',
-	block_textures: {
+	blockTextures: {
 		pieces: pieces_block_textures,
 		others: other_block_textures
 	},
 	background: {
 		left: {
 			_3d: {
-				cube_size: 16,
-				cubes: [Generator.background_chess(other_block_textures[0], other_block_textures[1], 1000)]
+				cubeSize: 16,
+				cubes: [Generator.backgroundChess(other_block_textures[0], other_block_textures[1], 1000)]
 			}
 		},
 		right: {
 			_3d: {
-				cube_size: 16,
-				cubes: [Generator.background_chess(other_block_textures[0], other_block_textures[1], 1000)]
+				cubeSize: 16,
+				cubes: [Generator.backgroundChess(other_block_textures[0], other_block_textures[1], 1000)]
 			}
 		}
 	}

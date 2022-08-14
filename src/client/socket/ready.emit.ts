@@ -3,7 +3,7 @@ import notifications from '$client/stores/notification';
 import type { BasicError } from 'src/socket';
 import socket from './socket';
 
-export default function ready(callback: ((new_ready: boolean) => void) | undefined = undefined) {
+export default function ready(callback: ((value: boolean) => void) | undefined = undefined) {
 	socket.emit('room:ready', (ready: boolean, error: BasicError | null | undefined) => {
 		if (error != null && error != undefined) {
 			notifications.push({ id: nanoid(), message: error.message, error: true });

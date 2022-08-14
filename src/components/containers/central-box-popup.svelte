@@ -3,25 +3,17 @@
 	import CentralBox from './central-box.svelte';
 
 	export let title = '';
-	export let show_username = false;
-	export let show_room = false;
+	export let showUsername = false;
+	export let showRoom = false;
 	export let loading = false;
-	export let loading_title = false;
-	export let waiting_time = 0;
-	export let extra_large = false;
+	export let loadingTitle = false;
+	export let waitingTime = 0;
+	export let extraLarge = false;
 </script>
 
 <!-- ========================= HTML -->
 <div class="absolute z-[100000]">
-	<CentralBox
-		{title}
-		{show_username}
-		{show_room}
-		{loading}
-		{loading_title}
-		{waiting_time}
-		{extra_large}
-	>
+	<CentralBox {title} {showUsername} {showRoom} {loading} {loadingTitle} {waitingTime} {extraLarge}>
 		<slot />
 	</CentralBox>
 </div>

@@ -8,7 +8,7 @@
 	import themes from '$client/themes/themes';
 	import * as Sounds from '$client/effects/sounds';
 
-	$: sound_status = $sound.status;
+	$: soundStatus = $sound.status;
 
 	function changeTheme(index: number) {
 		theme.set(index);
@@ -33,7 +33,7 @@
 </script>
 
 <!-- ========================= HTML -->
-<CentralBoxPopup title="Parameters" extra_large>
+<CentralBoxPopup title="Parameters" extraLarge>
 	<div>
 		<h3>Theme</h3>
 		<button
@@ -69,12 +69,12 @@
 	<div>
 		<h3 class="mt-5">Sound</h3>
 		<button
-			class:off={!sound_status}
+			class:off={!soundStatus}
 			class="mt-5"
 			on:click={(event) => {
 				toggleSound(event);
 				Sounds.select();
-			}}>{sound_status ? 'on' : 'off'}</button
+			}}>{soundStatus ? 'on' : 'off'}</button
 		>
 		<input
 			type="range"

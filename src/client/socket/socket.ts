@@ -57,7 +57,7 @@ if (browser) {
 	username.set(storageUsername);
 
 	socket = io({
-		auth: { token, username },
+		auth: { token, username: storageUsername },
 		reconnection: true,
 		reconnectionDelay: 1000,
 		reconnectionDelayMax: 5000,
@@ -156,8 +156,8 @@ if (browser) {
 		boards.refreshBoard(board);
 		level.set(board.level);
 		if (board.tetris) Sounds.tetris();
-		else if (board.blockedLine) Sounds.add_penalty();
-		else if (board.touched) Sounds.touch_floor();
+		else if (board.blockedLine) Sounds.addPenalty();
+		else if (board.touched) Sounds.touchFloor();
 		if (board.player === 0 || board.player === 1) scores.update(board.player, board.score);
 	});
 
@@ -183,7 +183,7 @@ if (browser) {
 	socket.on('game:over', (gameWinner: number) => {
 		gameStart.remove();
 		if (gameWinner === 0 || gameWinner === 1) {
-			Sounds.gameover();
+			Sounds.gameOver();
 			notifications.push({ id: nanoid(), message: 'game over', error: false });
 			winner.set(gameWinner);
 		}
@@ -211,7 +211,7 @@ if (browser) {
 
 	socket.on('player:id', (playerId: string) => {
 		id.set(playerId);
-		notifications.push({ id: nanoid(), message: `id: ${id}`, error: false });
+		notifications.push({ id: nanoid(), message: `id: ${playerId}`, error: false });
 	});
 
 	socket.on('connect', () => {
