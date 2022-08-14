@@ -1,5 +1,6 @@
 <!-- ========================= SCRIPT -->
 <script lang="ts">
+	import { onDestroy } from 'svelte';
 	import { goto } from '$app/navigation';
 	import CentralBox from '../../client/components/containers/central_box.svelte';
 	import CurrentRoomStore from '$client/stores/currentRoom';
@@ -14,6 +15,7 @@
 	import Kick from '../../client/socket/kick.emit';
 	import OpponenReadytStore from '../../client/stores/opponentReady';
 	import * as Sounds from '../../client/effects/sounds';
+	import { getRandomInt } from '$utils/random';
 
 	// prevent come back <-
 	if ($CurrentRoomStore == null || $CurrentRoomStore == undefined) {
@@ -45,8 +47,20 @@
 	$: opponent_is_absent = opponent_username == null;
 
 	const tips: string[] = [
-		'When you complete more than two lines, your opponent receives additional lines.'
+		'When you complete more than two lines, your opponent receives additional lines.',
+		'You can play in single player to beat your highscore.',
+		'The game speed increase by 15% every 6 completed lines.',
+		'The last player alive is the winner.'
 	];
+
+	let currentTip = getRandomInt(0, tips.length);
+	const tipInterval = setInterval(() => {
+		let lastTip = currentTip;
+		currentTip = getRandomInt(0, tips.length);
+		if (currentTip == lastTip) {
+			currentTip = (currentTip + 1) % tips.length;
+		}
+	}, 5000);
 
 	function handle_leave() {
 		if (!game_will_start) {
@@ -69,12 +83,16 @@
 
 	OpponenReadytStore.set(false);
 	WinnerStore.remove();
+
+	onDestroy(() => {
+		clearInterval(tipInterval);
+	});
 </script>
 
 <!-- ========================= HTML -->
 <CentralBox title="Room" {loading} show_room>
 	<p class="mt-3">{start_message}</p>
-	<p class="text-neutral-400 mt-7">{tips[0]}</p>
+	<p class="text-neutral-400 mt-7">{tips[currentTip]}</p>
 	<div class="button-container flex justify-between mt-6">
 		<div class:opacity-0={opponent_is_absent && game_will_start} class="relative transition-all">
 			<p>

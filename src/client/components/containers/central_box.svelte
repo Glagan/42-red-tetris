@@ -1,5 +1,6 @@
 <!-- ========================= SCRIPT -->
 <script lang="ts">
+	import { fade } from 'svelte/transition';
 	import UsernameStore from '../../stores/username';
 	import CurrentRoomStore from '../../stores/currentRoom';
 	import SquareSpinner from '../loading/square_spinner.svelte';
@@ -20,7 +21,7 @@
 <!-- ========================= HTML -->
 <div class="central-box shadow" class:extra-large={extra_large}>
 	{#if _loading}
-		<div class="absolute top-0 left-0 z-40 w-full h-full" />
+		<div class="absolute top-0 left-0 z-40 w-full h-full" transition:fade />
 		<SquareSpinner />
 	{/if}
 	<div class:transparent={_loading} disabled>

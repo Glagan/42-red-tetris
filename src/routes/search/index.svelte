@@ -19,6 +19,7 @@
 	import { browser } from '$app/env';
 	import * as Sounds from '../../client/effects/sounds';
 
+	let hasInput = false;
 	let create = '';
 	let loading = false;
 
@@ -38,7 +39,13 @@
 		});
 	}
 
-	function handle_create() {
+	function onCreateInput() {
+		hasInput = true;
+		Sounds.text();
+	}
+
+	function handleCreate() {
+		Sounds.ok();
 		loading = true;
 		if (create.length > 0) {
 			Create(create, () => {
@@ -93,8 +100,11 @@
 	<input
 		type="text"
 		class="text-input"
+		class:with-error={$SearchStore.length > 50}
 		placeholder="Search a game"
 		value={$SearchStore}
+		min="1"
+		max="50"
 		on:input={(event) => {
 			Sounds.text();
 			handle_search(event);
@@ -124,24 +134,26 @@
 		on:click={() => {
 			Sounds.ok();
 			handle_join_matchmaking();
-		}}>Quick Match</button
+		}}
 	>
+		Quick Match
+	</button>
 </CentralBox>
 
 <CentralBox title="Create" {loading}>
-	<input
-		type="text"
-		class="text-input"
-		placeholder="Name"
-		bind:value={create}
-		on:input={Sounds.text}
-	/>
-	<button
-		class="mt-5"
-		disabled={create.length < 1}
-		on:click={() => {
-			Sounds.ok();
-			handle_create();
-		}}>Create</button
-	>
+	<form on:submit|preventDefault={handleCreate}>
+		<input
+			type="text"
+			class="text-input"
+			class:with-error={(hasInput && create.length < 1) || create.length > 25}
+			placeholder="Name"
+			min="1"
+			max="25"
+			bind:value={create}
+			on:input={onCreateInput}
+		/>
+		<button class="mt-5" disabled={create.length < 1 || create.length > 25} on:click={handleCreate}>
+			Create
+		</button>
+	</form>
 </CentralBox>

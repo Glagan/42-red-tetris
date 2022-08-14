@@ -10,15 +10,21 @@
 	import { join_url as JoinUrl } from '../client/socket/join.emit';
 
 	let username = '';
+	let hasInput = false;
 	let loading = false;
 
 	if (browser && $UsernameStore.length > 0) {
 		username = $UsernameStore;
 	}
 
-	$: disabled = username.length == 0 || loading;
+	$: disabled = username.length == 0 || username.length > 25 || loading;
 
-	function onClick() {
+	function onUsernameInput() {
+		hasInput = true;
+		Sounds.text();
+	}
+
+	function handle() {
 		loading = true;
 		Username(username, () => {
 			loading = false;
@@ -39,12 +45,17 @@
 <!-- ========================= HTML -->
 <CentralBox title="Username" {loading}>
 	<h2>{location}</h2>
-	<input
-		type="text"
-		class="text-input"
-		placeholder="Your username"
-		bind:value={username}
-		on:input={Sounds.text}
-	/>
-	<button class="mt-5" on:click={onClick} {disabled}>Enter</button>
+	<form on:submit|preventDefault={handle}>
+		<input
+			type="text"
+			class="text-input"
+			class:with-error={(hasInput && username.length < 1) || username.length > 25}
+			placeholder="Your username"
+			bind:value={username}
+			min="1"
+			max="25"
+			on:input={onUsernameInput}
+		/>
+		<button class="mt-5 transition-all" type="submit" on:click={handle} {disabled}>Enter</button>
+	</form>
 </CentralBox>
