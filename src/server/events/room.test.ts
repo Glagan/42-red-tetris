@@ -247,6 +247,47 @@ describe('Room events', () => {
 		socketThree.disconnect();
 	});
 
+	it('Can join a room by name', async () => {
+		const tokenOne = nanoid();
+		const socketOne = await connectTestWebSocket(tokenOne, username);
+		const tokenTwo = nanoid();
+		const socketTwo = await connectTestWebSocket(tokenTwo, usernameTwo);
+		const tokenThree = nanoid();
+		const socketThree = await connectTestWebSocket(tokenThree, usernameThree);
+
+		const roomName = nanoid();
+		let roomId = '';
+		await new Promise((resolve) => {
+			socketOne.emit('room:create', roomName, (room, error) => {
+				if (room) {
+					roomId = room.id;
+				}
+				expect(room).toBeTruthy();
+				expect(error).toBeFalsy();
+				resolve(true);
+			});
+		});
+
+		await new Promise((resolve) => {
+			socketTwo.emit('room:joinByName', roomName, (room, error) => {
+				expect(room).toBeTruthy();
+				expect(error).toBeFalsy();
+				resolve(true);
+			});
+		});
+
+		const roomOnServer = RoomManager.getRoom(roomId);
+		expect(roomOnServer).toBeTruthy();
+
+		// Cleanup
+		PlayerManager.get(tokenOne).leaveCurrentRoom();
+		PlayerManager.get(tokenTwo).leaveCurrentRoom();
+		PlayerManager.get(tokenThree).leaveCurrentRoom();
+		socketOne.disconnect();
+		socketTwo.disconnect();
+		socketThree.disconnect();
+	});
+
 	it("Can't leave a room while in a game", async () => {
 		const tokenOne = nanoid();
 		const socketOne = await connectTestWebSocket(tokenOne, username);

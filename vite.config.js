@@ -46,6 +46,7 @@ const config = {
 			reporter: ['text', 'html'],
 			src: 'src/'
 		},
+		silent: true,
 
 		deps: {
 			// Put Svelte component here, e.g., inline: [/svelte-multiselect/, /msw/]
