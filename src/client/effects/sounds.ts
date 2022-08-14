@@ -15,6 +15,8 @@ const sounds = {
 		select: 'sounds/select.wav'
 	},
 	game: {
+		tetris: 'sounds/tetris.wav',
+		touch_floor: 'sounds/touch_floor.wav',
 		left_right: 'sounds/left_right.wav',
 		down: 'sounds/down.wav',
 		dash: 'sounds/dash.wav',
@@ -56,6 +58,14 @@ export function error() {
 }
 
 // ---------------------- Game
+
+export function tetris() {
+	play_sound(sounds.game.tetris);
+}
+
+export function touch_floor() {
+	play_sound(sounds.game.touch_floor);
+}
 
 export function left_right() {
 	play_sound(sounds.game.left_right);

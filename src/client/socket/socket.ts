@@ -155,6 +155,8 @@ if (browser) {
 	socket.on('game:board', (board: GameBoard) => {
 		BoardsStore.refreshBoard(board);
 		LevelStore.set(board.level);
+		if (board.tetris) Sounds.tetris();
+		else if (board.blockedLine) Sounds.add_penalty();
 		if (board.player === 0 || board.player === 1) ScoresStore.update(board.player, board.score);
 	});
 
