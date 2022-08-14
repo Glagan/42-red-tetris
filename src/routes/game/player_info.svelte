@@ -44,13 +44,15 @@
 			<img src="/icons/flag.png" alt="parameters icon" />
 		</button>
 	{/if}
-	<p>
-		@{player_name}
-		{#if its_me}
-			<span class="text-neutral-500"> (you)</span>
-		{/if}
-	</p>
-	<p>Score: <span>{$ScoresStore[player_number]}</span></p>
+	<div class="flex justify-between">
+		<p class="w-1/2 align-top">
+			<span class="inline-block align-top truncate w-1/2">@{player_name}</span>
+			{#if its_me}
+				<span class="align-top text-neutral-500"> (you)</span>
+			{/if}
+		</p>
+		<p class="truncate w-1/2">Score: <span>{$ScoresStore[player_number]}</span></p>
+	</div>
 	<NextPieces player={player_number} />
 	<p class="level-{level_side} absolute block w-0 h-0 bottom-2 -rotate-90">{level}</p>
 </div>
@@ -66,6 +68,6 @@
 	}
 
 	p {
-		@apply inline px-1;
+		@apply inline-block px-1;
 	}
 </style>
