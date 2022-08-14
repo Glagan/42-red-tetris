@@ -21,6 +21,7 @@ const REDUCE_PER_LEVEL = 0.85;
 const LINES_PER_LEVEL = 6;
 
 type UpdateFlags = {
+	touched?: boolean;
 	tetris?: boolean;
 	blockedLine?: boolean;
 };
@@ -134,6 +135,7 @@ export default class Game {
 			score: this.score[index],
 			level: this.level,
 			board: this.boards[index].bitboard,
+			touched: flags?.touched ?? false,
 			tetris: flags?.tetris ?? false,
 			blockedLine: flags?.blockedLine ?? false
 		};
@@ -304,7 +306,10 @@ export default class Game {
 		// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 		const nextTetromino = this.tetrominoesBags[boardIndex].pop()!;
 		if (this.boards[boardIndex].spawnTetromino(nextTetromino)) {
-			this.emitBoardUpdate(boardIndex, { tetris: completedLines > 0 });
+			this.emitBoardUpdate(boardIndex, {
+				touched: completedLines >= 0,
+				tetris: completedLines > 0
+			});
 			this.emitPieceUpdate(boardIndex);
 			return true;
 		}
@@ -322,7 +327,10 @@ export default class Game {
 		if (completedLines >= 0 && this.handleAfterTetrominoSet(boardIndex, completedLines)) {
 			return true;
 		} else {
-			this.emitBoardUpdate(boardIndex, { tetris: completedLines > 0 });
+			this.emitBoardUpdate(boardIndex, {
+				touched: completedLines >= 0,
+				tetris: completedLines > 0
+			});
 			this.emitPieceUpdate(boardIndex);
 		}
 		return false;
