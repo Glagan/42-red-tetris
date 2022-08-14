@@ -1,5 +1,5 @@
 import mergeImages from 'merge-images';
-import type Cube from '../../lib/Cube';
+import type Cube from '$client/lib/Cube';
 
 export default function (sprite_size: number, cubes: Cube[]): Promise<string> {
 	return new Promise((resolve) => {

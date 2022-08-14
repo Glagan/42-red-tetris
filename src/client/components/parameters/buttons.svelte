@@ -1,10 +1,10 @@
 <!-- ========================= SCRIPT -->
 <script lang="ts">
-	import SoundStore from '../../stores/sound';
-	export let open = false;
+	import SoundStore from '$client/stores/sound';
 	import { browser } from '$app/env';
-	import * as Sounds from '../../effects/sounds';
+	import * as Sounds from '$client/effects/sounds';
 
+	export let open = false;
 	let sound_loaded = false;
 
 	if (browser) {

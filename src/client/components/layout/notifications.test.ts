@@ -1,7 +1,7 @@
 import { nanoid } from 'nanoid';
 import { render } from '@testing-library/svelte';
 import Notifications from './notifications.svelte';
-import NotificationStore from '../../stores/notification';
+import NotificationStore from '$client/stores/notification';
 
 describe('Notifications', () => {
 	it('Should display all notifications', () => {

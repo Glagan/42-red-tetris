@@ -2,7 +2,7 @@
 <script lang="ts">
 	import { onDestroy } from 'svelte';
 	import { goto } from '$app/navigation';
-	import CentralBox from '../../client/components/containers/central-box.svelte';
+	import CentralBox from '$client/components/containers/central-box.svelte';
 	import CurrentRoomStore from '$client/stores/currentRoom';
 	import IdStore from '$client/stores/id';
 	import UsernameStore from '$client/stores/username';
@@ -10,11 +10,11 @@
 	import ThreePoints from '$client/components/loading/three-points.svelte';
 	import GameStartStore from '$client/stores/gameStart';
 	import WinnerStore from '$client/stores/winner';
-	import { leave_room as Leave } from '../../client/socket/leave.emit';
-	import Ready from '../../client/socket/ready.emit';
-	import Kick from '../../client/socket/kick.emit';
-	import OpponenReadytStore from '../../client/stores/opponentReady';
-	import * as Sounds from '../../client/effects/sounds';
+	import { leave_room as Leave } from '$client/socket/leave.emit';
+	import Ready from '$client/socket/ready.emit';
+	import Kick from '$client/socket/kick.emit';
+	import OpponenReadytStore from '$client/stores/opponentReady';
+	import * as Sounds from '$client/effects/sounds';
 	import { getRandomInt } from '$utils/random';
 
 	// prevent come back <-

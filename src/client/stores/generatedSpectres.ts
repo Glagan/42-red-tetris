@@ -1,9 +1,10 @@
-import type Cube from '../lib/Cube';
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
+import type Cube from '$client/lib/Cube';
 import { derived } from 'svelte/store';
 import PiecesStore from './pieces';
-import IdGenerator from '../../utils/id.generator';
+import IdGenerator from '$utils/id.generator';
 import ThemeStore from './theme';
-import Themes from '../themes/themes';
+import Themes from '$client/themes/themes';
 
 export default derived([PiecesStore, ThemeStore], ($Stores): Cube[][] => {
 	const pieces: Cube[][] = [[], []];

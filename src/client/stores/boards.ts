@@ -1,6 +1,6 @@
-import type { TetrominoType } from '$shared/Tetromino';
 import { writable } from 'svelte/store';
-import type GameBoard from '../lib/GameBoard';
+import type { TetrominoType } from '$shared/Tetromino';
+import type GameBoard from '$client/lib/GameBoard';
 
 function initial(): TetrominoType[][][] {
 	return [[], []];

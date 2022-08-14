@@ -1,5 +1,5 @@
-import type Theme from '../../../lib/Theme';
-import * as Generator from '../../generators/background';
+import type Theme from '$client/lib/Theme';
+import * as Generator from '$client/themes/generators/background';
 
 const pieces_block_textures = [
 	[

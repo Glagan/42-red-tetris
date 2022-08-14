@@ -1,5 +1,5 @@
-import type Cube from '../lib/Cube';
-import Themes from '../themes/themes';
+import type Cube from '$client/lib/Cube';
+import Themes from '$client/themes/themes';
 import { derived } from 'svelte/store';
 import BoardsStore from './boards';
 import ThemeStore from './theme';

@@ -1,5 +1,5 @@
 import { writable } from 'svelte/store';
-import sleep from '../../utils/sleep';
+import sleep from '$utils/sleep';
 
 const initial = -1;
 let updates = 0;

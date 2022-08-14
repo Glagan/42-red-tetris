@@ -1,5 +1,5 @@
-import type Room from '$client/lib/Room';
 import { writable } from 'svelte/store';
+import type Room from '$client/lib/Room';
 
 function createRoomsStore() {
 	const { subscribe, update, set } = writable<Room[]>([]);

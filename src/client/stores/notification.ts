@@ -1,6 +1,6 @@
 import { writable } from 'svelte/store';
-import type _Notification from '../lib/Notification';
-import * as Sounds from '../effects/sounds';
+import type _Notification from '$client/lib/Notification';
+import * as Sounds from '$client/effects/sounds';
 
 const initial: _Notification[] = [];
 

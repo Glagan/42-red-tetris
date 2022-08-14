@@ -1,13 +1,13 @@
 <!-- ========================= SCRIPT -->
 <script lang="ts">
-	import UsernameStore from '../client/stores/username';
+	import UsernameStore from '$client/stores/username';
 	import { browser } from '$app/env';
-	import CentralBox from '../client/components/containers/central-box.svelte';
+	import CentralBox from '$client/components/containers/central-box.svelte';
 	import WinnerStore from '$client/stores/winner';
-	import OpponenReadytStore from '../client/stores/opponentReady';
-	import * as Sounds from '../client/effects/sounds';
-	import Username from '../client/socket/username.emit';
-	import { join_url as JoinUrl } from '../client/socket/join.emit';
+	import OpponenReadytStore from '$client/stores/opponentReady';
+	import * as Sounds from '$client/effects/sounds';
+	import Username from '$client/socket/username.emit';
+	import { join_url as JoinUrl } from '$client/socket/join.emit';
 
 	let username = '';
 	let hasInput = false;

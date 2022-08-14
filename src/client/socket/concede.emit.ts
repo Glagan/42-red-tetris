@@ -1,5 +1,5 @@
 import Socket from './socket';
-import NotificationStore from '../stores/notification';
+import NotificationStore from '$client/stores/notification';
 import { nanoid } from 'nanoid';
 
 export default function dash() {

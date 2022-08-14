@@ -1,4 +1,4 @@
-import type Theme from '../../../lib/Theme';
+import type Theme from '$client/lib/Theme';
 
 import Minecraft_1_Theme from './minecraft-1';
 import Minecraft_2_Theme from './minecraft-2';

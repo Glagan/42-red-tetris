@@ -3,9 +3,9 @@
 	import { nanoid } from 'nanoid';
 	import { browser } from '$app/env';
 	import Notification from './notification.svelte';
-	import NotificationStore from '../../stores/notification';
-	import type _Notification from '../../lib/Notification';
-	import Socket from '../../socket/socket';
+	import NotificationStore from '$client/stores/notification';
+	import type _Notification from '$client/lib/Notification';
+	import Socket from '$client/socket/socket';
 
 	if (browser) {
 		Socket.on('connect', () => {

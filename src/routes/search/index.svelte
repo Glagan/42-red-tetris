@@ -1,23 +1,23 @@
 <!-- ========================= SCRIPT -->
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import CentralBox from '../../client/components/containers/central-box.svelte';
-	import CurrentRoomStore from '../../client/stores/currentRoom';
-	import MatchmakingStore from '../../client/stores/matchmaking';
-	import RoomsStore from '../../client/stores/rooms';
-	import SearchStore from '../../client/stores/search';
+	import CentralBox from '$client/components/containers/central-box.svelte';
+	import CurrentRoomStore from '$client/stores/currentRoom';
+	import MatchmakingStore from '$client/stores/matchmaking';
+	import RoomsStore from '$client/stores/rooms';
+	import SearchStore from '$client/stores/search';
 	import {
 		leave_room as LeaveRoom,
 		leave_matchmaking as LeaveMatchmaking
-	} from '../../client/socket/leave.emit';
-	import Search from '../../client/socket/search.emit';
+	} from '$client/socket/leave.emit';
+	import Search from '$client/socket/search.emit';
 	import {
 		join_room as JoinRoom,
 		join_matchmaking as JoinMatchmaking
-	} from '../../client/socket/join.emit';
-	import Create from '../../client/socket/create.emit';
+	} from '$client/socket/join.emit';
+	import Create from '$client/socket/create.emit';
 	import { browser } from '$app/env';
-	import * as Sounds from '../../client/effects/sounds';
+	import * as Sounds from '$client/effects/sounds';
 
 	let hasInput = false;
 	let create = '';

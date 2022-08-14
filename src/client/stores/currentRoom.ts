@@ -1,6 +1,5 @@
-import type { Room } from '../../client/lib/Room';
-
 import { writable } from 'svelte/store';
+import type { Room } from '$client/lib/Room';
 
 const initial: Room | null = null;
 

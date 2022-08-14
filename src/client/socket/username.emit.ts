@@ -1,10 +1,10 @@
 import { nanoid } from 'nanoid';
-import NotificationStore from '../../client/stores/notification';
+import NotificationStore from '$client/stores/notification';
 import { goto } from '$app/navigation';
-import UsernameStore from '../../client/stores/username';
+import UsernameStore from '$client/stores/username';
 import Socket from './socket';
 import type { BasicError } from 'src/socket';
-import * as Sounds from '../effects/sounds';
+import * as Sounds from '$client/effects/sounds';
 import { get } from 'svelte/store';
 
 export default function username(

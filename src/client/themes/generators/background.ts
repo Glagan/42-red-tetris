@@ -1,4 +1,4 @@
-import type Cube from '../../lib/Cube';
+import type Cube from '$client/lib/Cube';
 
 export function background_uniform(sprites: string[], id_start: number): Cube[] {
 	return [...new Array(200)].map(

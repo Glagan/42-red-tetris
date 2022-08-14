@@ -1,5 +1,5 @@
 import { writable } from 'svelte/store';
-import type { NextGamePiece } from '../lib/GamePiece';
+import type { NextGamePiece } from '$client/lib/GamePiece';
 
 function createNextPiecesStore() {
 	const { subscribe, update } = writable<NextGamePiece[][]>([[], []]);

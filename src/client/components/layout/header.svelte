@@ -1,5 +1,4 @@
 <!-- ========================= HTML -->
-
 <header class="absolute w-full text-center z-[10000000]">
 	<div class="relative p-6 w-fit m-auto">
 		<h1>

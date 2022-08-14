@@ -1,5 +1,5 @@
 import { nanoid } from 'nanoid';
-import NotificationStore from '../../client/stores/notification';
+import NotificationStore from '$client/stores/notification';
 import type { BasicError } from 'src/socket';
 import Socket from './socket';
 

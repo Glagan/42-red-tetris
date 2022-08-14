@@ -1,5 +1,5 @@
 import Socket from './socket';
-import * as Sounds from '../effects/sounds';
+import * as Sounds from '$client/effects/sounds';
 
 export function left() {
 	Socket.emit('game:move:left', (ok) => {

@@ -1,8 +1,5 @@
-// export const sound = writable<boolean>(true);
-// export default sound;
-
-import { browser } from '$app/env';
 import { writable } from 'svelte/store';
+import { browser } from '$app/env';
 
 const initial = {
 	status: <boolean>false, // true:on | false:off

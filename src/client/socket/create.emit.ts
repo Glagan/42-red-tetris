@@ -1,9 +1,9 @@
 import { nanoid } from 'nanoid';
-import NotificationStore from '../../client/stores/notification';
-import CurrentRoomStore from '../../client/stores/currentRoom';
-import WinnerStore from '../../client/stores/winner';
+import NotificationStore from '$client/stores/notification';
+import CurrentRoomStore from '$client/stores/currentRoom';
+import WinnerStore from '$client/stores/winner';
 import type { BasicError } from 'src/socket';
-import type Room from '../lib/Room';
+import type Room from '$client/lib/Room';
 import { goto } from '$app/navigation';
 import Socket from './socket';
 

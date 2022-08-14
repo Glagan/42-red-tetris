@@ -3,7 +3,7 @@
 
 import { browser } from '$app/env';
 import { get } from 'svelte/store';
-import SoundStore from '../stores/sound';
+import SoundStore from '$client/stores/sound';
 
 const sounds = {
 	navigation: {

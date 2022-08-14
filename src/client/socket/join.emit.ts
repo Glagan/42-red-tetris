@@ -1,15 +1,15 @@
 import { nanoid } from 'nanoid';
-import NotificationStore from '../../client/stores/notification';
-import CurrentRoomStore from '../../client/stores/currentRoom';
-import MatchmakingStore from '../../client/stores/matchmaking';
-import WinnerStore from '../../client/stores/winner';
+import NotificationStore from '$client/stores/notification';
+import CurrentRoomStore from '$client/stores/currentRoom';
+import MatchmakingStore from '$client/stores/matchmaking';
+import WinnerStore from '$client/stores/winner';
 import type { BasicError } from 'src/socket';
-import type Room from '../lib/Room';
+import type Room from '$client/lib/Room';
 import { goto } from '$app/navigation';
 import Socket from './socket';
 import Username from './username.emit';
 import Create from './create.emit';
-import ParseUrlHash from '../../utils/parse_url_hash';
+import ParseUrlHash from '$utils/parse_url_hash';
 
 export function join_url(
 	url_hash: string,

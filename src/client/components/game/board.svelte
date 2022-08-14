@@ -1,8 +1,8 @@
 <!-- ========================= SCRIPT -->
 <script lang="ts">
 	import Cube from './cube.svelte';
-	import Config from '../../config';
-	import type _Cube from '../../lib/Cube';
+	import Config from '$client/config';
+	import type _Cube from '$client/lib/Cube';
 	import calculate_z_index from '$utils/cube_z_index';
 	import Piece from './piece.svelte';
 

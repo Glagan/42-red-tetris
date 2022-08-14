@@ -1,8 +1,8 @@
 <!-- ========================= SCRIPT -->
 <script lang="ts">
-	import CentralBox from '../../client/components/containers/central-box.svelte';
-	import { leave_matchmaking as Leave } from '../../client/socket/leave.emit';
-	import * as Sounds from '../../client/effects/sounds';
+	import CentralBox from '$client/components/containers/central-box.svelte';
+	import { leave_matchmaking as Leave } from '$client/socket/leave.emit';
+	import * as Sounds from '$client/effects/sounds';
 	import { goto } from '$app/navigation';
 
 	let loading = false;

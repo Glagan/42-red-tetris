@@ -1,6 +1,6 @@
 import Socket from './socket';
 import type { BasicError } from 'src/socket';
-import NotificationStore from '../../client/stores/notification';
+import NotificationStore from '$client/stores/notification';
 import { nanoid } from 'nanoid';
 
 export default function dash() {
