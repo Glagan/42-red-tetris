@@ -45,6 +45,10 @@
 	}
 
 	function handleCreate() {
+		if (create.length == 0 || create.length > 25) {
+			return;
+		}
+
 		Sounds.ok();
 		loading = true;
 		if (create.length > 0) {
@@ -152,8 +156,6 @@
 			bind:value={create}
 			on:input={onCreateInput}
 		/>
-		<button class="mt-5" disabled={create.length < 1 || create.length > 25} on:click={handleCreate}>
-			Create
-		</button>
+		<button class="mt-5" disabled={create.length < 1 || create.length > 25}> Create </button>
 	</form>
 </CentralBox>

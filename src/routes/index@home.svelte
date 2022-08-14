@@ -25,6 +25,10 @@
 	}
 
 	function handle() {
+		if (disabled) {
+			return;
+		}
+
 		loading = true;
 		Username(username, () => {
 			loading = false;
@@ -58,6 +62,6 @@
 			max="25"
 			on:input={onUsernameInput}
 		/>
-		<button class="mt-5 transition-all" type="submit" on:click={handle} {disabled}>Enter</button>
+		<button class="mt-5 transition-all" type="submit" {disabled}>Enter</button>
 	</form>
 </CentralBox>

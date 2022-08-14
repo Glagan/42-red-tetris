@@ -46,6 +46,18 @@
 
 	$: opponent_is_absent = opponent_username == null;
 
+	function readableTime(duration: number) {
+		if (duration >= 60) {
+			if (duration >= 3600) {
+				const hours = Math.floor(duration / 3600);
+				return `${hours} hour${hours > 1 ? 's' : ''}`;
+			}
+			const minutes = Math.floor(duration / 60);
+			return `${minutes} minute${minutes > 1 ? 's' : ''}`;
+		}
+		return `${duration} second${duration > 1 ? 's' : ''}`;
+	}
+
 	const tips: string[] = [
 		'When you complete more than two lines, your opponent receives additional lines.',
 		'You can play in single player to beat your highscore.',
@@ -125,7 +137,7 @@
 				</p>
 			{:else}
 				<p class="text-neutral-800 text-center">
-					{waiting_time} seconds
+					{readableTime(waiting_time)}
 				</p>
 			{/if}
 			<button
