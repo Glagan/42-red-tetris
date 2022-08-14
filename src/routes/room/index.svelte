@@ -3,38 +3,36 @@
 	import { onDestroy } from 'svelte';
 	import { goto } from '$app/navigation';
 	import CentralBox from '$components/containers/central-box.svelte';
-	import CurrentRoomStore from '$client/stores/currentRoom';
-	import IdStore from '$client/stores/id';
-	import UsernameStore from '$client/stores/username';
-	import OpponentReady from '$client/stores/opponentReady';
+	import currentRoom from '$client/stores/currentRoom';
+	import id from '$client/stores/id';
+	import username from '$client/stores/username';
+	import opponentReady from '$client/stores/opponentReady';
 	import ThreePoints from '$components/loading/three-points.svelte';
-	import GameStartStore from '$client/stores/gameStart';
-	import WinnerStore from '$client/stores/winner';
+	import gameStart from '$client/stores/gameStart';
+	import winner from '$client/stores/winner';
 	import { leave_room as Leave } from '$client/socket/leave.emit';
 	import Ready from '$client/socket/ready.emit';
 	import Kick from '$client/socket/kick.emit';
-	import OpponenReadytStore from '$client/stores/opponentReady';
 	import * as Sounds from '$client/effects/sounds';
 	import { getRandomInt } from '$utils/random';
 
 	// prevent come back <-
-	if ($CurrentRoomStore == null || $CurrentRoomStore == undefined) {
+	if ($currentRoom == null || $currentRoom == undefined) {
 		goto('/search');
 	}
 
-	$: i_am_owner = $IdStore === $CurrentRoomStore?.players[0].id;
+	$: i_am_owner = $id === $currentRoom?.players[0].id;
 
-	$: game_will_start = $GameStartStore != -1;
+	$: game_will_start = $gameStart != -1;
 
 	$: start_message =
-		$CurrentRoomStore != null && $CurrentRoomStore.players.length > 1
+		$currentRoom != null && $currentRoom.players.length > 1
 			? 'The game starts when both players are ready'
 			: 'Waiting for another player';
 
 	$: opponent_username = ((): string | null => {
-		if ($CurrentRoomStore != null && $CurrentRoomStore.players.length > 1) {
-			return $CurrentRoomStore.players[$CurrentRoomStore.players[0].name == $UsernameStore ? 1 : 0]
-				.name;
+		if ($currentRoom != null && $currentRoom.players.length > 1) {
+			return $currentRoom.players[$currentRoom.players[0].name == $username ? 1 : 0].name;
 		}
 		return null;
 	})();
@@ -93,8 +91,8 @@
 		}
 	}
 
-	OpponenReadytStore.set(false);
-	WinnerStore.remove();
+	opponentReady.set(false);
+	winner.remove();
 
 	onDestroy(() => {
 		clearInterval(tipInterval);
@@ -116,7 +114,7 @@
 			<button
 				class="cant-click"
 				class:transparent={opponent_is_absent || game_will_start}
-				class:off={!$OpponentReady}>Ready</button
+				class:off={!$opponentReady}>Ready</button
 			>
 			{#if !game_will_start && !opponent_is_absent && i_am_owner}
 				<p
@@ -133,7 +131,7 @@
 		<div>
 			{#if game_will_start}
 				<p class="text-center">
-					start in {$GameStartStore} seconds
+					start in {$gameStart} seconds
 				</p>
 			{:else}
 				<p class="text-neutral-800 text-center">
@@ -152,8 +150,9 @@
 		</div>
 		<div>
 			<p>
-				<span class="inline-block max-w-[65%] align-top truncate">@{$UsernameStore}</span
-				>&nbsp;<span class="text-neutral-500 align-top">(you)</span>
+				<span class="inline-block max-w-[65%] align-top truncate">@{$username}</span>&nbsp;<span
+					class="text-neutral-500 align-top">(you)</span
+				>
 			</p>
 			<button
 				class:cant-click={game_will_start}

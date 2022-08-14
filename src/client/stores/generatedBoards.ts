@@ -1,10 +1,10 @@
 import type Cube from '$client/lib/Cube';
 import Themes from '$client/themes/themes';
 import { derived } from 'svelte/store';
-import BoardsStore from './boards';
-import ThemeStore from './theme';
+import boards from './boards';
+import theme from './theme';
 
-export default derived([BoardsStore, ThemeStore], ($Stores): Cube[][] => {
+export default derived([boards, theme], ($Stores): Cube[][] => {
 	const boards: Cube[][] = [[], []];
 
 	for (let player = 0; player < $Stores[0].length; player++) {

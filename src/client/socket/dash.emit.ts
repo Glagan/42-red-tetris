@@ -1,5 +1,5 @@
-import Socket from './socket';
+import socket from './socket';
 
 export default function dash() {
-	Socket.emit('game:dash');
+	socket.emit('game:dash');
 }

@@ -1,11 +1,11 @@
 import type Cube from '$client/lib/Cube';
 import { derived } from 'svelte/store';
-import PiecesStore from './pieces';
-import IdGenerator from '$utils/id.generator';
-import ThemeStore from './theme';
-import Themes from '$client/themes/themes';
+import pieces from './pieces';
+import idGenerator from '$utils/id.generator';
+import theme from './theme';
+import themes from '$client/themes/themes';
 
-export default derived([PiecesStore, ThemeStore], ($Stores): Cube[][] => {
+export default derived([pieces, theme], ($Stores): Cube[][] => {
 	const pieces: Cube[][] = [[], []];
 
 	for (let player = 0; player < $Stores[0].length; player++) {
@@ -14,11 +14,11 @@ export default derived([PiecesStore, ThemeStore], ($Stores): Cube[][] => {
 			for (let x = 0; x < matrix.length; x++) {
 				if (matrix[y][x] === 1) {
 					pieces[player].push(<Cube>{
-						id: IdGenerator([player, x, y]),
+						id: idGenerator([player, x, y]),
 						x: x + $Stores[0][player].x,
 						y: y + $Stores[0][player].y,
 						z_index: 0,
-						sprites: Themes[$Stores[1]].block_textures.pieces[$Stores[0][player].type - 1]
+						sprites: themes[$Stores[1]].block_textures.pieces[$Stores[0][player].type - 1]
 					});
 				}
 			}

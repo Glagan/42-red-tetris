@@ -1,8 +1,8 @@
 <!-- ========================= SCRIPT -->
 <script lang="ts">
 	import Boards from '$components/game/boards.svelte';
-	import WinnerStore from '$client/stores/winner';
-	import BoardsStore from '$client/stores/boards';
+	import winner from '$client/stores/winner';
+	import boards from '$client/stores/boards';
 	import { browser } from '$app/env';
 	import * as Move from '$client/socket/move.emit';
 	import Rotate from '$client/socket/rotate.emit';
@@ -11,7 +11,7 @@
 	import PlayerInfos from '$components/game/player-infos.svelte';
 	import { onDestroy } from 'svelte';
 
-	$: solo = $BoardsStore[1].length === 0;
+	$: solo = $boards[1].length === 0;
 
 	if (browser) {
 		const onKeyDown = (event: KeyboardEvent) => {
@@ -59,10 +59,7 @@
 <!-- ========================= HTML -->
 
 <GameOver />
-<div
-	class="game relative flex flex-col justify-center h-fit"
-	class:transparant={$WinnerStore != -1}
->
+<div class="game relative flex flex-col justify-center h-fit" class:transparant={$winner != -1}>
 	<PlayerInfos {solo} />
 	<Boards {solo} />
 </div>

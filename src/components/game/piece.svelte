@@ -2,7 +2,7 @@
 <script lang="ts">
 	import Cube from './cube.svelte';
 	import type _Cube from '$client/lib/Cube';
-	import calculate_z_index from '$utils/cube_z_index';
+	import calculate_z_index from '$utils/cube-z-index';
 
 	export let layer = 0;
 	export let background = false;

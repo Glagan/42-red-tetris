@@ -1,23 +1,23 @@
 <!-- ========================= SCRIPT -->
 <script lang="ts">
-	import UsernameStore from '$client/stores/username';
+	import username from '$client/stores/username';
 	import { browser } from '$app/env';
 	import CentralBox from '$components/containers/central-box.svelte';
-	import WinnerStore from '$client/stores/winner';
-	import OpponenReadytStore from '$client/stores/opponentReady';
+	import winner from '$client/stores/winner';
+	import opponentReady from '$client/stores/opponentReady';
 	import * as Sounds from '$client/effects/sounds';
 	import Username from '$client/socket/username.emit';
 	import { join_url as JoinUrl } from '$client/socket/join.emit';
 
-	let username = '';
+	let usernameInput = '';
 	let hasInput = false;
 	let loading = false;
 
-	if (browser && $UsernameStore.length > 0) {
-		username = $UsernameStore;
+	if (browser && $username.length > 0) {
+		usernameInput = $username;
 	}
 
-	$: disabled = username.length == 0 || username.length > 25 || loading;
+	$: disabled = usernameInput.length == 0 || usernameInput.length > 25 || loading;
 
 	function onUsernameInput() {
 		hasInput = true;
@@ -30,13 +30,13 @@
 		}
 
 		loading = true;
-		Username(username, () => {
+		Username(usernameInput, () => {
 			loading = false;
 		});
 	}
 
-	OpponenReadytStore.set(false);
-	WinnerStore.remove();
+	opponentReady.set(false);
+	winner.remove();
 
 	let location: string | undefined = undefined;
 
@@ -55,9 +55,9 @@
 		<input
 			type="text"
 			class="text-input"
-			class:with-error={(hasInput && username.length < 1) || username.length > 25}
+			class:with-error={(hasInput && usernameInput.length < 1) || usernameInput.length > 25}
 			placeholder="Your username"
-			bind:value={username}
+			bind:value={usernameInput}
 			min="1"
 			max="25"
 			on:input={onUsernameInput}

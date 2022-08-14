@@ -2,10 +2,10 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import CentralBox from '$components/containers/central-box.svelte';
-	import CurrentRoomStore from '$client/stores/currentRoom';
-	import MatchmakingStore from '$client/stores/matchmaking';
-	import RoomsStore from '$client/stores/rooms';
-	import SearchStore from '$client/stores/search';
+	import currentRoom from '$client/stores/currentRoom';
+	import matchmaking from '$client/stores/matchmaking';
+	import rooms from '$client/stores/rooms';
+	import search from '$client/stores/search';
 	import {
 		leave_room as LeaveRoom,
 		leave_matchmaking as LeaveMatchmaking
@@ -28,7 +28,7 @@
 	function debounceSearch() {
 		clearTimeout(searchTimeout);
 		searchTimeout = setTimeout(() => {
-			Search($SearchStore);
+			Search($search);
 		}, 200);
 	}
 
@@ -66,12 +66,12 @@
 	}
 
 	function handle_search(event: any) {
-		SearchStore.set(event.target.value);
+		search.set(event.target.value);
 		debounceSearch();
 	}
 
 	function leave_current_room() {
-		if ($CurrentRoomStore != null) {
+		if ($currentRoom != null) {
 			loading = true;
 			LeaveRoom(() => {
 				loading = false;
@@ -80,7 +80,7 @@
 	}
 
 	function leave_current_matchmaking() {
-		if ($MatchmakingStore) {
+		if ($matchmaking) {
 			loading = true;
 			LeaveMatchmaking(() => {
 				loading = false;
@@ -93,7 +93,7 @@
 
 	if (browser) {
 		onMount(() => {
-			Search($SearchStore);
+			Search($search);
 		});
 	}
 </script>
@@ -103,9 +103,9 @@
 	<input
 		type="text"
 		class="text-input"
-		class:with-error={$SearchStore.length > 50}
+		class:with-error={$search.length > 50}
 		placeholder="Search a game"
-		value={$SearchStore}
+		value={$search}
 		min="1"
 		max="50"
 		on:input={(event) => {
@@ -114,10 +114,10 @@
 		}}
 	/>
 	<div class="games mt-5 w-[80%] m-auto h-[120px] overflow-y-scroll overflow-x-hidden">
-		{#if $RoomsStore.length == 0}
+		{#if $rooms.length == 0}
 			<p class="text-neutral-500 pt-10">No rooms available</p>
 		{:else}
-			{#each $RoomsStore as room (room.id)}
+			{#each $rooms as room (room.id)}
 				{#if room != undefined && room.players.length < 2}
 					<p
 						class="cant-select scale-hover"

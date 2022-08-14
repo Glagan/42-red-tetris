@@ -1,26 +1,34 @@
 <!-- ========================= SCRIPT -->
 <script lang="ts">
 	import CentralBoxPopup from '$components/containers/central-box-popup.svelte';
-	import ThemeStore from '$client/stores/theme';
-	import SoundStore from '$client/stores/sound';
-	import DimensionsStore from '$client/stores/dimensions';
-	import ShadowStore from '$client/stores/shadow';
-	import Themes from '$client/themes/themes';
+	import theme from '$client/stores/theme';
+	import sound from '$client/stores/sound';
+	import dimensions from '$client/stores/dimensions';
+	import shadow from '$client/stores/shadow';
+	import themes from '$client/themes/themes';
 	import * as Sounds from '$client/effects/sounds';
 
-	$: sound_status = $SoundStore.status;
+	$: sound_status = $sound.status;
 
-	function handle_theme(index: number) {
-		ThemeStore.set(index);
+	function changeTheme(index: number) {
+		theme.set(index);
 	}
 
-	function handle_sound_switch(event: any) {
-		event.target.blur();
-		SoundStore.switch();
+	function toggleSound(
+		event: MouseEvent & {
+			currentTarget: EventTarget & HTMLButtonElement;
+		}
+	) {
+		event.currentTarget.blur();
+		sound.switch();
 	}
 
-	function handle_sound_volume(event: any) {
-		SoundStore.updateVolume(event.target.value);
+	function changeSoundVolume(
+		event: Event & {
+			currentTarget: EventTarget & HTMLInputElement;
+		}
+	) {
+		sound.updateVolume(parseInt(event.currentTarget.value));
 	}
 </script>
 
@@ -29,30 +37,30 @@
 	<div>
 		<h3>Theme</h3>
 		<button
-			class:off={$DimensionsStore != 3}
+			class:off={$dimensions != 3}
 			class="mt-3 inline-block m-2"
 			on:click={() => {
 				Sounds.select();
-				DimensionsStore.switch();
+				dimensions.switch();
 			}}>3D</button
 		>
 		<button
-			class:off={!$ShadowStore}
+			class:off={!$shadow}
 			class="mt-3 inline-block m-2"
 			on:click={() => {
 				Sounds.select();
-				ShadowStore.switch();
+				shadow.switch();
 			}}>Shadow</button
 		>
 		<ul class="mt-3">
-			{#each Themes as theme, index}
+			{#each themes as currentTheme, index}
 				<li class="inline-block m-2">
 					<button
-						class:off={index != $ThemeStore}
+						class:off={index != $theme}
 						on:click={() => {
 							Sounds.select();
-							handle_theme(index);
-						}}>{theme.name}</button
+							changeTheme(index);
+						}}>{currentTheme.name}</button
 					>
 				</li>
 			{/each}
@@ -64,7 +72,7 @@
 			class:off={!sound_status}
 			class="mt-5"
 			on:click={(event) => {
-				handle_sound_switch(event);
+				toggleSound(event);
 				Sounds.select();
 			}}>{sound_status ? 'on' : 'off'}</button
 		>
@@ -72,9 +80,9 @@
 			type="range"
 			class="mt-5"
 			step="0.01"
-			value={$SoundStore.volume}
+			value={$sound.volume}
 			on:change={(event) => {
-				handle_sound_volume(event);
+				changeSoundVolume(event);
 				Sounds.select();
 			}}
 			min="0"

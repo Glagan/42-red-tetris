@@ -1,6 +1,4 @@
-export default function parse_url_hash(
-	url_hash: string
-): { room: string; username: string } | null {
+export default function parseUrlHash(url_hash: string): { room: string; username: string } | null {
 	// check #
 	if (url_hash.length === 0 || url_hash[0] != '#') return null;
 

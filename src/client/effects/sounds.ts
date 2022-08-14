@@ -3,7 +3,7 @@
 
 import { browser } from '$app/env';
 import { get } from 'svelte/store';
-import SoundStore from '$client/stores/sound';
+import sound from '$client/stores/sound';
 
 const sounds = {
 	navigation: {
@@ -29,9 +29,9 @@ const sounds = {
 };
 
 function play_sound(url: string) {
-	if (browser && get(SoundStore).status) {
+	if (browser && get(sound).status) {
 		const audio = new Audio(url);
-		audio.volume = get(SoundStore).volume;
+		audio.volume = get(sound).volume;
 		audio.play();
 	}
 }
