@@ -63,7 +63,7 @@
 	<div
 		class:info={info_mode}
 		class:pseudo-shadow={$ShadowStore}
-		class="cube"
+		class="cube select-none"
 		style="transform: translate3d({position_x_px}px, {position_y_px}px , {position_z_px}px); z-index: {z_index}; will-change: {background
 			? 'transform'
 			: 'transform'}; contain: {background ? 'layout' : 'none'};"
@@ -110,6 +110,7 @@
 	}
 
 	.cube > div {
+		@apply select-none;
 		position: absolute;
 		box-sizing: border-box;
 		text-align: center;

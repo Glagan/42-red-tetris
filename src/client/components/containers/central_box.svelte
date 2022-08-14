@@ -27,7 +27,7 @@
 	</div>
 	<div class:transparent={_loading} disabled>
 		{#if title.length > 0}
-			<h2 class="absolute cant-select left-4 -top-4">
+			<h2 class="absolute left-4 -top-4">
 				{title}{#if loading_title}<ThreePoints bind:waiting_time />{/if}
 			</h2>
 		{/if}
