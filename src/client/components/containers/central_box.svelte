@@ -19,13 +19,15 @@
 
 <!-- ========================= HTML -->
 <div class="central-box shadow" class:extra-large={extra_large}>
-	{#if _loading}
-		<div class="absolute top-0 left-0 z-40 w-full h-full" />
+	<div
+		style="pointer-events: none; opacity: {_loading ? 1 : 0};"
+		class="absolute top-0 left-0 z-40 w-full h-full transition-all duration-300"
+	>
 		<SquareSpinner />
-	{/if}
+	</div>
 	<div class:transparent={_loading} disabled>
 		{#if title.length > 0}
-			<h2 class="absolute cant-select left-4 -top-4">
+			<h2 class="absolute left-4 -top-4">
 				{title}{#if loading_title}<ThreePoints bind:waiting_time />{/if}
 			</h2>
 		{/if}

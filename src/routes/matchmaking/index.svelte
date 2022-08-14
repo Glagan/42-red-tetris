@@ -29,8 +29,8 @@
 		class="mt-5"
 		on:click={() => {
 			Sounds.cancel();
+			handle_leave();
 			goto('/search');
-			// handle_leave();
 		}}>Leave</button
 	>
 	<p class="absolute text-neutral-800  bottom-1 right-3 text-center">{waiting_time} seconds</p>

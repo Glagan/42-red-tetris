@@ -79,7 +79,7 @@
 		<div class:opacity-0={opponent_is_absent && game_will_start} class="relative transition-all">
 			<p>
 				{#if !opponent_is_absent}
-					@{opponent_username}
+					<span class="inline-block max-w-[100%] align-top truncate">@{opponent_username}</span>
 				{/if}
 				<ThreePoints bind:waiting_time hidden={!opponent_is_absent} grey />
 			</p>
@@ -122,7 +122,8 @@
 		</div>
 		<div>
 			<p>
-				@{$UsernameStore}&nbsp;<span class="text-neutral-500">(you)</span>
+				<span class="inline-block max-w-[65%] align-top truncate">@{$UsernameStore}</span
+				>&nbsp;<span class="text-neutral-500 align-top">(you)</span>
 			</p>
 			<button
 				class:cant-click={game_will_start}
@@ -144,7 +145,7 @@
 	}
 
 	.button-container > div {
-		@apply basis-0 flex-grow-[1];
+		width: 30%;
 	}
 
 	.button-container > div > p {

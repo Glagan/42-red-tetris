@@ -30,7 +30,7 @@
 <div class="absolute right-0 m-3 z-[20000000]">
 	<button
 		style="opacity: {+sound_loaded};"
-		class="icon not-hover cant-select"
+		class="icon not-hover"
 		on:click={(event) => {
 			Sounds.select();
 			handle_sound_switch(event);
@@ -39,11 +39,7 @@
 	>
 		<img src={sound_icon} alt="sound icon" />
 	</button>
-	<button
-		class="icon not-hover cant-select hover:rotate-90"
-		on:click={handle_open_close}
-		tabindex="-1"
-	>
+	<button class="icon not-hover hover:rotate-90" on:click={handle_open_close} tabindex="-1">
 		<img src="/icons/parameters.png" alt="parameters icon" />
 	</button>
 </div>

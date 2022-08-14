@@ -21,7 +21,7 @@
 
 <!-- ========================= HTML -->
 <div
-	class="cube-wrap"
+	class="cube-wrap select-none"
 	style="perspective-origin: calc({50 + 50 * horizontal_alignement}% + {horizontal_alignement *
 		80}px) center; position: {css_position}; z-index: {layer + 100};"
 >

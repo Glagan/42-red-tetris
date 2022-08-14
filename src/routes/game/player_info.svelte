@@ -19,7 +19,6 @@
 	$: player_number = horizontal_alignement == 1 ? 1 : 0;
 	$: player_name = player == undefined ? '?' : player.name;
 	$: level_side = player_number === 0 ? 'right' : 'left';
-	$: level = '>'.repeat($LevelStore);
 </script>
 
 <!-- ========================= HTML -->
@@ -44,15 +43,21 @@
 			<img src="/icons/flag.png" alt="parameters icon" />
 		</button>
 	{/if}
-	<p>
-		@{player_name}
-		{#if its_me}
-			<span class="text-neutral-500"> (you)</span>
-		{/if}
-	</p>
-	<p>Score: <span>{$ScoresStore[player_number]}</span></p>
+	<div class="flex justify-between">
+		<p class="w-1/2 align-top">
+			<span class="inline-block align-top truncate w-1/2">@{player_name}</span>
+			{#if its_me}
+				<span class="align-top text-neutral-500"> (you)</span>
+			{/if}
+		</p>
+		<p class="truncate w-1/2">Score: <span>{$ScoresStore[player_number]}</span></p>
+	</div>
 	<NextPieces player={player_number} />
-	<p class="level-{level_side} absolute block w-0 h-0 bottom-2 -rotate-90">{level}</p>
+	<p class="level-{level_side} select-none absolute block w-0 h-0 bottom-2 -rotate-90">
+		{#each new Array($LevelStore).fill('>') as level, index}
+			<span style="opacity: {1 / 5 + index / 5};">{level}</span>
+		{/each}
+	</p>
 </div>
 
 <!-- ========================= CSS -->
@@ -66,6 +71,6 @@
 	}
 
 	p {
-		@apply inline px-1;
+		@apply inline-block px-1;
 	}
 </style>

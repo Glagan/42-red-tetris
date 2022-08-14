@@ -65,7 +65,7 @@ button:disabled, button.off {
 	@apply bg-neutral-300;
 }
 
-.cant-select {
+.cant-select, h1, h2, h3, img, button {
 	-webkit-touch-callout: none;
 	/* iOS Safari */
 	-webkit-user-select: none;
@@ -130,6 +130,10 @@ button:disabled, button.off {
 
 .transparent {
 	opacity: 0.2;
+}
+
+h1 {
+	@apply text-5xl;
 }
 
 h2 {
