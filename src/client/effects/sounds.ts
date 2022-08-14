@@ -1,4 +1,5 @@
 // https://sfxr.me/
+/* c8 ignore start */
 
 import { browser } from '$app/env';
 import { get } from 'svelte/store';
@@ -84,3 +85,5 @@ export function add_penalty() {
 export function remove_line() {
 	play_sound(sounds.game.remove_line);
 }
+
+/* c8 ignore end */

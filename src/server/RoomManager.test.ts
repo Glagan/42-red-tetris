@@ -26,6 +26,11 @@ describe('Room Manager', () => {
 		expect(room.name).toEqual(insertedRoom.name);
 	});
 
+	it('Can find a room by name', () => {
+		RoomManager.addRoom(room);
+		expect(RoomManager.findRoom(room.name)).toStrictEqual(room);
+	});
+
 	it('Can get a room', () => {
 		expect(RoomManager.getRoom(room.id)).toEqual(room);
 		expect(RoomManager.getRoom(room)).toEqual(room);

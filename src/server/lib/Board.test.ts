@@ -456,4 +456,13 @@ describe('Board', () => {
 		const tetromino = new TetrominoI();
 		expect(board.fixTetrominoPosition(tetromino)).toBeTruthy();
 	});
+
+	it('An empty Board can\'t interactive with it\'s "current" tetromino', () => {
+		const board = new Board();
+
+		expect(board.movingTetrominoIsTouching()).toBeFalsy();
+		expect(board.currentSpectre()).toBeUndefined();
+		expect(board.tickDown()).toBe(-2);
+		expect(board.dash()).toBe(-1);
+	});
 });
