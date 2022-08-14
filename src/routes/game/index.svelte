@@ -9,7 +9,7 @@
 	import Dash from '$client/socket/dash.emit';
 	import GameOver from '$components/game/game-over.svelte';
 	import PlayerInfos from '$components/game/player-infos.svelte';
-	import { onDestroy } from 'svelte';
+	import { onDestroy, onMount, tick } from 'svelte';
 
 	$: solo = $boards[1].length === 0;
 
@@ -53,13 +53,21 @@
 		onDestroy(() => {
 			document.removeEventListener('keydown', onKeyDown);
 		});
+
+		onMount(async () => {
+			await tick();
+			window.scrollTo(0, document.body.scrollHeight);
+		});
 	}
 </script>
 
 <!-- ========================= HTML -->
 
 <GameOver />
-<div class="game relative flex flex-col justify-center h-fit" class:transparant={$winner != -1}>
+<div
+	class="game relative flex flex-col justify-center h-fit mb-4"
+	class:transparant={$winner != -1}
+>
 	<PlayerInfos {solo} />
 	<Boards {solo} />
 </div>
