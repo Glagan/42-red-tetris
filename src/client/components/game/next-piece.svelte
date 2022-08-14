@@ -1,10 +1,10 @@
 <!-- ========================= SCRIPT -->
 <script lang="ts">
 	import Piece from './piece.svelte';
-	import type _Cube from '../../client/lib/Cube';
-	import Config from '../../client/config';
+	import type _Cube from '$client/lib/Cube';
+	import Config from '$client/config';
 
-	export let piece: Array<_Cube> | undefined = undefined;
+	export let piece: _Cube[] | undefined = undefined;
 	export let opacity = 1;
 
 	const default_size = {
@@ -12,7 +12,7 @@
 		y: 2
 	};
 
-	function find_max_xy_cube(xy: 'x' | 'y', piece: Array<_Cube>): number {
+	function find_max_xy_cube(xy: 'x' | 'y', piece: _Cube[]): number {
 		let max = 0;
 
 		if (piece != undefined)
@@ -21,7 +21,7 @@
 		return max + 1;
 	}
 
-	function need_to_translate(xy: 'x' | 'y', piece: Array<_Cube>): number {
+	function need_to_translate(xy: 'x' | 'y', piece: _Cube[]): number {
 		const max = find_max_xy_cube(xy, piece);
 
 		return (default_size[xy] - max) / 2;

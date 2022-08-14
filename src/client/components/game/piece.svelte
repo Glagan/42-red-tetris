@@ -1,13 +1,13 @@
 <!-- ========================= SCRIPT -->
 <script lang="ts">
 	import Cube from './cube.svelte';
-	import type _Cube from '../../client/lib/Cube';
-	import calculate_z_index from '../../utils/cube_z_index';
+	import type _Cube from '$client/lib/Cube';
+	import calculate_z_index from '$utils/cube_z_index';
 
 	export let layer = 0;
 	export let background = false;
 	export let horizontal_alignement: -1 | 0 | 1 = 0; // -1:left | 0:center | 1:right
-	export let piece: Array<_Cube> | undefined = undefined;
+	export let piece: _Cube[] | undefined = undefined;
 	export let info_mode = false;
 	export let spectre = false;
 </script>

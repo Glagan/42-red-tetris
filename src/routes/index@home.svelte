@@ -2,7 +2,7 @@
 <script lang="ts">
 	import UsernameStore from '../client/stores/username';
 	import { browser } from '$app/env';
-	import CentralBox from '../client/components/containers/central_box.svelte';
+	import CentralBox from '../client/components/containers/central-box.svelte';
 	import WinnerStore from '$client/stores/winner';
 	import OpponenReadytStore from '../client/stores/opponentReady';
 	import * as Sounds from '../client/effects/sounds';

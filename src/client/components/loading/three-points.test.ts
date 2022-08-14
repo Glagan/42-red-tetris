@@ -1,5 +1,5 @@
 import { render } from '@testing-library/svelte';
-import ThreePoints from './three_points.svelte';
+import ThreePoints from './three-points.svelte';
 
 describe('Three points', () => {
 	it('Should display the spinner', () => {

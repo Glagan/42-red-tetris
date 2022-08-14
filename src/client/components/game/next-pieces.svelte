@@ -1,7 +1,7 @@
 <!-- ========================= SCRIPT -->
 <script lang="ts">
-	import NextPiece from './next_piece.svelte';
-	import NextPiecesStore from '../../client/stores/generatedNextPieces';
+	import NextPiece from './next-piece.svelte';
+	import NextPiecesStore from '$client/stores/generatedNextPieces';
 
 	export let player: 0 | 1;
 </script>

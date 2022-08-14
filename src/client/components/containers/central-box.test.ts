@@ -1,5 +1,5 @@
 import { render } from '@testing-library/svelte';
-import CentralBox from './central_box.svelte';
+import CentralBox from './central-box.svelte';
 
 describe('CentralBox', () => {
 	it('Should display the box', () => {

@@ -3,9 +3,9 @@
 	import { fade } from 'svelte/transition';
 	import UsernameStore from '../../stores/username';
 	import CurrentRoomStore from '../../stores/currentRoom';
-	import SquareSpinner from '../loading/square_spinner.svelte';
+	import SquareSpinner from '../loading/square-spinner.svelte';
 	import SocketStore from '../../stores/socket';
-	import ThreePoints from '../loading/three_points.svelte';
+	import ThreePoints from '../loading/three-points.svelte';
 
 	export let title = '';
 	export let show_username = false;

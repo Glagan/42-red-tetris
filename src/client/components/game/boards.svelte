@@ -1,14 +1,14 @@
 <!-- ========================= SCRIPT -->
 <script lang="ts">
 	import Board from './board.svelte';
-	import GeneratedBoardsStore from '../../client/stores/generatedBoards';
-	import ThemeStore from '../../client/stores/theme';
-	import GeneratedPiecesStore from '../../client/stores/generatedPieces';
-	import GeneratedSpectresStore from '../../client/stores/generatedSpectres';
-	import Config from '../../client/config';
-	import _3Dto2D from '../../client/themes/generators/3Dto2D';
+	import GeneratedBoardsStore from '$client/stores/generatedBoards';
+	import ThemeStore from '$client/stores/theme';
+	import GeneratedPiecesStore from '$client/stores/generatedPieces';
+	import GeneratedSpectresStore from '$client/stores/generatedSpectres';
+	import Config from '$client/config';
+	import _3Dto2D from '$client/themes/generators/3Dto2D';
 	import { browser } from '$app/env';
-	import Themes from '../../client/themes/themes';
+	import Themes from '$client/themes/themes';
 
 	export let solo: boolean;
 

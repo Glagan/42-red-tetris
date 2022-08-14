@@ -1,6 +1,6 @@
 <!-- ========================= SCRIPT -->
 <script lang="ts">
-	import Config from '../../client/config';
+	import Config from '$client/config';
 	import DimensionsStore from '$stores/dimensions';
 	import ShadowStore from '$stores/shadow';
 

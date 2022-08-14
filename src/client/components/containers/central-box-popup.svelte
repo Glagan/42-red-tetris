@@ -1,6 +1,6 @@
 <!-- ========================= SCRIPT -->
 <script lang="ts">
-	import CentralBox from './central_box.svelte';
+	import CentralBox from './central-box.svelte';
 
 	export let title = '';
 	export let show_username = false;

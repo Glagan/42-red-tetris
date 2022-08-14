@@ -1,7 +1,7 @@
 <!-- ========================= SCRIPT -->
 <script lang="ts">
-	import PlayerInfo from './player_info.svelte';
-	import CurrentRoomStore from '../../client/stores/currentRoom';
+	import PlayerInfo from './player-info.svelte';
+	import CurrentRoomStore from '$client/stores/currentRoom';
 
 	export let solo: boolean;
 </script>

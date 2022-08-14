@@ -2,12 +2,12 @@
 <script lang="ts">
 	import { onDestroy } from 'svelte';
 	import { goto } from '$app/navigation';
-	import CentralBox from '../../client/components/containers/central_box.svelte';
+	import CentralBox from '../../client/components/containers/central-box.svelte';
 	import CurrentRoomStore from '$client/stores/currentRoom';
 	import IdStore from '$client/stores/id';
 	import UsernameStore from '$client/stores/username';
 	import OpponentReady from '$client/stores/opponentReady';
-	import ThreePoints from '$client/components/loading/three_points.svelte';
+	import ThreePoints from '$client/components/loading/three-points.svelte';
 	import GameStartStore from '$client/stores/gameStart';
 	import WinnerStore from '$client/stores/winner';
 	import { leave_room as Leave } from '../../client/socket/leave.emit';

@@ -1,13 +1,13 @@
 <!-- ========================= SCRIPT -->
 <script lang="ts">
-	import type Player from '../../client/lib/Player';
-	import ScoresStore from '../../client/stores/scores';
-	import IdStore from '../../client/stores/id';
-	import WinnerStore from '../../client/stores/winner';
-	import LevelStore from '../../client/stores/level';
-	import NextPieces from './next_pieces.svelte';
-	import Concede from '../../client/socket/concede.emit';
-	import * as Sounds from '../../client/effects/sounds';
+	import type Player from '$client/lib/Player';
+	import ScoresStore from '$client/stores/scores';
+	import IdStore from '$client/stores/id';
+	import WinnerStore from '$client/stores/winner';
+	import LevelStore from '$client/stores/level';
+	import NextPieces from './next-pieces.svelte';
+	import Concede from '$client/socket/concede.emit';
+	import * as Sounds from '$client/effects/sounds';
 
 	export let player: Player | undefined = undefined;
 	export let horizontal_alignement: -1 | 0 | 1 = 0; // -1:left | 0:center | 1:right

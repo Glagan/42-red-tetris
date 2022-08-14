@@ -1,7 +1,7 @@
 <!-- ========================= SCRIPT -->
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import CentralBox from '../../client/components/containers/central_box.svelte';
+	import CentralBox from '../../client/components/containers/central-box.svelte';
 	import CurrentRoomStore from '../../client/stores/currentRoom';
 	import MatchmakingStore from '../../client/stores/matchmaking';
 	import RoomsStore from '../../client/stores/rooms';
@@ -96,7 +96,6 @@
 			Search($SearchStore);
 		});
 	}
-	$: console.log($RoomsStore);
 </script>
 
 <!-- ========================= HTML -->

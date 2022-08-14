@@ -1,5 +1,5 @@
 import { render } from '@testing-library/svelte';
-import Spinner from './square_spinner.svelte';
+import Spinner from './square-spinner.svelte';
 
 describe('Spinner', () => {
 	it('Should display the spinner', () => {
