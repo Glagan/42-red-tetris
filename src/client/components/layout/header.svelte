@@ -9,7 +9,7 @@
 			<span class="text-blue-300">R</span>
 			<span class="text-green-300">I</span>
 			<span class="text-pink-300">S</span>
-			<span class="absolute rotate text-inherit text-xl text-center">3D</span>
+			<span class="pl-3 absolute right-0 rotate text-inherit text-xl text-center">3D</span>
 		</h1>
 	</div>
 </header>
