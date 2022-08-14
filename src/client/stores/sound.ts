@@ -6,6 +6,9 @@ const initial = {
 	volume: <number>1 // min:0 | max:1
 };
 
+const localStorageSoundKey = 'sound';
+const localStorageVolumeKey = 'volume';
+
 function createScoresStore() {
 	const { subscribe, update } = writable(initial);
 
@@ -15,9 +18,9 @@ function createScoresStore() {
 			if (browser) {
 				update((sound) => {
 					// Status
-					localStorage.setItem('sound_status', sound.status.toString());
+					localStorage.setItem(localStorageSoundKey, sound.status.toString());
 					// Volume
-					localStorage.setItem('sound_volume', sound.volume.toString());
+					localStorage.setItem(localStorageVolumeKey, sound.volume.toString());
 
 					if (callback != undefined) callback();
 
@@ -29,7 +32,7 @@ function createScoresStore() {
 			if (browser) {
 				update((sound) => {
 					// Status
-					switch (localStorage.getItem('sound_status')) {
+					switch (localStorage.getItem(localStorageSoundKey)) {
 						case 'true':
 							sound.status = true;
 							break;
@@ -39,7 +42,7 @@ function createScoresStore() {
 					}
 
 					// Volume
-					const sound_volume = localStorage.getItem('sound_volume');
+					const sound_volume = localStorage.getItem(localStorageVolumeKey);
 					if (sound_volume != null) sound.volume = parseFloat(sound_volume);
 
 					if (callback != undefined) callback();
@@ -51,28 +54,28 @@ function createScoresStore() {
 		switch: () => {
 			update((sound) => {
 				sound.status = !sound.status;
-				localStorage.setItem('sound_status', sound.status.toString());
+				localStorage.setItem(localStorageSoundKey, sound.status.toString());
 				return sound;
 			});
 		},
 		on: () => {
 			update((sound) => {
 				sound.status = true;
-				localStorage.setItem('sound_status', sound.status.toString());
+				localStorage.setItem(localStorageSoundKey, sound.status.toString());
 				return sound;
 			});
 		},
 		off: () => {
 			update((sound) => {
 				sound.status = false;
-				localStorage.setItem('sound_status', sound.status.toString());
+				localStorage.setItem(localStorageSoundKey, sound.status.toString());
 				return sound;
 			});
 		},
 		updateVolume: (volume: number) => {
 			update((sound) => {
 				sound.volume = volume;
-				localStorage.setItem('sound_volume', sound.volume.toString());
+				localStorage.setItem(localStorageVolumeKey, sound.volume.toString());
 				return sound;
 			});
 		}
