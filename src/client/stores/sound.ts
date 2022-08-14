@@ -14,20 +14,6 @@ function createScoresStore() {
 
 	return {
 		subscribe,
-		save: (callback: (() => void) | undefined = undefined) => {
-			if (browser) {
-				update((sound) => {
-					// Status
-					localStorage.setItem(localStorageSoundKey, sound.status.toString());
-					// Volume
-					localStorage.setItem(localStorageVolumeKey, sound.volume.toString());
-
-					if (callback != undefined) callback();
-
-					return sound;
-				});
-			}
-		},
 		load: (callback: (() => void) | undefined = undefined) => {
 			if (browser) {
 				update((sound) => {

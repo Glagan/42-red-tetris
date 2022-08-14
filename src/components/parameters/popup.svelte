@@ -28,7 +28,7 @@
 			currentTarget: EventTarget & HTMLInputElement;
 		}
 	) {
-		sound.updateVolume(parseInt(event.currentTarget.value));
+		sound.updateVolume(parseFloat(event.currentTarget.value));
 	}
 </script>
 
