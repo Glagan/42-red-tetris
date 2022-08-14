@@ -44,7 +44,9 @@
 
 <!-- ========================= HTML -->
 <CentralBox title="Username" {loading}>
-	<h2>{location}</h2>
+	{#if location}
+		<h2>{location}</h2>
+	{/if}
 	<form on:submit|preventDefault={handle}>
 		<input
 			type="text"
