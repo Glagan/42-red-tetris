@@ -4,6 +4,7 @@
 	import ThemeStore from '../../../client/stores/theme';
 	import SoundStore from '../../../client/stores/sound';
 	import DimensionsStore from '../../../client/stores/dimensions';
+	import ShadowStore from '../../../client/stores/shadow';
 	import Themes from '../../themes/themes';
 	import * as Sounds from '../../effects/sounds';
 
@@ -29,11 +30,19 @@
 		<h3>Theme</h3>
 		<button
 			class:off={$DimensionsStore != 3}
-			class="mt-3"
+			class="mt-3 inline-block m-2"
 			on:click={() => {
 				Sounds.select();
 				DimensionsStore.switch();
 			}}>3D</button
+		>
+		<button
+			class:off={!$ShadowStore}
+			class="mt-3 inline-block m-2"
+			on:click={() => {
+				Sounds.select();
+				ShadowStore.switch();
+			}}>Shadow</button
 		>
 		<ul class="mt-3">
 			{#each Themes as theme, index}

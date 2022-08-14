@@ -2,6 +2,7 @@
 <script lang="ts">
 	import Config from '../../client/config';
 	import DimensionsStore from '$stores/dimensions';
+	import ShadowStore from '$stores/shadow';
 
 	export let sprites: string[] = ['/sprites/default/cross.png'];
 
@@ -61,6 +62,7 @@
 {#if show}
 	<div
 		class:info={info_mode}
+		class:pseudo-shadow={$ShadowStore}
 		class="cube"
 		style="transform: translate3d({position_x_px}px, {position_y_px}px , {position_z_px}px); z-index: {z_index}; will-change: {background
 			? 'transform'
@@ -123,6 +125,10 @@
 		/* background-color: #00d7ff; */
 	}
 
+	.cube.pseudo-shadow > .front {
+		filter: brightness(95%);
+	}
+
 	.cube > .back {
 		-webkit-transform: translateZ(var(--cube-half-size-negative)) rotateY(180deg);
 		transform: translateZ(var(--cube-half-size-negative)) rotateY(180deg);
@@ -136,11 +142,19 @@
 		/* background-color: #ffc900; */
 	}
 
+	.cube.pseudo-shadow > .right {
+		filter: brightness(70%);
+	}
+
 	.cube > .left {
 		-webkit-transform: rotateY(270deg) translateX(var(--cube-half-size-negative));
 		transform: rotateY(270deg) translateX(var(--cube-half-size-negative));
 		transform-origin: center left;
 		/* background-color: #00ff73; */
+	}
+
+	.cube.pseudo-shadow > .left {
+		filter: brightness(80%);
 	}
 
 	.cube > .top {
@@ -155,5 +169,9 @@
 		transform: rotateX(270deg) translateY(var(--cube-half-size));
 		transform-origin: bottom center;
 		/* background-color: #7552bc; */
+	}
+
+	.cube.pseudo-shadow > .bottom {
+		filter: brightness(50%);
 	}
 </style>
