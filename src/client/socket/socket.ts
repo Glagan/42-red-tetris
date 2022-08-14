@@ -157,6 +157,7 @@ if (browser) {
 		LevelStore.set(board.level);
 		if (board.tetris) Sounds.tetris();
 		else if (board.blockedLine) Sounds.add_penalty();
+		else if (board.touched) Sounds.touch_floor();
 		if (board.player === 0 || board.player === 1) ScoresStore.update(board.player, board.score);
 	});
 
@@ -182,6 +183,7 @@ if (browser) {
 	socket.on('game:over', (winner: number) => {
 		GameStartStore.remove();
 		if (winner === 0 || winner === 1) {
+			Sounds.gameover();
 			NotificationStore.push({ id: nanoid(), message: 'game over', error: false });
 			WinnerStore.set(winner);
 		}
