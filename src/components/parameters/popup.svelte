@@ -1,6 +1,6 @@
 <!-- ========================= SCRIPT -->
 <script lang="ts">
-	import CentralBoxPopup from '$client/components/containers/central-box-popup.svelte';
+	import CentralBoxPopup from '$components/containers/central-box-popup.svelte';
 	import ThemeStore from '$client/stores/theme';
 	import SoundStore from '$client/stores/sound';
 	import DimensionsStore from '$client/stores/dimensions';

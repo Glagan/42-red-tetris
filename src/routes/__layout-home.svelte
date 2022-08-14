@@ -1,12 +1,12 @@
 <!-- ========================= SCRIPT -->
 <script lang="ts">
 	import '../app.css';
-	import Header from '$client/components/layout/header.svelte';
-	import Notifications from '$client/components/layout/notifications.svelte';
-	import ParametersPopup from '$client/components/parameters/popup.svelte';
+	import Header from '$components/layout/header.svelte';
+	import Notifications from '$components/layout/notifications.svelte';
+	import ParametersPopup from '$components/parameters/popup.svelte';
 	import { browser } from '$app/env';
 	import { onDestroy } from 'svelte';
-	import ParametersButtons from '$client/components/parameters/buttons.svelte';
+	import ParametersButtons from '$components/parameters/buttons.svelte';
 	import * as Sounds from '$client/effects/sounds';
 
 	let parameters = false;

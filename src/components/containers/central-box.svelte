@@ -3,7 +3,7 @@
 	import UsernameStore from '$client/stores/username';
 	import CurrentRoomStore from '$client/stores/currentRoom';
 	import SocketStore from '$client/stores/socket';
-	import ThreePoints from '$client/components/loading/three-points.svelte';
+	import ThreePoints from '$components/loading/three-points.svelte';
 
 	export let title = '';
 	export let show_username = false;

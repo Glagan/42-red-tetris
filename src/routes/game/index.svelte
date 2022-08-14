@@ -1,14 +1,14 @@
 <!-- ========================= SCRIPT -->
 <script lang="ts">
-	import Boards from '$client/components/game/boards.svelte';
+	import Boards from '$components/game/boards.svelte';
 	import WinnerStore from '$client/stores/winner';
 	import BoardsStore from '$client/stores/boards';
 	import { browser } from '$app/env';
 	import * as Move from '$client/socket/move.emit';
 	import Rotate from '$client/socket/rotate.emit';
 	import Dash from '$client/socket/dash.emit';
-	import GameOver from '$client/components/game/game-over.svelte';
-	import PlayerInfos from '$client/components/game/player-infos.svelte';
+	import GameOver from '$components/game/game-over.svelte';
+	import PlayerInfos from '$components/game/player-infos.svelte';
 	import { onDestroy } from 'svelte';
 
 	$: solo = $BoardsStore[1].length === 0;
