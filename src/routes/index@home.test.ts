@@ -15,6 +15,5 @@ describe('Index page', () => {
 		// Central box
 		const centralBox = container.querySelector('.central-box');
 		expect(centralBox).toBeTruthy();
-		expect(centralBox?.querySelector('.square-spinner')).toBeTruthy();
 	});
 });
