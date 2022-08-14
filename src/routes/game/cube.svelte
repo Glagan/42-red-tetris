@@ -101,7 +101,7 @@
 	}
 
 	.spectre {
-		@apply opacity-60;
+		@apply opacity-50;
 	}
 
 	.info {
