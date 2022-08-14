@@ -47,3 +47,10 @@
 		</div>
 	</CentralBoxPopup>
 {/if}
+
+<!-- ========================= CSS -->
+<style lang="postcss">
+	button {
+		@apply w-[100px];
+	}
+</style>
