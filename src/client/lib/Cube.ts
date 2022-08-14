@@ -2,6 +2,6 @@ export default interface Cube {
 	id: number;
 	x: number;
 	y: number;
-	z_index: number;
+	zIndex: number;
 	sprites: string[];
 }

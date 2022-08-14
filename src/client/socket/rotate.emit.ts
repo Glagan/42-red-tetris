@@ -1,8 +1,8 @@
-import Socket from './socket';
-import * as Sounds from '../effects/sounds';
+import socket from './socket';
+import * as Sounds from '$client/effects/sounds';
 
 export default function rotate(direction = false) {
-	Socket.emit(direction ? 'game:rotate:clockwise' : 'game:rotate:counter-clockwise', (ok) => {
+	socket.emit(direction ? 'game:rotate:clockwise' : 'game:rotate:counter-clockwise', (ok) => {
 		if (ok) Sounds.rotate();
 	});
 }

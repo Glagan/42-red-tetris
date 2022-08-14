@@ -1,5 +1,5 @@
-import MinecraftAllThemes from './categories/minecraft/minecraft_all';
-import TetrisAllThemes from './categories/tetris/tetris_all';
-import type Theme from '../lib/Theme';
+import MinecraftAllThemes from './categories/minecraft';
+import TetrisAllThemes from './categories/tetris';
+import type Theme from '$client/lib/Theme';
 
 export default <Theme[]>[...TetrisAllThemes, ...MinecraftAllThemes];

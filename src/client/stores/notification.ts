@@ -1,15 +1,15 @@
 import { writable } from 'svelte/store';
-import type _Notification from '../lib/Notification';
-import * as Sounds from '../effects/sounds';
+import type Notification from '$client/lib/Notification';
+import * as Sounds from '$client/effects/sounds';
 
-const initial: _Notification[] = [];
+const initial: Notification[] = [];
 
 function createUsernameStore() {
 	const { subscribe, update } = writable(initial);
 
 	return {
 		subscribe,
-		push: (notification: _Notification) =>
+		push: (notification: Notification) =>
 			update((notifications) => {
 				if (notification.error) Sounds.error();
 				notifications.push(notification);

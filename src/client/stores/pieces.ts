@@ -1,6 +1,6 @@
+import { writable } from 'svelte/store';
 import type GamePiece from '$client/lib/GamePiece';
 import { TetrominoType } from '$shared/Tetromino';
-import { writable } from 'svelte/store';
 
 function createPiecesStore() {
 	const { subscribe, update } = writable<GamePiece[]>([

@@ -1,23 +1,23 @@
 <!-- ========================= SCRIPT -->
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import CentralBox from '../../client/components/containers/central_box.svelte';
-	import CurrentRoomStore from '../../client/stores/currentRoom';
-	import MatchmakingStore from '../../client/stores/matchmaking';
-	import RoomsStore from '../../client/stores/rooms';
-	import SearchStore from '../../client/stores/search';
+	import CentralBox from '$components/containers/central-box.svelte';
+	import currentRoom from '$client/stores/currentRoom';
+	import matchmaking from '$client/stores/matchmaking';
+	import rooms from '$client/stores/rooms';
+	import search from '$client/stores/search';
 	import {
 		leave_room as LeaveRoom,
 		leave_matchmaking as LeaveMatchmaking
-	} from '../../client/socket/leave.emit';
-	import Search from '../../client/socket/search.emit';
+	} from '$client/socket/leave.emit';
+	import Search from '$client/socket/search.emit';
 	import {
 		join_room as JoinRoom,
 		join_matchmaking as JoinMatchmaking
-	} from '../../client/socket/join.emit';
-	import Create from '../../client/socket/create.emit';
+	} from '$client/socket/join.emit';
+	import Create from '$client/socket/create.emit';
 	import { browser } from '$app/env';
-	import * as Sounds from '../../client/effects/sounds';
+	import * as Sounds from '$client/effects/sounds';
 
 	let hasInput = false;
 	let create = '';
@@ -28,11 +28,11 @@
 	function debounceSearch() {
 		clearTimeout(searchTimeout);
 		searchTimeout = setTimeout(() => {
-			Search($SearchStore);
+			Search($search);
 		}, 200);
 	}
 
-	function handle_join_room(id: string) {
+	function joinRoom(id: string) {
 		loading = true;
 		JoinRoom(id, false, false, () => {
 			loading = false;
@@ -58,20 +58,20 @@
 		}
 	}
 
-	function handle_join_matchmaking() {
+	function joinMatchmaking() {
 		loading = true;
 		JoinMatchmaking(() => {
 			loading = false;
 		});
 	}
 
-	function handle_search(event: any) {
-		SearchStore.set(event.target.value);
+	function executeSearch(query: string) {
+		search.set(query);
 		debounceSearch();
 	}
 
-	function leave_current_room() {
-		if ($CurrentRoomStore != null) {
+	function leaveCurrentRoom() {
+		if ($currentRoom != null) {
 			loading = true;
 			LeaveRoom(() => {
 				loading = false;
@@ -79,8 +79,8 @@
 		}
 	}
 
-	function leave_current_matchmaking() {
-		if ($MatchmakingStore) {
+	function leaveMatchmaking() {
+		if ($matchmaking) {
 			loading = true;
 			LeaveMatchmaking(() => {
 				loading = false;
@@ -88,43 +88,42 @@
 		}
 	}
 
-	leave_current_room();
-	leave_current_matchmaking();
+	leaveCurrentRoom();
+	leaveMatchmaking();
 
 	if (browser) {
 		onMount(() => {
-			Search($SearchStore);
+			Search($search);
 		});
 	}
-	$: console.log($RoomsStore);
 </script>
 
 <!-- ========================= HTML -->
-<CentralBox title="Join" {loading} show_username>
+<CentralBox title="Join" {loading} showUsername>
 	<input
 		type="text"
 		class="text-input"
-		class:with-error={$SearchStore.length > 50}
+		class:with-error={$search.length > 50}
 		placeholder="Search a game"
-		value={$SearchStore}
+		value={$search}
 		min="1"
 		max="50"
 		on:input={(event) => {
 			Sounds.text();
-			handle_search(event);
+			executeSearch(event.currentTarget.value);
 		}}
 	/>
 	<div class="games mt-5 w-[80%] m-auto h-[120px] overflow-y-scroll overflow-x-hidden">
-		{#if $RoomsStore.length == 0}
+		{#if $rooms.length == 0}
 			<p class="text-neutral-500 pt-10">No rooms available</p>
 		{:else}
-			{#each $RoomsStore as room (room.id)}
+			{#each $rooms as room (room.id)}
 				{#if room != undefined && room.players.length < 2}
 					<p
 						class="cant-select scale-hover"
 						on:click={() => {
 							Sounds.ok();
-							handle_join_room(room.id);
+							joinRoom(room.id);
 						}}
 					>
 						{room?.name}&nbsp;<span class="text-neutral-500">@{room?.players[0]?.name}</span>
@@ -137,7 +136,7 @@
 		class="mt-5"
 		on:click={() => {
 			Sounds.ok();
-			handle_join_matchmaking();
+			joinMatchmaking();
 		}}
 	>
 		Quick Match

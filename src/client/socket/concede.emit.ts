@@ -1,17 +1,17 @@
-import Socket from './socket';
-import NotificationStore from '../stores/notification';
+import socket from './socket';
+import notifications from '$client/stores/notification';
 import { nanoid } from 'nanoid';
 
 export default function dash() {
-	Socket.emit('game:concede', (ok: boolean) => {
+	socket.emit('game:concede', (ok: boolean) => {
 		if (ok) {
-			NotificationStore.push({
+			notifications.push({
 				id: nanoid(),
 				message: `you concede`,
 				error: false
 			});
 		} else {
-			NotificationStore.push({
+			notifications.push({
 				id: nanoid(),
 				message: `you can't concede`,
 				error: true
