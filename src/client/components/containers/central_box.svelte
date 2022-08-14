@@ -1,5 +1,6 @@
 <!-- ========================= SCRIPT -->
 <script lang="ts">
+	import { fade } from 'svelte/transition';
 	import UsernameStore from '../../stores/username';
 	import CurrentRoomStore from '../../stores/currentRoom';
 	import SquareSpinner from '../loading/square_spinner.svelte';
@@ -22,9 +23,7 @@
 	<div
 		style="pointer-events: none; opacity: {_loading ? 1 : 0};"
 		class="absolute top-0 left-0 z-40 w-full h-full transition-all duration-300"
-	>
-		<SquareSpinner />
-	</div>
+	/>
 	<div class:transparent={_loading} disabled>
 		{#if title.length > 0}
 			<h2 class="absolute left-4 -top-4">

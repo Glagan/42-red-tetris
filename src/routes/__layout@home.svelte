@@ -17,4 +17,8 @@
 </script>
 
 <!-- ========================= HTML -->
+<svelte:head>
+	<title>Tetris 3D</title>
+</svelte:head>
+
 <slot />

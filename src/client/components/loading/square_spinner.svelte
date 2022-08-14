@@ -1,5 +1,10 @@
+<!-- ========================= SCRIPT -->
+<script lang="ts">
+	import { fade } from 'svelte/transition';
+</script>
+
 <!-- ========================= HTML -->
-<div>
+<div transition:fade>
 	<div class="square-spinner" style="animation-delay: 0s;" />
 </div>
 

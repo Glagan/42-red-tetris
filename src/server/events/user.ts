@@ -20,7 +20,7 @@ export default function useUserAPI(socket: TypedSocket) {
 		) {
 			if (callback) {
 				callback(false, {
-					message: 'Invalid username, must be non-empty and at most 20 characters'
+					message: 'Invalid username, must be non-empty and at most 25 characters'
 				});
 			}
 			return;

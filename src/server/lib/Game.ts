@@ -328,7 +328,6 @@ export default class Game {
 			return true;
 		} else {
 			this.emitBoardUpdate(boardIndex, {
-				touched: completedLines >= 0,
 				tetris: completedLines > 0
 			});
 			this.emitPieceUpdate(boardIndex);
