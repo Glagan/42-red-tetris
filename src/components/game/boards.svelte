@@ -51,6 +51,7 @@
 			layer={0}
 			backgroundPicture={backgroundTheme.left.picture}
 			background3Dto2D={background3Dto2Dleft}
+			backgroundBrightness={backgroundTheme.left.brightness}
 		/>
 		{#if backgroundTheme.left._3d != undefined}
 			{#each backgroundTheme.left._3d.cubes as board}
@@ -60,6 +61,7 @@
 					layer={-1}
 					background={true}
 					{backgroundWithoutFront}
+					backgroundBrightness={backgroundTheme.left.brightness}
 				/>
 			{/each}
 		{/if}
@@ -74,6 +76,7 @@
 				layer={0}
 				backgroundPicture={backgroundTheme.right.picture}
 				background3Dto2D={background3Dto2Dright}
+				backgroundBrightness={backgroundTheme.right.brightness}
 			/>
 			{#if backgroundTheme.right._3d != undefined}
 				{#each backgroundTheme.right._3d.cubes as board}
@@ -83,6 +86,7 @@
 						layer={-1}
 						background={true}
 						{backgroundWithoutFront}
+						backgroundBrightness={backgroundTheme.left.brightness}
 					/>
 				{/each}
 			{/if}

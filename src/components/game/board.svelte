@@ -15,6 +15,7 @@
 	export let backgroundPicture: string | undefined = undefined;
 	export let background3Dto2D: string | undefined = undefined;
 	export let backgroundWithoutFront = false;
+	export let backgroundBrightness = 100;
 
 	$: cssPosition = layer != 0 ? 'absolute' : 'relative';
 </script>
@@ -37,7 +38,8 @@
 			src={background3Dto2D}
 			alt="board background"
 			class="board-background"
-			style="transform: translateZ(-{Config.game.blockSize / 2}px);"
+			style="transform: translateZ(-{Config.game.blockSize /
+				2}px); filter: brightness({backgroundBrightness}%);"
 		/>
 	{/if}
 	<Piece {layer} {background} {horizontalAlignement} {piece} />
@@ -52,6 +54,7 @@
 			{layer}
 			{background}
 			{horizontalAlignement}
+			brightness={background ? backgroundBrightness : 100}
 		/>
 	{/each}
 </div>

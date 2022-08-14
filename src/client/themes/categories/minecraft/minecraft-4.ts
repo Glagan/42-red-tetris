@@ -61,13 +61,15 @@ export default <Theme>{
 			_3d: {
 				cubeSize: 16,
 				cubes: [Generator.backgroundChess(other_block_textures[0], other_block_textures[1], 1000)]
-			}
+			},
+			brightness: 100
 		},
 		right: {
 			_3d: {
 				cubeSize: 16,
 				cubes: [Generator.backgroundChess(other_block_textures[0], other_block_textures[1], 1000)]
-			}
+			},
+			brightness: 100
 		}
 	}
 };

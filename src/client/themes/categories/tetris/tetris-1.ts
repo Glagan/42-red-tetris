@@ -44,7 +44,7 @@ const other_block_textures = [
 ];
 
 export default <Theme>{
-	name: 'Tetris 1',
+	name: 'tetris 1',
 	blockTextures: {
 		pieces: pieces_block_textures,
 		others: other_block_textures
@@ -54,13 +54,15 @@ export default <Theme>{
 			_3d: {
 				cubeSize: 16,
 				cubes: [Generator.backgroundUniform(other_block_textures[0], 1000)]
-			}
+			},
+			brightness: 100
 		},
 		right: {
 			_3d: {
 				cubeSize: 16,
 				cubes: [Generator.backgroundUniform(other_block_textures[0], 1000)]
-			}
+			},
+			brightness: 100
 		}
 	}
 };

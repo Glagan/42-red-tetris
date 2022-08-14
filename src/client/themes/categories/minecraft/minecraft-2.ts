@@ -57,13 +57,15 @@ export default <Theme>{
 			_3d: {
 				cubeSize: 16,
 				cubes: [Generator.backgroundUniform(other_block_textures[0], 1000)]
-			}
+			},
+			brightness: 100
 		},
 		right: {
 			_3d: {
 				cubeSize: 16,
 				cubes: [Generator.backgroundUniform(other_block_textures[0], 1000)]
-			}
+			},
+			brightness: 100
 		}
 	}
 };

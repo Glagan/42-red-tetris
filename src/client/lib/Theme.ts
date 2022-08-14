@@ -10,10 +10,12 @@ export default interface Theme {
 		left: {
 			picture: string | undefined;
 			_3d: { cubeSize: number; cubes: Cube[][] } | undefined;
+			brightness: number;
 		};
 		right: {
 			picture: string | undefined;
 			_3d: { cubeSize: number; cubes: Cube[][] } | undefined;
+			brightness: number;
 		};
 	};
 }
