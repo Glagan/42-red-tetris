@@ -515,4 +515,54 @@ describe('Game events', () => {
 		socketOne.disconnect();
 		socketTwo.disconnect();
 	});
+
+	it('Receive the touched flag when a block is set on the board', async () => {
+		const token = nanoid();
+		const socket = await connectTestWebSocket(token, username);
+
+		let roomId = '';
+		await new Promise((resolve) => {
+			socket.emit('room:create', nanoid(), (room, error) => {
+				if (room) {
+					roomId = room.id;
+				}
+				expect(room).toBeTruthy();
+				expect(error).toBeFalsy();
+				resolve(true);
+			});
+		});
+
+		// Start the game manually
+		const roomOnServer = RoomManager.getRoom(roomId);
+		expect(roomOnServer).toBeTruthy();
+		if (roomOnServer) {
+			roomOnServer.ready = [...roomOnServer.players.map((player) => player.id)];
+			roomOnServer.createGame();
+			roomOnServer.startGame();
+		}
+
+		// Wait for the next game:board event and expect a { touched: true }
+		let resolver: (value: boolean) => void;
+		const promise = new Promise((resolve) => {
+			resolver = resolve;
+		});
+		socket.once('game:board', (board) => {
+			expect(board.touched).toBeTruthy();
+			resolver(true);
+		});
+
+		await new Promise((resolve) => {
+			socket.emit('game:dash', (ok) => {
+				expect(ok).toBeTruthy();
+				resolve(true);
+			});
+		});
+
+		await promise;
+
+		// Cleanup
+		roomOnServer?.game?.gameOver(0);
+		PlayerManager.get(token).leaveCurrentRoom();
+		socket.disconnect();
+	});
 });

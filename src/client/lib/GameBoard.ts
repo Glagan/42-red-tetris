@@ -5,6 +5,7 @@ export type GameBoard = {
 	level: number;
 	score: number;
 	board: TetrominoType[][];
+	touched: boolean;
 	tetris: boolean;
 	blockedLine: boolean;
 };
