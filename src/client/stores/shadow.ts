@@ -1,7 +1,7 @@
 import { writable } from 'svelte/store';
 
 function createShadowStore() {
-	const { subscribe, update, set } = writable<boolean>(false);
+	const { subscribe, update, set } = writable<boolean>(true);
 
 	return {
 		subscribe,
