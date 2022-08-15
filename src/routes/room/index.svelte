@@ -102,7 +102,7 @@
 <!-- ========================= HTML -->
 <CentralBox title="Room" {loading} showRoom>
 	<p class="mt-3">{startMessage}</p>
-	<p class="text-neutral-400 mt-7">{tips[currentTip]}</p>
+	<p class="text-neutral-400 mt-7 min-h-[50px]">{tips[currentTip]}</p>
 	<div class="button-container flex justify-between mt-6">
 		<div class:opacity-0={singlePlayer && gameWillStart} class="relative transition-all">
 			<p>
