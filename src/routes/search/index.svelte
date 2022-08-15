@@ -112,6 +112,7 @@
 			Sounds.text();
 			executeSearch(event.currentTarget.value);
 		}}
+		maxlength="20"
 	/>
 	<div class="games mt-5 w-[80%] m-auto h-[120px] overflow-y-scroll overflow-x-hidden">
 		{#if $rooms.length == 0}
@@ -154,6 +155,7 @@
 			max="25"
 			bind:value={create}
 			on:input={onCreateInput}
+			maxlength="20"
 		/>
 		<button class="mt-5" disabled={create.length < 1 || create.length > 25}> Create </button>
 	</form>

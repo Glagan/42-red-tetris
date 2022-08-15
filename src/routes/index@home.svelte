@@ -61,6 +61,7 @@
 			min="1"
 			max="25"
 			on:input={onUsernameInput}
+			maxlength="20"
 		/>
 		<button class="mt-5 transition-all" type="submit" {disabled}>Enter</button>
 	</form>
