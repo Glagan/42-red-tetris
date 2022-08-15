@@ -28,8 +28,8 @@ function createScoresStore() {
 					}
 
 					// Volume
-					const sound_volume = localStorage.getItem(localStorageVolumeKey);
-					if (sound_volume != null) sound.volume = parseFloat(sound_volume);
+					const soundVolume = localStorage.getItem(localStorageVolumeKey);
+					if (soundVolume != null) sound.volume = parseFloat(soundVolume);
 
 					if (callback != undefined) callback();
 
