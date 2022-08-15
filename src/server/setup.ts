@@ -38,6 +38,10 @@ export default function SetupSocketServer() {
 
 		const player = PlayerManager.get(token);
 		if (player) {
+			// Only keep a singe socket connection alive
+			if (player.socket) {
+				player.socket.disconnect();
+			}
 			player.socket = socket;
 			socket.data.player = player;
 		} else {
