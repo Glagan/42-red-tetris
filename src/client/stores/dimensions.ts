@@ -1,7 +1,7 @@
 import { browser } from '$app/env';
 import { writable } from 'svelte/store';
 
-const initial = 3; // 2:2D | 3:3D
+const initial = 2; // 2:2D | 3:3D
 
 const localStorageDimensionsKey = 'dimensions';
 

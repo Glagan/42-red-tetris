@@ -4,7 +4,7 @@ import { writable } from 'svelte/store';
 const localStorageShadowKey = 'shadow';
 
 function createShadowStore() {
-	const { subscribe, update, set } = writable<boolean>(true);
+	const { subscribe, update, set } = writable<boolean>(false);
 
 	return {
 		subscribe,
