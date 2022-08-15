@@ -31,7 +31,7 @@
 			class="board-background"
 			style="background-image: url({backgroundPicture}); transform: translateZ(-{Config.game
 				.blockSize / 2}px);"
-			alt=""
+			alt="board background"
 		/>
 	{:else if background3Dto2D != undefined}
 		<img
