@@ -64,9 +64,36 @@ if (browser) {
 		reconnectionAttempts: 5
 	});
 
-	socket.on('game:startIn', (seconds: number) => {
-		boards.clean();
-		gameStart.startIn(seconds);
+	// * Player
+	socket.on('player:id', (playerId: string) => {
+		id.set(playerId);
+		notifications.push({ id: nanoid(), message: `id: ${playerId}`, error: false });
+	});
+
+	// * Room
+	socket.on('room:created', (room: Room) => {
+		if (get(search).length === 0 || RoomMatchAny(room, get(search))) rooms.addRoom(room);
+	});
+
+	socket.on('room:playerJoined', (player: Player, room: Room) => {
+		rooms.updateRoom(room);
+		if (room.id == get(currentRoom)?.id) {
+			notifications.push({ id: nanoid(), message: 'player joined', error: false });
+			currentRoom.set(room);
+		}
+	});
+
+	socket.on('room:playerLeft', (player: Player, room: Room) => {
+		rooms.updateRoom(room);
+		if (room.id == get(currentRoom)?.id && player.id != get(id)) {
+			notifications.push({ id: nanoid(), message: 'player left', error: false });
+			currentRoom.set(room);
+			opponentReady.set(false);
+		}
+	});
+
+	socket.on('room:deleted', (roomId: string) => {
+		rooms.removeRoom(roomId);
 	});
 
 	socket.on('room:current', (room: Room | null) => {
@@ -77,6 +104,40 @@ if (browser) {
 			goto('/room');
 		}
 	});
+
+	socket.on('room:playerReady', (player: Player, ready: boolean) => {
+		if (
+			get(currentRoom)?.players[0].id === player.id ||
+			get(currentRoom)?.players[1].id === player.id
+		) {
+			if (player.id != get(id)) {
+				opponentReady.set(ready);
+				notifications.push({
+					id: nanoid(),
+					message: `opponent ${ready ? '' : 'not '}ready`,
+					error: false
+				});
+			}
+		}
+	});
+
+	socket.on('room:kicked', () => {
+		Sounds.cancel();
+		currentRoom.clean();
+		notifications.push({ id: nanoid(), message: 'you have been kicked', error: true });
+		goto('/search');
+	});
+
+	// * Matchmaking
+
+	socket.on('matchmaking:found', (room: Room) => {
+		currentRoom.set(room);
+		winner.remove();
+		notifications.push({ id: nanoid(), message: 'room founded', error: false });
+		goto('/room');
+	});
+
+	// * Game
 
 	socket.on('game:current', (state: GameState | null) => {
 		if (state != null) {
@@ -100,20 +161,6 @@ if (browser) {
 		}
 	});
 
-	socket.on('room:kicked', () => {
-		Sounds.cancel();
-		currentRoom.clean();
-		notifications.push({ id: nanoid(), message: 'you have been kicked', error: true });
-		goto('/search');
-	});
-
-	socket.on('matchmaking:found', (room: Room) => {
-		currentRoom.set(room);
-		winner.remove();
-		notifications.push({ id: nanoid(), message: 'room founded', error: false });
-		goto('/room');
-	});
-
 	socket.on('game:initialState', (playerOne: GameInitialState, playerTwo?: GameInitialState) => {
 		notifications.push({ id: nanoid(), message: 'the game will start', error: false });
 
@@ -131,53 +178,14 @@ if (browser) {
 		}
 	});
 
-	socket.on('room:playerJoined', (player: Player, room: Room) => {
-		rooms.updateRoom(room);
-	});
-
-	socket.on('room:playerLeft', (player: Player, room: Room) => {
-		rooms.updateRoom(room);
-	});
-
-	socket.on('room:deleted', (roomId: string) => {
-		rooms.removeRoom(roomId);
-	});
-
-	socket.on('room:created', (room: Room) => {
-		if (get(search).length === 0 || RoomMatchAny(room, get(search))) rooms.addRoom(room);
+	socket.on('game:startIn', (seconds: number) => {
+		boards.clean();
+		gameStart.startIn(seconds);
 	});
 
 	socket.on('game:start', () => {
 		gameStart.start();
 		goto('/game');
-	});
-
-	socket.on('game:board', (board: GameBoard) => {
-		boards.refreshBoard(board);
-		level.set(board.level);
-		if (board.tetris) Sounds.tetris();
-		else if (board.blockedLine) Sounds.addPenalty();
-		else if (board.touched) Sounds.touchFloor();
-		if (board.player === 0 || board.player === 1) scores.update(board.player, board.score);
-	});
-
-	socket.on('game:nextPieces', (player: number, pieces: NextGamePiece[]) => {
-		nextPieces.updateNextPieces(player, pieces);
-	});
-
-	socket.on('room:playerLeft', (player: Player, room: Room) => {
-		if (room.id == get(currentRoom)?.id && player.id != get(id)) {
-			notifications.push({ id: nanoid(), message: 'player left', error: false });
-			currentRoom.set(room);
-			opponentReady.set(false);
-		}
-	});
-
-	socket.on('room:playerJoined', (player: Player, room: Room) => {
-		if (room.id == get(currentRoom)?.id) {
-			notifications.push({ id: nanoid(), message: 'player joined', error: false });
-			currentRoom.set(room);
-		}
 	});
 
 	socket.on('game:over', (gameWinner: number) => {
@@ -189,30 +197,24 @@ if (browser) {
 		}
 	});
 
-	socket.on('room:playerReady', (player: Player, ready: boolean) => {
-		if (
-			get(currentRoom)?.players[0].id === player.id ||
-			get(currentRoom)?.players[1].id === player.id
-		) {
-			if (player.id != get(id)) {
-				opponentReady.set(ready);
-				notifications.push({
-					id: nanoid(),
-					message: `opponent ${ready ? '' : 'not '}ready`,
-					error: false
-				});
-			}
-		}
-	});
-
 	socket.on('game:piece', (piece: GamePiece) => {
 		pieces.updatePiece(piece);
 	});
 
-	socket.on('player:id', (playerId: string) => {
-		id.set(playerId);
-		notifications.push({ id: nanoid(), message: `id: ${playerId}`, error: false });
+	socket.on('game:nextPieces', (player: number, pieces: NextGamePiece[]) => {
+		nextPieces.updateNextPieces(player, pieces);
 	});
+
+	socket.on('game:board', (board: GameBoard) => {
+		boards.refreshBoard(board);
+		level.set(board.level);
+		if (board.tetris) Sounds.tetris();
+		else if (board.blockedLine) Sounds.addPenalty();
+		else if (board.touched) Sounds.touchFloor();
+		if (board.player === 0 || board.player === 1) scores.update(board.player, board.score);
+	});
+
+	// native
 
 	socket.on('connect', () => {
 		playerSocket.set('connect');
@@ -248,31 +250,6 @@ if (browser) {
 		playerSocket.set('reconnect_failed');
 		notifications.push({ id: nanoid(), message: 'server: reconnection failed', error: true });
 	});
-
-	// socket.on('room:all', (serverRooms) => {
-	// 	rooms.set(serverRooms);
-	// });
-
-	// socket.on('room:current', (currentRoomId) => {
-	// 	if (currentRoomId) {
-	// 		currentRoom.set(currentRoomId);
-	// 	}
-	// });
-
-	// socket.on('room:created', (room) => {
-	// 	const roomList = get(rooms);
-	// 	roomList.push(room);
-	// 	rooms.set(roomList);
-	// });
-
-	// socket.on('room:deleted', (roomId) => {
-	// 	const currenRooms = get(rooms);
-	// 	const index = currenRooms.findIndex((room) => room.id == roomId);
-	// 	if (index >= 0) {
-	// 		currenRooms.splice(index, 1);
-	// 		rooms.set(currenRooms);
-	// 	}
-	// });
 }
 
 /// @ts-expect-error It is defined when used in browser mode
