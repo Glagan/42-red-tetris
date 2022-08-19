@@ -21,7 +21,6 @@
 	export let infoMode = false;
 	export let spectre = false;
 	export let onlyFront = false;
-	export let brightness = 100;
 
 	$: onlyBack = $dimensions === 2;
 
@@ -63,46 +62,22 @@
 			: 'transform'}; contain: {background ? 'layout' : 'none'};"
 	>
 		{#if showFront}
-			<div
-				class:spectre
-				class="front"
-				style="background-image: url('{spriteSide}'); filter: brightness({brightness}%);"
-			/>
+			<div class:spectre class="front" style="background-image: url('{spriteSide}');" />
 		{/if}
 		{#if showBack}
-			<div
-				class:spectre
-				class="back"
-				style="background-image: url('{spriteSide}'); filter: brightness({brightness}%);"
-			/>
+			<div class:spectre class="back" style="background-image: url('{spriteSide}');" />
 		{/if}
 		{#if showTop}
-			<div
-				class:spectre
-				class="top"
-				style="background-image: url('{spriteTop}'); filter: brightness({brightness}%);"
-			/>
+			<div class:spectre class="top" style="background-image: url('{spriteTop}');" />
 		{/if}
 		{#if showBottom}
-			<div
-				class:spectre
-				class="bottom"
-				style="background-image: url('{spriteBottom}'); filter: brightness({brightness}%);"
-			/>
+			<div class:spectre class="bottom" style="background-image: url('{spriteBottom}');" />
 		{/if}
 		{#if showLeft}
-			<div
-				class:spectre
-				class="left"
-				style="background-image: url('{spriteSide}'); filter: brightness({brightness}%);"
-			/>
+			<div class:spectre class="left" style="background-image: url('{spriteSide}');" />
 		{/if}
 		{#if showRight}
-			<div
-				class:spectre
-				class="right"
-				style="background-image: url('{spriteSide}'); filter: brightness({brightness}%);"
-			/>
+			<div class:spectre class="right" style="background-image: url('{spriteSide}');" />
 		{/if}
 	</div>
 {/if}
