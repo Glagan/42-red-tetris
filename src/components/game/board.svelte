@@ -54,7 +54,6 @@
 			{layer}
 			{background}
 			{horizontalAlignement}
-			brightness={background ? backgroundBrightness : 100}
 		/>
 	{/each}
 </div>
