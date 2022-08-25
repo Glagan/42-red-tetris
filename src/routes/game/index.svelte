@@ -21,10 +21,12 @@
 					case 'a':
 					case 'q':
 					case 'ArrowLeft':
+						event.preventDefault();
 						Move.left();
 						break;
 					case 'd':
 					case 'ArrowRight':
+						event.preventDefault();
 						Move.right();
 						break;
 					case ' ':
@@ -34,11 +36,13 @@
 						break;
 					case 's':
 					case 'ArrowDown':
+						event.preventDefault();
 						Move.down();
 						break;
 					case 'w':
 					case 'z':
 					case 'ArrowUp':
+						event.preventDefault();
 						Rotate(true);
 						break;
 					case 'e':
